@@ -1,0 +1,481 @@
+/* När Leo inte ser ;-)
+body { 
+	-webkit-transform: rotate(180deg); }
+*/
+
+body, div, ul, li, h1, h2, h3, h4, h5, h6, p, form, input, label { 
+	margin : 0;
+	padding : 0; }
+
+h1, h2, h3, h4, h5, h6 {
+	font-size : 100%; }
+
+body {
+	background-color : #333;
+	min-width : 765px; 
+	font : 75%/1.5 Helvetiva, Verdana, sans-serif;
+	/* max-width : 1024px; */
+	/* width: 1012px; */ }
+
+h1 { 
+	font-size : 190%;
+	padding-left : 0.5em;
+	padding-right : 0.5em; }
+	
+h2 {
+	font-size : 160%;
+	margin : 0 10px 0 10px;
+	padding-top : 2em; }
+	
+h3 {
+	font-size : 160%; 
+	xpadding : 0.5em 0; 
+	padding-top: 0.5em;}
+
+h3 + .scale-group .headline {
+	margin-top: 1em; }
+	
+h4 {
+	font-size : 110%;
+	padding-top : 2em;
+	line-height : 2em; }
+	
+h5 {
+	margin-left : 3em;
+	line-height : 1.5em;
+	padding : 0 310px 0 0;
+	font-weight : normal; }
+
+/** Borde finnas .scale-group.prioritet **/
+.scale-group.prioritet h5 {
+	padding-right: 657px;
+}
+	
+h5 span {
+	font-weight : bold; }
+
+h5 span.number {
+	display : block;
+	position : absolute;
+	width : 2.5em;
+	padding-right : 0.5em; 
+	margin-left : -2.5em; 
+	top: 0.5em; }
+
+.last h5 span.number {
+	top: 0.5em; /* Utan denhär hamnar sista frågan i scale-group (som har lite extra text i en SPAN) för långt ner. */ }
+	
+ul {
+	list-style : none; }
+
+img { 
+	border : 0; }
+
+p { 
+	margin: 0 10px; 
+	font-size: 100%; }
+
+a:link {
+	color : #333333;
+	font-weight : normal; }
+
+.selected, .unselected {
+	display: block;
+	background: transparent url("../images/radiobutton.gif") no-repeat;
+	height: 17px;
+	padding-left: 20px;
+	padding-bottom: 4px; }
+	
+
+.checked, .unchecked {
+	display: block;
+	padding-bottom: 4px;
+	height: 15px;
+	padding-left: 20px;
+	background: transparent url("../images/checkbox.gif") no-repeat; }
+
+.selected, .checked {
+	background-position: left 0; }
+	
+.unselected, .unchecked {
+	background-position: left -43px; }
+
+.group {
+	clear: left;
+	margin: 0 10px;
+	xpadding-top: 2em;
+	padding-bottom: 2em;}
+
+.group p { 
+	margin-left: 0; }
+
+
+
+.obligatory {
+	border-left-color: #000 !important;
+	border-right-color: #000 !important; }
+
+/* =header
+------------------------------------------------------------*/
+#header {
+	width : 100%;
+	color : #fff;
+	padding-top : 70px;
+	background: url(../images/bg-header-bla-tonad-uppochned.jpg) blue; }
+
+#statusbar { 
+	background-color : #F8F8F8;
+	color : #000;
+	line-height : 2em; 
+	padding :1em 0.5em; }
+
+#statusbar p {
+	margin-bottom : -2em; }
+
+#form {
+	background-color : #FFFBFF; }
+
+	
+/* =question
+------------------------------------------------------------*/
+div.question, div.headline {
+	position : relative; }
+	
+div.question {
+	clear : left;
+	background-color : #FAFAFA;
+	border-bottom : 1px solid #EEEEEE;
+	border-left : 3px solid #fff;
+	border-right : 3px solid #fff;
+	line-height : 2em;
+	padding-bottom : 0.5em;
+	padding-top : 0.5em; }
+	
+div.question ul {
+	/* position: absolute; Javascript aktiverar position:asbolute*/ 
+	right: 0; 
+	top: 0; 
+	float: left; 
+	margin: 0 0 0 3em; }
+
+.question.odd {
+	background-color: transparent; }
+	
+.question ul input {
+	margin : 0 50px 0 0;
+	padding : 0; }
+
+.question li {
+	float: left;
+	margin-right: 2em;
+	margin-top: 0.5em; }
+
+/*
+.scale-group .question li {
+	float: none; }
+*/
+
+.question label {
+	display: block;
+	line-height: 16px; /* Så att label hamnar mer i mitten. */ 
+	margin: 0;
+	float:left; }
+
+/* =scale-group
+------------------------------------------------------------*/
+.scale-group label span {
+	position: absolute;
+	left: -9999px; }
+	
+.scale-group {
+	padding-bottom: 1em; }
+
+.scale-group .question {
+	border-top: none; /* Önskemål från IE6 */
+	border-left: 3px solid #EEEEEE;
+	border-right: 3px solid #EEEEEE; 
+	padding-top: 0.5em;
+	padding-bottom: 0.5em;}
+	
+.scale-group .first.question {
+	border-top: 3px solid #EEEEEE; }
+	
+.scale-group .last.question {
+	border-bottom: 3px solid #EEEEEE; }
+	
+/*
+.scale-group .question ul, .headline ul {
+	position: absolute; }
+*/
+
+.scale-group .svar {
+	position: absolute;
+	top: 0;
+	right: 0; }
+
+.scale-group .headline .svar {
+	right: 1.7em;
+	_right: 0.5em;
+	bottom: 0;
+	top: auto;
+}
+
+.scale-group .headline .svar div {
+	position: relative;
+}
+
+.scale-group .headline .svar div h4 {
+	position: absolute;
+	top: -4em;
+	_top: -5.5em;
+	xleft: 1.5em;
+}
+
+
+.scale-group .selected, .scale-group .unselected {
+	display: block;
+	height: 17px;
+	width: 17px; }
+
+.scale-group .question ul li {
+	float: left;
+	font-size: 85%;
+	width: 5em;
+	margin-right: 0;
+	margin: 6px 0; }
+
+.scale-group .headline {
+	position: relative;
+	min-height: 2em;
+	margin-top: 2em; }
+
+.scale-group .headline h4 {
+	position: absolute;
+	bottom: 0; }
+	
+.scale-group .headline ul {
+	xright: 20px;
+	xbottom: 0;
+	font-size: 85%;
+	float: left; }
+
+.scale-group .svar div {
+	float: left;
+}
+	
+.scale-group .headline ul li {
+	float: left;
+	width: 5em;
+	text-align: center; 
+	_position: relative;
+	xoverflow: hidden; }
+
+.scale-group .headline ul li span {
+	height: 2em;
+	width: 5em;
+	top: -2em;
+	left: 0;
+	}
+
+.v {
+	margin-left: 24px !important;
+	margin-right: -13px !important;
+	}
+	
+.prioritet {
+	margin-left: 34px;
+}
+
+.scale-group.prioritet {
+	margin-left: 0;
+}
+
+
+
+/* =column-group
+------------------------------------------------------------*/
+.column-group {
+	width: 100%; }
+	
+.column-group, .column-group .question {
+	float: left; }
+	
+.column-group .question {
+	border-bottom: none;
+	border-right: 1px solid #ccc;
+	float: left !important;
+	padding-right: 1em;
+	clear:none; }
+	
+.column-group .question ul {
+	float: left;
+	display: block; }
+	
+.column-group .question li {
+	clear: left;
+	display: block;
+	margin-top: 0.5em;
+	margin-right: 0; /* ta bort marginalen igen för bakgrundsfrågor och sådana som 
+						vill bara ha kolumner och vara ihoptryckta */ }
+	
+.column-group .question h5, .column-group .question p {
+	padding-right: 0; }
+
+	
+/* =navigation
+------------------------------------------------------------*/
+#navigation {
+	font-weight: bold;
+	background-color: #F8F8F8;
+	padding: 1em 0.5em;
+	text-align: center; }
+
+.navigation h3 {
+	clear: left;
+	position: absolute;
+	left: -9999px; }
+	
+#navigation ul, #statusbar ul {
+	text-align: center; }
+	
+#navigation ul li, #statusbar ul li {
+	display: inline; }
+
+#navigation .menu {
+	margin-bottom: 1.5em; }
+
+#navigation .menu input {
+	padding: 5px; }
+	
+#navigation .menu li {
+	margin: 0 0.5em; }
+
+/* =pages
+------------------------------------------------------------*/
+
+.pages a {
+	border: 1px solid #A4B3C9;
+	padding: 0.3em 0.5em;
+	margin: 0 0.25em; 
+	color: #333;
+	text-decoration: none;
+	background: white; }
+	
+.pages a:hover { 
+	border-color: #0066CC;
+	text-decoration: underline; }
+	
+.pages li {
+	margin: 0 2px; }
+	
+#page-0  {
+	margin: 0 auto;
+	padding: 4em 0;
+	width:60%; }
+	
+.on-page-0 #intro { 
+	display: none; }
+
+.on-page-1 a.goto-1,
+.on-page-2 a.goto-2,
+.on-page-3 a.goto-3,
+.on-page-4 a.goto-4,
+.on-page-5 a.goto-5,
+.on-page-6 a.goto-6,
+.on-page-7 a.goto-7,
+.on-page-8 a.goto-8,
+.on-page-9 a.goto-9,
+.on-page-11 a.goto-11,
+.on-page-10 a.goto-10,
+.on-page-12 a.goto-12,
+.on-page-13 a.goto-13,
+.on-page-14 a.goto-14,
+.on-page-15 a.goto-15 {
+	background: lightblue; }
+
+/* =message
+------------------------------------------------------------*/
+#message a {
+	color : #522E0C;
+	font-weight : bold; }
+	
+#message {
+	color : #522E0C;
+	line-height : 36px;
+	text-align : center;
+	border-top : 1px solid #F2EAD3; }
+
+/* =footer
+------------------------------------------------------------*/
+#footer {
+	text-align: center;
+	color: #fff;
+	font-size: 100%;
+	padding: 1em 0; }
+	
+#footer a {
+	color: #fff;
+	font-weight: bold; }
+	
+.infopage {
+	margin: 0 auto;
+	padding: 4em 0;
+	width: 60%;
+	text-align: center;
+	line-height: 3em; }
+
+.infopage input {
+	padding: 5px; }
+
+#page-exit,
+#page-tack,
+.on-page-exit #intro,
+.on-page-exit .menu,
+.on-page-exit #message,
+.on-page-tack #intro,
+.on-page-tack .menu,
+.on-page-tack #message,
+.on-page-tack #statusbar,
+.on-page-tack #navigation,
+.on-page-0 #intro,
+.on-page-0 .menu,
+.on-page-0 #message {
+	display: none; }
+
+#intro {
+	width: 70%; 
+	margin-bottom: 2em; }
+
+.on-page-exit #page-exit,
+.on-page-tack #page-tack {
+	display: block; }
+
+
+div.highlight {
+	background: #FCF16D url("../images/highlight.png") repeat-x top left !important;  }
+			
+input[type="text"] {
+	border: 2px solid #ccc;
+	width: 20em; }
+	
+
+/* =clearfix
+------------------------------------------------------------*/
+.clearfix:after {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden; }
+
+.clearfix {
+	display: inline-block; }
+	
+/* Hides from IE-mac \*/
+* html .clearfix {
+	height: 1%; }
+	
+.clearfix {
+	display: block; }
+/* End hide from IE-mac */
+
