@@ -228,9 +228,8 @@ div.question ul {
 	position: absolute;
 	top: -4em;
 	_top: -5.5em;
-	xleft: 1.5em;
+	left: 0;
 }
-
 
 .scale-group .selected, .scale-group .unselected {
 	display: block;
@@ -247,7 +246,7 @@ div.question ul {
 .scale-group .headline {
 	position: relative;
 	min-height: 2em;
-	margin-top: 2em; }
+	margin-top: 3em; }
 
 .scale-group .headline h4 {
 	position: absolute;
@@ -282,14 +281,9 @@ div.question ul {
 	margin-right: -13px !important;
 	}
 	
-.prioritet {
+.scale-group .prioritet {
 	margin-left: 34px;
 }
-
-.scale-group.prioritet {
-	margin-left: 0;
-}
-
 
 
 /* =column-group
