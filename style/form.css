@@ -319,7 +319,7 @@ div.question ul {
 /* =navigation
 ------------------------------------------------------------*/
 #navigation {
-	font-weight: bold;
+	/* font-weight: bold; */
 	background-color: #F8F8F8;
 	padding: 1em 0.5em;
 	text-align: center; }
