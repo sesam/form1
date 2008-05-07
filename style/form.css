@@ -446,12 +446,23 @@ div.question ul {
 
 
 div.highlight {
-	background: #FCF16D url("../images/highlight.png") repeat-x top left !important;  }
+	background-color: #FCF16D !important; /* Magnus: Ser bättre ut utan bakgrundsbild */
+	/* background: #FCF16D url("../images/highlight.png") repeat-x top left !important;*/ }
+
+#message.highlight { 
+	background: #FCF16D url("../images/highlight.png") repeat-x top left !important; }
 			
 input[type="text"] {
 	border: 2px solid #ccc;
 	width: 20em; }
 	
+.big-text ul {
+	clear: left;
+	float: none; }
+	
+.big-text.question textarea {
+	margin-left: 3em;
+}
 
 /* =clearfix
 ------------------------------------------------------------*/
