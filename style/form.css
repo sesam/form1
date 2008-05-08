@@ -156,7 +156,8 @@ div.question ul {
 	right: 0; 
 	top: 0; 
 	float: left; 
-	margin: 0 0 0 3em; }
+	margin: 0 0 0 3em;
+	padding-left: 4em; }
 
 .question.odd {
 	background-color: transparent; }
@@ -282,7 +283,7 @@ div.question ul {
 	}
 	
 .scale-group .prioritet {
-	margin-left: 34px;
+	xxxxxxmargin-left: 34px;
 }
 
 
@@ -484,3 +485,34 @@ input[type="text"] {
 	display: block; }
 /* End hide from IE-mac */
 
+.scale-group .question .svar .betyg h4 {
+	position: absolute;
+	left: -9999px;
+}
+
+.scale-group .question .svar .prioritet h4 {
+	left: 0;
+	margin: 0;
+	padding: 0 0 0 0.5em;
+	position: absolute;
+	top: 0;
+}
+
+.scale-group .question .svar .prioritet {
+	background-color: #EEEEEE;
+	left: 0;
+	position: absolute;
+	top: 34px;
+}
+
+.scale-group .question .svar div {
+	position: relative;
+}
+
+.scale-group .question {
+	height: 55px;
+}
+
+.scale-group .question h5 {
+	padding-right: 388px;
+}
