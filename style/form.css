@@ -42,7 +42,7 @@ h4 {
 	
 h5 {
 	margin-left : 3em;
-	line-height : 1.5em;
+	line-height : 1.7em; /* ändrad från 1.5 */
 	padding : 0 310px 0 0;
 	font-weight : normal; }
 
@@ -156,8 +156,7 @@ div.question ul {
 	right: 0; 
 	top: 0; 
 	float: left; 
-	margin: 0 0 0 3em;
-	padding-left: 4em; }
+	margin: 0 0 0 3em; }
 
 .question.odd {
 	background-color: transparent; }
@@ -281,11 +280,10 @@ div.question ul {
 	margin-left: 24px !important;
 	margin-right: -13px !important;
 	}
-	
-.scale-group .prioritet {
-	xxxxxxmargin-left: 34px;
-}
 
+.scale-group.prioritet .question ul {
+	padding-left: 4em; /* Flyttar Prioritets-rubriken mer åt vänster */
+}
 
 /* =column-group
 ------------------------------------------------------------*/
@@ -344,6 +342,15 @@ div.question ul {
 	
 #navigation .menu li {
 	margin: 0 0.5em; }
+	
+#navigation .back_button, #navigation .save_button {
+	background-color: #fff;
+	font-weight: bold;
+	border: 1px solid #A4B3C9; }
+
+#navigation .back_button:hover, #navigation .save_button:hover {
+	text-decoration: underline;
+	border: 1px solid #0066CC; }
 
 /* =pages
 ------------------------------------------------------------*/
@@ -493,7 +500,7 @@ input[type="text"] {
 .scale-group .question .svar .prioritet h4 {
 	left: 0;
 	margin: 0;
-	padding: 0 0 0 0.5em;
+	padding: 4px 0 0 0.5em;
 	position: absolute;
 	top: 0;
 }
@@ -509,10 +516,18 @@ input[type="text"] {
 	position: relative;
 }
 
-.scale-group .question {
+.scale-group.prioritet .question {
 	height: 55px;
 }
 
 .scale-group .question h5 {
 	padding-right: 388px;
 }
+
+
+.scale-group .question .prioritet ul li, .scale-group .question.first .prioritet ul li  {
+	padding-bottom: 4px;
+	margin-bottom: 0; }
+
+.scale-group .question .svar div h4{
+	font-size: 100%; }
