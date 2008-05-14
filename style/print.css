@@ -1,0 +1,37 @@
+div.question {
+	border-bottom-color: #000; }
+
+body {
+	min-width : 0; 
+}
+	
+.scale-group .question {
+	border-left-color: #000;
+	border-right-color: #000;
+	border-bottom : 1px solid #000;
+	xborder-top: none; /* IE6 utskrift buggar med denna på */
+	xborder-bottom: none;}
+	
+	.scale-group .first.question {
+		xborder-top: none; }
+			
+.scale-group div.first {
+	border-top: 1px solid blue !important; }
+
+
+.scale-group .last {
+	border-bottom: 1px solid #000; }
+	
+#message {
+	display: none; }
+
+#navigation {
+	display: none; }
+	
+div.question { background-color: #eee;}
+
+div.question {
+	page-break-after: avoid;
+}
+
+.pagebreak { padding-top: 45pt; }

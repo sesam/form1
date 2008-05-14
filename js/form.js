@@ -7,8 +7,11 @@ function init() {
 	prepareForm();
 	
 	pageNav = new pageNavigation();
-	pageNav.loader();
-	pageNav.showPage(1);
+	if (!location.search.match(/print/)) {
+		pageNav.loader();
+	} else {
+		pageNav.setPageClass('print');		
+	}
 }
 
 function prepareForm(){
@@ -141,14 +144,18 @@ var pageNavigation = function() {
 			if (!o) break;
   		}
 		this.onpage = n;
+		this.setPageClass('on-page-'+n);
+	}
+
+	this.setPageClass = function(name) {
 		var x=document.getElementsByTagName('body')[0];
 		if (!x) return;
 		if (!x.className) x.className='on-page-1';
-		this.logga( 'fore: '+ x.className );
+		//this.logga( 'fore: '+ x.className );
 		var y=x.className;
-		var z=y.replace(/on-page-\w+/, 'on-page-'+n);
+		var z=y.replace(/on-page-\w+/, '') + name;
 		x.className=z;
-		this.logga( 'efter: '+ x.className );
+		//this.logga( 'efter: '+ x.className );
 	}
 }
 
