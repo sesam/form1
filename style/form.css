@@ -545,68 +545,12 @@ input[type="text"] {
 
 
 
-/*
-
-	table { 
-		border-collapse: collapse;
-		width: 100%;
-		border: 1px solid #666; }
-	
-	table h4 {
-		font-size: 140%;
-		line-height: auto;
-		padding-top: 0;
-	}
-	
-	th, td { 
-		padding: 0.1em 1em; }
-		
-	th#number {
-		text-indent: -9999px;
-	}
-	
-	tr {
-		height: 3em;;
-	}
-	
-	caption { 
-		font-size: 1.2em;
-		font-weight: bold;
-		margin: 1em 0; }
-
-	col { 
-		border-right: 1px solid #ccc; }
-
-	col#HourCol { 
-		border: none; }
-	
-	col#numberCol {
-		width: 3em;
-	}
-	
-	col.s {
-		width: 5em;
-		text-align: center;
-	}
-	
-	thead { 
-		background-color: #fff;
-		border-top: 1px solid #666;
-		border-bottom: 1px solid #666;
-		border-left-color: #fff;}
-
-	th { 
-		font-weight: normal;
-		text-align: left;
-		vertical-align: bottom;
-		font-size: 80%; }
-*/
 
 body.print .noprint, body.print .infopage, body.print #header, body.print #message, body.print #navigation, body.print #footer { display:none; }
 
 @media print {
 	.noprint, .infopage, #header, #message, #navigation, #footer { display:none; }
-	body { background-color : white; }
+	body { background-color : white; min-width: 0;}
 	.selected, .unselected, .checked, .unchecked {
 	background: transparent url("../images/checkbox_print.gif") no-repeat 0 0; }
 }
