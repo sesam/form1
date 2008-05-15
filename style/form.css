@@ -16,16 +16,6 @@ body {
 	font : 75%/1.5 Helvetiva, Verdana, sans-serif;
 	/* max-width : 1024px; */
 	/* width: 1012px; */ }
-		
-@media print {
-	.noprint, .infopage, #header, #message, #navigation { display:none; }
-	body { background-color : white; }
-	.selected, .unselected, .checked, .unchecked {
-	background: transparent url("../images/checkbox_print.gif") no-repeat 0 0; }
-	/* tab ist. för mellanslag ovan! */
-	/* lägga till info*/
-}
-
 
 h1 { 
 	font-size : 190%;
@@ -470,9 +460,9 @@ div.highlight {
 #message.highlight { 
 	background: #FCF16D url("../images/highlight.png") repeat-x top left !important; }
 			
-input[type="text"] {
+.textline {
 	border: 2px solid #ccc;
-	width: 20em; }
+	xwidth: 10em; }
 	
 .big-text ul {
 	clear: left;
@@ -548,10 +538,25 @@ input[type="text"] {
 
 body.print .noprint, body.print .infopage, body.print #header, body.print #message, body.print #navigation, body.print #footer { display:none; }
 
-@media print {
-	.noprint, .infopage, #header, #message, #navigation, #footer { display:none; }
-	body { background-color : white; min-width: 0;}
+/* @media print { */
+	.noprint, .infopage, #header, #message, #navigation, #footer { xdisplay:none; }
+	
+	body {
+		background-color : white; min-width: 0; }
+		
 	.selected, .unselected, .checked, .unchecked {
-	background: transparent url("../images/checkbox_print.gif") no-repeat 0 0; }
-}
+		background: transparent url("../images/checkbox_print.gif") no-repeat 0 0; }
+	
+		.big-text.question textarea {
+			background: transparent url("../images/dotted-line.gif") left top;
+			border: none;
+			height: 86pt;  /* height: 9em; */
+		}
+
+		.textline {
+			background: transparent url("../images/dotted-line.gif") left bottom;
+			border: 2px solid #fff;
+			xheight: 15pt; /* height: 1.7em; */
+		}
+/*} */
 
