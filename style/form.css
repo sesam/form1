@@ -538,7 +538,7 @@ div.highlight {
 
 body.print .noprint, body.print .infopage, body.print #header, body.print #message, body.print #navigation, body.print #footer { display:none; }
 
-/* @media print { */
+@media print {
 	.noprint, .infopage, #header, #message, #navigation, #footer { xdisplay:none; }
 	
 	body {
@@ -558,5 +558,5 @@ body.print .noprint, body.print .infopage, body.print #header, body.print #messa
 			border: 2px solid #fff;
 			xheight: 15pt; /* height: 1.7em; */
 		}
-/*} */
+}
 
