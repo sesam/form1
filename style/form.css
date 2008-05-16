@@ -29,7 +29,6 @@ h2 {
 	
 h3 {
 	font-size : 160%; 
-	xpadding : 0.5em 0; 
 	padding-top: 0.5em;}
 
 h3 + .scale-group .headline {
@@ -46,8 +45,8 @@ h5 {
 	padding : 0 310px 0 0;
 	font-weight : normal; }
 
-/** Borde finnas .scale-group.prioritet **/
-.scale-group.prioritet h5 {
+/** Borde finnas .scale-group.priority **/
+.scale-group.priority h5 {
 	padding-right: 657px;
 }
 	
@@ -103,7 +102,6 @@ a:link {
 .group {
 	clear: left;
 	margin: 0 10px;
-	xpadding-top: 2em;
 	padding-bottom: 2em;}
 
 .group p { 
@@ -208,26 +206,24 @@ div.question ul {
 	position: absolute; }
 */
 
-.scale-group .svar {
+.scale-group .answer {
 	position: absolute;
 	top: 0;
 	right: 0; }
 
-.scale-group .headline .svar {
+.scale-group .headline .answer {
 	right: 1.7em;
-	_right: 0.5em;
 	bottom: 0;
 	top: auto;
 }
 
-.scale-group .headline .svar div {
+.scale-group .headline .answer div {
 	position: relative;
 }
 
-.scale-group .headline .svar div h4 {
+.scale-group .headline .answer div h4 {
 	position: absolute;
 	top: -4em;
-	_top: -5.5em;
 	left: 0;
 }
 
@@ -253,35 +249,30 @@ div.question ul {
 	bottom: 0; }
 	
 .scale-group .headline ul {
-	xright: 20px;
-	xbottom: 0;
 	font-size: 85%;
 	float: left; }
 
-.scale-group .svar div {
+.scale-group .answer div {
 	float: left;
 }
 	
 .scale-group .headline ul li {
 	float: left;
 	width: 5em;
-	text-align: center; 
-	_position: relative;
-	xoverflow: hidden; }
+	text-align: center; }
 
 .scale-group .headline ul li span {
 	height: 2em;
 	width: 5em;
 	top: -2em;
-	left: 0;
-	}
+	left: 0; }
 
 .v {
 	margin-left: 24px !important;
 	margin-right: -13px !important;
 	}
 
-.scale-group.prioritet .question ul {
+.scale-group.priority .question ul {
 	padding-left: 4em; /* Flyttar Prioritets-rubriken mer åt vänster */
 }
 
@@ -393,7 +384,7 @@ div.question ul {
 .on-page-13 a.goto-13,
 .on-page-14 a.goto-14,
 .on-page-15 a.goto-15 {
-	background: lightblue; }
+	background-color: #ADD8E6; }
 
 /* =message
 ------------------------------------------------------------*/
@@ -461,9 +452,8 @@ div.highlight {
 	background: #FCF16D url("../images/highlight.png") repeat-x top left !important; }
 			
 .textline {
-	border: 2px solid #ccc;
-	xwidth: 10em; }
-	
+	border: 2px solid #ccc; }
+		
 .big-text ul {
 	clear: left;
 	float: none; }
@@ -492,12 +482,12 @@ div.highlight {
 	display: block; }
 /* End hide from IE-mac */
 
-.scale-group .question .svar .betyg h4 {
+.scale-group .question .answer .grade h4 {
 	position: absolute;
 	left: -9999px;
 }
 
-.scale-group .question .svar .prioritet h4 {
+.scale-group .question .answer .priority h4 {
 	left: 0;
 	margin: 0;
 	padding: 4px 0 0 0.5em;
@@ -505,18 +495,18 @@ div.highlight {
 	top: 0;
 }
 
-.scale-group .question .svar .prioritet {
+.scale-group .question .answer .priority {
 	background-color: #EEEEEE;
 	left: 0;
 	position: absolute;
 	top: 34px;
 }
 
-.scale-group .question .svar div {
+.scale-group .question .answer div {
 	position: relative;
 }
 
-.scale-group.prioritet .question {
+.scale-group.priority .question {
 	height: 55px;
 }
 
@@ -525,11 +515,11 @@ div.highlight {
 }
 
 
-.scale-group .question .prioritet ul li, .scale-group .question.first .prioritet ul li  {
+.scale-group .question .priority ul li, .scale-group .question.first .priority ul li  {
 	padding-bottom: 4px;
 	margin-bottom: 0; }
 
-.scale-group .question .svar div h4{
+.scale-group .question .answer div h4{
 	font-size: 100%; }
 
 
@@ -539,7 +529,7 @@ div.highlight {
 body.print .noprint, body.print .infopage, body.print #header, body.print #message, body.print #navigation, body.print #footer { display:none; }
 
 @media print {
-	.noprint, .infopage, #header, #message, #navigation, #footer { xdisplay:none; }
+	.noprint, .infopage, #header, #message, #navigation, #footer { display:none; }
 	
 	body {
 		background-color : white; min-width: 0; }
@@ -556,7 +546,7 @@ body.print .noprint, body.print .infopage, body.print #header, body.print #messa
 		.textline {
 			background: transparent url("../images/dotted-line.gif") left bottom;
 			border: 2px solid #fff;
-			xheight: 15pt; /* height: 1.7em; */
+			height: 15pt; /* height: 1.7em; */
 		}
 }
 

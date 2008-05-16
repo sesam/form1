@@ -1,8 +1,10 @@
 .first h5 span.number { top: 0.75em; /* Första siffran i scale-group hamnar lite fel. Detta rättar till det. */ }
 div.question ul { margin-left: 1.5em; }
-.scale-group .headline ul { right: 6px; }
 .column-group .question ul { margin-left: 1.5em; }
-.scale-group .first.question ul  li { xmargin-top: 9px; /* Flyttar ner radioknapparna på första frågan i en Scale-group lite extra tack vare den bredare border-top */ }
+.scale-group .headline ul { right: 6px; }
 .scale-group .headline ul li span { position: absolute; }
+.scale-group .headline ul li { position: relative; }
+.scale-group .headline .answer { right: 0.5em; }
+.scale-group .headline .answer div h4 { top: -5.5em; }
 .scale-group .v { margin-right: 0px !important; }
-.scale-group.prioritet .question .v { margin-right: -13px !important;}
+.scale-group.priority .question .v { margin-right: -13px !important;}
