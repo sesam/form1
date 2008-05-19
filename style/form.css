@@ -519,7 +519,7 @@ div.highlight {
 	padding-bottom: 4px;
 	margin-bottom: 0; }
 
-.scale-group .question .answer div h4{
+.scale-group .question .answer div h4 {
 	font-size: 100%; }
 
 
@@ -528,25 +528,24 @@ div.highlight {
 
 body.print .noprint, body.print .infopage, body.print #header, body.print #message, body.print #navigation, body.print #footer { display:none; }
 
+body.print .scale-group.priority .header { background-color: blue; }
+
 @media print {
 	.noprint, .infopage, #header, #message, #navigation, #footer { display:none; }
-	
 	body {
 		background-color : white; min-width: 0; }
 		
 	.selected, .unselected, .checked, .unchecked {
-		background: transparent url("../images/checkbox_print.gif") no-repeat 0 0; }
+		background: transparent url("../images/checkbox-print-2.gif") no-repeat 3px 3px; }
 	
-		.big-text.question textarea {
-			background: transparent url("../images/dotted-line.gif") left top;
-			border: none;
-			height: 86pt;  /* height: 9em; */
-		}
-
-		.textline {
-			background: transparent url("../images/dotted-line.gif") left bottom;
-			border: 2px solid #fff;
-			height: 15pt; /* height: 1.7em; */
-		}
-}
+	.big-text.question textarea {
+		background: transparent url("../images/dotted-line.gif") left top;
+		border: none;
+		height: 86pt;  /* height: 9em; */ }
+		
+	.textline {
+		background: transparent url("../images/dotted-line.gif") left bottom;
+		border: 2px solid #fff;
+		height: 15pt; /* height: 1.7em; */ }
+} 
 
