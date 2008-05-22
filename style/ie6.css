@@ -1,4 +1,5 @@
-.first h5 span.number { top: 0.75em; /* Första siffran i scale-group hamnar lite fel. Detta rättar till det. */ }
+.first h5 span.number { margin-top: -3px; padding-top: 5px; xtop: 0.75em; /* Första siffran i scale-group hamnar lite fel. Detta rättar till det. */ }
+.priority .first h5 span.number { margin-top: -5px;}
 div.question ul { margin-left: 1.5em; }
 .column-group .question ul { margin-left: 1.5em; }
 .scale-group .headline ul { right: 6px; }

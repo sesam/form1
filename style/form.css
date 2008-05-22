@@ -542,10 +542,17 @@ body.print .scale-group.priority .header { background-color: blue; }
 		background: transparent url("../images/dotted-line.gif") left top;
 		border: none;
 		height: 86pt;  /* height: 9em; */ }
-		
+	
+	.textfield {
+		padding-right: 20em;
+		position: relative;
+	}
+	
 	.textline {
-		background: transparent url("../images/dotted-line.gif") left bottom;
-		border: 2px solid #fff;
-		height: 15pt; /* height: 1.7em; */ }
-} 
+		background : transparent url("../images/dotted-line-2.gif") left bottom;
+		border: 0px solid #fff;
+		height: 20px; /* 15px height: 1.7em; */ 
+		position: absolute;
+		margin-left: 5px !important; /* .question ul input {…} har en dum margin */  }
+}
 
