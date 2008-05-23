@@ -110,8 +110,8 @@ a:link {
 
 
 .obligatory {
-	border-left-color: #000 !important;
-	border-right-color: #000 !important; }
+	xx_border-left-color: #000 !important;
+	xx_border-right-color: #000 !important; }
 
 /* =header
 ------------------------------------------------------------*/
@@ -156,8 +156,8 @@ div.question ul {
 	float: left; 
 	margin: 0 0 0 3em; }
 
-.question.odd {
-	background-color: transparent; }
+.odd {
+	background-color: transparent !important; }
 	
 .question ul input {
 	margin : 0 50px 0 0;
@@ -444,15 +444,12 @@ div.question ul {
 	display: block; }
 
 
-div.highlight {
-	background-color: #FCF16D !important; /* Magnus: Ser bättre ut utan bakgrundsbild */
-	/* background: #FCF16D url("../images/highlight.png") repeat-x top left !important;*/ }
 
-#message.highlight { 
-	background: #FCF16D url("../images/highlight.png") repeat-x top left !important; }
+
+
 			
-.textline {
-	border: 2px solid #ccc; }
+.textline, textarea {
+	border: 1px solid #ccc; }
 		
 .big-text ul {
 	clear: left;
@@ -524,7 +521,14 @@ div.highlight {
 
 
 
-
+@media screen {
+	div.highlight {
+		background-color: #FCF16D !important; /* Magnus: Ser bättre ut utan bakgrundsbild */
+		/* background: #FCF16D url("../images/highlight.png") repeat-x top left !important;*/ }
+		
+	#message.highlight { 
+		background: #FCF16D url("../images/highlight.png") repeat-x top left !important; }
+}
 
 body.print .noprint, body.print .infopage, body.print #header, body.print #message, body.print #navigation, body.print #footer { display:none; }
 
@@ -539,12 +543,13 @@ body.print .scale-group.priority .header { background-color: blue; }
 		background: transparent url("../images/checkbox-print-2.gif") no-repeat 3px 3px; }
 	
 	.big-text.question textarea {
-		background: transparent url("../images/dotted-line.gif") left top;
+		background: transparent url("../images/dotted-line-2.gif") left top;
 		border: none;
-		height: 86pt;  /* height: 9em; */ }
+		height: 86pt;  /* height: 9em; */ 
+		overflow: auto; }
 	
 	.textfield {
-		padding-right: 20em;
+		padding-right: 15em;
 		position: relative;
 	}
 	
@@ -554,5 +559,25 @@ body.print .scale-group.priority .header { background-color: blue; }
 		height: 20px; /* 15px height: 1.7em; */ 
 		position: absolute;
 		margin-left: 5px !important; /* .question ul input {…} har en dum margin */  }
+	
+	.question {
+		border-bottom-color: black !important; }
+	
+	.scale-group .question {
+		border-left-color: black !important;
+		border-top-color: black !important;
+		border-bottom-color: black !important;
+		border-right-color: black !important;
+		border-left-width: 2px !important;
+		border-right-width: 2px !important;
+	}
+	
+	.first {
+		border-top-width: 2px !important;
+	}
+	
+	.last {
+		border-bottom-width: 2px !important;
+	}
 }
 
