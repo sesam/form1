@@ -4,7 +4,7 @@
 <html lang="sv">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link rel="stylesheet" href="style/form.css" type="text/css" media="all" charset="utf-8">
+	<link rel="stylesheet" href="style/form-tiny.css" type="text/css" media="all" charset="utf-8">
 	
 	<!--[if lt IE 7]>
 		<script src="js/tiny/IE7-tiny.js" type="text/javascript"></script>
@@ -15,11 +15,11 @@
 </head>
 <body class="on-page-1">
 
-<div id="header">
+<div id="header" onclick="autoSave(true); return false;">
 	<h1>Mall2007 medarbetarundersökning</h1>
 	
 	<div id="statusbar" class="navigation">
-	<p><strong>Status:</strong> <em>Förhandsvisning</em> <span id='laddar'> - laddar...</span></p>
+	<p><strong>Status:</strong> <em>Förhandsvisning</em> <span id="saved"></span><span id='laddar'> - laddar...</span></p>
 	<h3>Gå till sida:</h3>
 	<ul class="pages">
 		<li><a class="goto-1" href="#page-1" onclick="pageNav.showPage(1);">1</a></li>
@@ -31,7 +31,7 @@
 	</div>
 </div>
 
-<form action="">
+<form id="form_"action="form-5-3-2.html">
 	<div id="form">
 
 		<div id="page-1">	
@@ -68,7 +68,7 @@
 					</div>
 					
 				</div>
-				<div class="first question">
+				<div class="first question obligatory">
 					<h5><span class="number">1</span> Mitt arbete engagerar mig mycket</h5>
 					<div class="answer">
 						<ul class="grade">
@@ -117,7 +117,7 @@
 						</div>
 						</div>
 				</div>
-				<div class="first question">
+				<div class="first question obligatory">
 					<h5><span class="number">3</span> inget förtroende</h5>
 					<div class="answer">
 					<ul class="grade">
@@ -413,7 +413,7 @@
 				</div>
 			</div>
 			
-				<div class="question odd clearfix highlight obligatory" id="q-18">
+				<div class="question odd clearfix obligatory" id="q-18">
 					<a name="q-18"></a>
 					<h5><span class="number">18</span> Jag har haft medarbetarsamtal under de senaste 12 månaderna</h5>
 					<div class="answer">
@@ -522,7 +522,7 @@
 					</div>
 				</div>
 				
-				<div class="first question highlight obligatory" id="q-23">
+				<div class="first question obligatory" id="q-23">
 					<a name="q-23"></a>
 					<h5><span class="number">23</span> Vi har effektiva arbetsrutiner på min avdelning/enhet</h5>
 					<div class="answer">
@@ -710,7 +710,7 @@
 					</ul>
 					</div>
 				</div>
-				<div class="last question highlight obligatory" id="q-35">
+				<div class="last question obligatory" id="q-35">
 					<a name="q-35"></a>
 					<h5><span class="number">35</span> Värderingarna hjälper mig i mitt dagliga arbete</h5>
 					<div class="answer">
@@ -833,12 +833,7 @@
 </div>
 
 </body>
-<script type="text/javascript" src="js/mootools.v1.11.js"></script>
-
-<!--
-<script type="text/javascript" src="js/tiny/moocheck-tiny.js"></script>
-<script src="js/toolbox.js" type="text/javascript" charset="utf-8"></script>
-<script src="js/tiny/form-tiny.js" type="text/javascript" charset="utf-8"></script>
--->
-<script src="js/tiny/bigform-tiny.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="js/mootools-release-1.11.js"></script>
+<script src="js/bigform-2.js" type="text/javascript" charset="utf-8"></script>
+<!-- <script src="js/moocheck-0.94.js" type="text/javascript" charset="utf-8"></script> -->
 </html>

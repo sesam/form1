@@ -11,13 +11,12 @@ h1, h2, h3, h4, h5, h6 {
 	font-size : 100%; }
 
 body {
-	background-color : #333;
 	min-width : 765px; 
 	font : 75%/1.5 Helvetiva, Verdana, sans-serif;
 	/* max-width : 1024px; */
 	/* width: 1012px; */ }
 
-h1 { 
+h1 {
 	font-size : 190%;
 	padding-left : 0.5em;
 	padding-right : 0.5em; }
@@ -119,7 +118,7 @@ a:link {
 	width : 100%;
 	color : #fff;
 	padding-top : 70px;
-	background: url(../images/bg-header-bla-tonad-uppochned.jpg) blue; }
+	background: url("../images/header_bg-blue.png") repeat-x blue; }
 
 #statusbar { 
 	background-color : #F8F8F8;
@@ -129,10 +128,6 @@ a:link {
 
 #statusbar p {
 	margin-bottom : -2em; }
-
-#form {
-	background-color : #FFFBFF; }
-
 	
 /* =question
 ------------------------------------------------------------*/
@@ -142,7 +137,7 @@ div.question, div.headline {
 div.question {
 	clear : left;
 	background-color : #FAFAFA;
-	border-bottom : 1px solid #EEEEEE;
+	border-bottom : 1px solid #D1D1D1;
 	border-left : 3px solid #fff;
 	border-right : 3px solid #fff;
 	line-height : 2em;
@@ -190,16 +185,16 @@ div.question ul {
 
 .scale-group .question {
 	border-top: none; /* Önskemål från IE6 */
-	border-left: 3px solid #EEEEEE;
-	border-right: 3px solid #EEEEEE; 
+	border-left: 2px solid #D1D1D1;
+	border-right: 2px solid #D1D1D1; 
 	padding-top: 0.5em;
 	padding-bottom: 0.5em;}
 	
-.scale-group .first.question {
-	border-top: 3px solid #EEEEEE; }
+.scale-group div.first {
+	border-top: 2px solid #D1D1D1; }
 	
-.scale-group .last.question {
-	border-bottom: 3px solid #EEEEEE; }
+.scale-group div.last {
+	border-bottom: 2px solid #D1D1D1; }
 	
 /*
 .scale-group .question ul, .headline ul {
@@ -269,7 +264,7 @@ div.question ul {
 
 .v {
 	margin-left: 24px !important;
-	margin-right: -13px !important;
+	margin-right: -12px !important;
 	}
 
 .scale-group.priority .question ul {
@@ -522,13 +517,25 @@ div.question ul {
 
 
 @media screen {
+	body {
+		background-color : #333; }
+
+	#form {
+		background-color : #FFFBFF; }
+	
 	div.highlight {
 		background-color: #FCF16D !important; /* Magnus: Ser bättre ut utan bakgrundsbild */
 		/* background: #FCF16D url("../images/highlight.png") repeat-x top left !important;*/ }
 		
 	#message.highlight { 
-		background: #FCF16D url("../images/highlight.png") repeat-x top left !important; }
+		background: #FCF16D url("../images/gul.gif") repeat-x top left !important; 
+	}
 }
+/*
+.scale-group { border-bottom: 1px solid black; border-right: 1px solid black; border-left: 1px solid black; }
+
+.scale-group .question { border-top: 1px solid black; }
+*/
 
 body.print .noprint, body.print .infopage, body.print #header, body.print #message, body.print #navigation, body.print #footer { display:none; }
 
@@ -561,23 +568,24 @@ body.print .scale-group.priority .header { background-color: blue; }
 		margin-left: 5px !important; /* .question ul input {…} har en dum margin */  }
 	
 	.question {
-		border-bottom-color: black !important; }
-	
+		xxxborder-bottom-color: #666 !important; }
+		
 	.scale-group .question {
-		border-left-color: black !important;
-		border-top-color: black !important;
-		border-bottom-color: black !important;
-		border-right-color: black !important;
+		border-left-color: #D1D1D1 !important;
+		border-top-color: #D1D1D1 !important;
+		xborder-bottom-color: #666 !important;
+		border-right-color: #D1D1D1 !important;
 		border-left-width: 2px !important;
 		border-right-width: 2px !important;
 	}
 	
-	.first {
+	.scale-group div.first {
 		border-top-width: 2px !important;
 	}
 	
-	.last {
-		border-bottom-width: 2px !important;
+	.scale-group div.last {
+		xxxborder-bottom-width: 2px !important;
+		border-bottom-color: #D1D1D1 !important;
 	}
 }
 
