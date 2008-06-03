@@ -22,11 +22,11 @@
 	<p><strong>Status:</strong> <em>Förhandsvisning</em> <span id="saved"></span><span id='laddar'> - laddar...</span></p>
 	<h3>Gå till sida:</h3>
 	<ul class="pages">
-		<li><a class="goto-1" href="#page-1" onclick="pageNav.showPage(1);">1</a></li>
-		<li><a class="goto-2" href="#page-2" onclick="pageNav.showPage(2);">2</a></li>
-		<li><a class="goto-3" href="#page-3" onclick="pageNav.showPage(3);">3</a></li>
-		<li><a class="goto-4" href="#page-4" onclick="pageNav.showPage(4);">4</a></li>
-		<li><a class="goto-0" href="#page-0" onclick="pageNav.showPage(0);">Sista</a></li>
+		<li><a class="goto-1" href="#page-1" onclick="fapp.showPage(1);">1</a></li>
+		<li><a class="goto-2" href="#page-2" onclick="fapp.showPage(2);">2</a></li>
+		<li><a class="goto-3" href="#page-3" onclick="fapp.showPage(3);">3</a></li>
+		<li><a class="goto-4" href="#page-4" onclick="fapp.showPage(4);">4</a></li>
+		<li><a class="goto-0" href="#page-0" onclick="fapp.showPage(0);">Sista</a></li>
 	</ul>
 	</div>
 </div>
@@ -776,9 +776,9 @@
 			<a name="page-0"></a>
 			<h2>Är du färdig med dina svar?</h2>
 			<p>Efter att svaren skickats in går de ej att ändra.</p>
-			<input type=submit onClick="pageNav.showPage('tack'); return false;" value="Skicka in nu" />
+			<input type=submit onClick="fapp.showPage('tack'); return false;" value="Skicka in nu" />
 			&nbsp;&nbsp;
-			<input type=button onClick="pageNav.showPage(1);" value="Nej, tillbaka till fr&aring;geformul&auml;ret" />
+			<input type=button onClick="fapp.showPage(1);" value="Nej, tillbaka till fr&aring;geformul&auml;ret" />
 			&nbsp;&nbsp;
 			<input type=button onClick="window.location='logout_close.asp';" value="Forts&auml;tt senare" />
 			<p style="color:gray;">Efter att du har skickat in enk&auml;ten b&ouml;r du st&auml;nga din webbl&auml;sare f&ouml;r att s&auml;kra din anonymitet.</p>
@@ -790,7 +790,7 @@
 			<p>Kom ihåg att återvända och färdigställa dina svar senast <span class=date>det datum</span>, då enkäten stänger.</p>
 			<input type=button onClick="window.location='logout_close.asp';" value="Logga ut" />
 			&nbsp;&nbsp;
-			<input type=button onClick="pageNav.showPage(1);" value="Nej, tillbaka till fr&aring;geformul&auml;ret" />
+			<input type=button onClick="fapp.showPage(1);" value="Nej, tillbaka till fr&aring;geformul&auml;ret" />
 			<p style="color:gray;">Om du stänger webbläsaren blir du automatiskt utloggad.</p>
 		</div>
 
@@ -806,24 +806,24 @@
 	</div> <!-- #form -->
 
 	<div id="message" class="highlight">
-		<p>Det finns obligatoriska frågor som ej besvarats. Var god besvara <a href="#q-18" onclick="pageNav.showPage(2);">Fråga 18</a>.</p>
+		<p>Det finns obligatoriska frågor som ej besvarats. Var god besvara <a href="#q-18" onclick="fapp.showPage(2);">Fråga 18</a>.</p>
 	</div>
 
 	<div id="navigation" class="navigation">
 		<h3>Menyn</h3>
 		<ul class="menu clearfix">
-			<li><input class="back_button" type="submit" onclick="pageNav.jumpPages(-1); return false;" name="prev" value="Föregående sida"></li>
-			<li><input class="save_button" type="submit" onclick="pageNav.showPage('exit'); return false;" name="exit" value="Fortsätt senare"></li>
-			<li><input class="next_button" type="submit" onclick="pageNav.jumpPages(1); return false;" name="next" value="Nästa sida"></li>
+			<li><input class="back_button" type="submit" onclick="fapp.jumpPages(-1); return false;" name="prev" value="Föregående sida"></li>
+			<li><input class="save_button" type="submit" onclick="fapp.showPage('exit'); return false;" name="exit" value="Fortsätt senare"></li>
+			<li><input class="next_button" type="submit" onclick="fapp.jumpPages(1); return false;" name="next" value="Nästa sida"></li>
 		</ul>
 		
 		<h3>Gå till sida:</h3>
 		<ul class="pages">
-			<li><a class="goto-1" href="#page-1" onclick="pageNav.showPage(1);">1</a></li>
-			<li><a class="goto-2" href="#page-2" onclick="pageNav.showPage(2);">2</a></li>
-			<li><a class="goto-3" href="#page-3" onclick="pageNav.showPage(3);">3</a></li>
-			<li><a class="goto-4" href="#page-4" onclick="pageNav.showPage(4);">4</a></li>
-			<li><a class="goto-0" href="#page-0" onclick="pageNav.showPage(0);">Sista</a></li>
+			<li><a class="goto-1" href="#page-1" onclick="fapp.showPage(1);">1</a></li>
+			<li><a class="goto-2" href="#page-2" onclick="fapp.showPage(2);">2</a></li>
+			<li><a class="goto-3" href="#page-3" onclick="fapp.showPage(3);">3</a></li>
+			<li><a class="goto-4" href="#page-4" onclick="fapp.showPage(4);">4</a></li>
+			<li><a class="goto-0" href="#page-0" onclick="fapp.showPage(0);">Sista</a></li>
 		</ul>
 	</div>
 </form>

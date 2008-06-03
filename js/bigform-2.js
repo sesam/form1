@@ -1,4 +1,4 @@
-var pageNav = { onSelect: function() { alert('denna ska ju ha bytts ut'); } };
+var fapp = { onSelect: function() { alert('denna ska ju ha bytts ut'); } };
 
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
 // Though it seems they are missing a way to populate cache without evalig the contents of the .js file.
@@ -9,12 +9,12 @@ function init() {
 	
 	prepareForm();
 
-	pageNav = new pageNavigation();
-	FancyForm.onSelect = pageNav.onSelect; //whee hoo!! monkeypatching ?
+	fapp = new formApplication();
+	FancyForm.onSelect = fapp.onSelect; //whee hoo!! monkeypatching ?
 	if (!location.search.match(/print/)) {
-		pageNav.loader();
+		fapp.loader();
 	} else {
-		pageNav.setPageClass('print');		
+		fapp.setPageClass('print');		
 	}
 }
 /*
@@ -107,7 +107,7 @@ function saveForm() {
 		onComplete: function() {
 			var saved = document.getElementById("saved");
 			var date = new Date();
-			pageNav.logga($('form_').toQueryString());
+			fapp.logga($('form_').toQueryString());
 			saved.innerHTML = date.getHours() + ":" + date.getMinutes();
 			document.getElementById("savetext").style.display='inline';
 		}
@@ -126,7 +126,7 @@ function autoSave(run) {
 }
 
 
-var pageNavigation = function() {
+var formApplication = function() {
 	this.onpage = 1;
 	this.currentPageDiv = document.getElementById('page-1');
 	this.maxPages = 15;
@@ -204,11 +204,11 @@ var pageNavigation = function() {
 		if (!to && 1==diff) this.showPage(0); //efter sista sida kommer "Spara"-sidan
 		else this.showPage(ny);
   	}
-	
+
 	this.firstLoad = true;
 	this.showPage = function(n) {
 		if (!this.firstLoad) {
-			var first = !pageNav.hasAddedEvents[pageNav.onpage];
+			var first = !fapp.hasAddedEvents[fapp.onpage];
 			var c = this.addHighlights();
 			// alert("antal hittade obl.obesvarade: " + c);
 			if (c!=0 && first) return false;
@@ -262,28 +262,20 @@ var pageNavigation = function() {
 				return elt.getValue();
 			} );
 		if (unanswered) {
-			pageNav.add_to_message( x.getElements('span.number')[0].innerHTML );
-			pageNav.print_message();
+			fapp.message_add( x.getElements('span.number')[0].innerHTML );
+			fapp.message_print();
 			
-			var x = pageNav.addHighlight(all_inputs[0], all_inputs);
+			var x = fapp.addHighlight(all_inputs[0], all_inputs);
 			return x;
 		}
 		else return 0;
 	}
-	/*
+
 	this.addHighlights = function() {
-		var obligatories = this.currentPageDiv.getElements( ".obligatory" );
-		alert(this.currentPageDiv.id);
-		var arr = obligatories.map(this.possiblyAddHighlight);
-		return this.arraySum(arr);
-	}
-	*/
-	
-	this.addHighlights = function() {
-		var getter = (window.ie ? $(pageNav.currentPageDiv.id): pageNav.currentPageDiv).getElements;
-		var obligatories = pageNav.currentPageDiv.getElements( ".obligatory" );
-		var arr = obligatories.map(pageNav.possiblyAddHighlight);
-		return pageNav.arraySum(arr);
+		var getter = (window.ie ? $(fapp.currentPageDiv.id): fapp.currentPageDiv).getElements;
+		var obligatories = fapp.currentPageDiv.getElements( ".obligatory" );
+		var arr = obligatories.map(fapp.possiblyAddHighlight);
+		return fapp.arraySum(arr);
 	}
 
 	
@@ -302,15 +294,15 @@ var pageNavigation = function() {
 	}
 
 	this.onSelect = function(source_elt) {
-		if (pageNav.hasAddedEvents[pageNav.onpage]) {
-			var elt = pageNav.findObligatoryParent(source_elt);
+		if (fapp.hasAddedEvents[fapp.onpage]) {
+			var elt = fapp.findObligatoryParent(source_elt);
 			if (elt) {
 				elt.removeClass("highlight");
 				
-				pageNav.remove_from_message(elt.getElements('span.number')[0].innerHTML);
-				pageNav.print_message();
+				fapp.message_remove(elt.getElements('span.number')[0].innerHTML);
+				fapp.message_print();
 			}
-			alert('denna HAR ju ha bytts ut :-9 '); 
+			//	alert('denna HAR ju ha bytts ut :-9 '); 
 		}
 	}
 	
@@ -319,7 +311,7 @@ var pageNavigation = function() {
 	 *	@param question_number - frågans nummer.
 	 *	@return true om den lyckades
 	 */
-	this.add_to_message = function(question_number) {
+	this.message_add = function(question_number) {
 		var foundQuestion = false;
 		for (var i=0; i < this.missedQuestions.length; i++) {
 						
@@ -341,11 +333,11 @@ var pageNavigation = function() {
 	 *	@param question_number - frågans nummer.
 	 *	@return true om den lyckades
 	 */
-	this.remove_from_message = function(question_number) {
+	this.message_remove = function(question_number) {
 		for (var i=0; i < this.missedQuestions.length; i++) {
 			if (this.missedQuestions[i] == question_number) {
 				this.missedQuestions[i] = "";
-				this.clean_missed_question();
+				this.message_clean();
 			}
 		}
 	}
@@ -354,7 +346,7 @@ var pageNavigation = function() {
 	 *	Städar this.missedQuestions[]
 	 *	Magnus: Kanske går att lösa detta på ett snyggare sätt.
 	 */
-	this.clean_missed_question = function() {
+	this.message_clean = function() {
 		var tempArray = Array();
 		var tempArrayIndex = 0;
 		for (var i=0; i < this.missedQuestions.length; i++) {
@@ -370,7 +362,7 @@ var pageNavigation = function() {
 	 *	Funktioner används för att skriva ut ett meddelanden med de missade frågorna
 	 *	TODO: Är inte inte gjord för språkhantering just nu... fixa! /magnus
 	 */
-	this.print_message = function() {
+	this.message_print = function() {
 		var messageString = "Det finns obligatoriska frågor som ej besvarats.";
 		var messageBox = document.getElementById("message");
 		if (!messageBox) { return false; }
@@ -586,6 +578,6 @@ var FancyForm = {
 };
 
 if (location.href.match(/form/)) {
-	addLoadEvent(function() {FancyForm.start(0, { onSelect: pageNav.onSelect } ) } );
+	addLoadEvent(function() {FancyForm.start(0, { onSelect: fapp.onSelect } ) } );
 	addLoadEvent(function() {init();});
 }
