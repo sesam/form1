@@ -37,8 +37,6 @@ function hasClassName(tempClassNames, wantedClassName) {
 }
 
 function prepareForm(){
-	if (!document.getElementById) { return false; }
-	
 	var li = document.getElementsByTagName("li");
 	
 	for (var i=0; i < li.length; i++) {
@@ -83,11 +81,26 @@ function prepareForm(){
 	li = null;
 }
 
+function saveForm() {
+	// Samlar ihop formuläret och skickar det till servern.
+	formform = $('form_').send({
+		onComplete: function() {
+			var saved = document.getElementById("saved");
+			var date = new Date();
+			alert($('form_').toQueryString());
+			saved.innerHTML = "- Svar sparades kl " + date.getHours() + ":" + date.getMinutes();
+		}
+	});
+} 
+
+
 var pageNavigation = function() {
 	this.onpage = 1;
 	this.maxPages = 15;
 	this.data = document.location.search;
-	if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
+	this.hasAddedEvents = Array();
+	
+	//if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
 	if ('welcome'== document.location.search) document.location.search='';
 	
 	// Debug - Skriver ut debug-information i <textarea>
@@ -150,23 +163,27 @@ var pageNavigation = function() {
 	}
 
 	this.jumpPages = function(diff) {
-		if (diff==-1 && 1==this.onpage) return; //inget finns fore sida 1
-		var ny=diff+this.onpage, to=document.getElementById('page-' + ny);
-		if (!to && 1==diff) this.showPage(0); //efter sista sida kommer "Spara"-sidan
-		else this.showPage(ny);
+		if(this.addHighlights() < 0) {
+			if (diff==-1 && 1==this.onpage) return; //inget finns fore sida 1
+			var ny=diff+this.onpage, to=document.getElementById('page-' + ny);
+			if (!to && 1==diff) this.showPage(0); //efter sista sida kommer "Spara"-sidan
+			else this.showPage(ny);
+		}
   	}
 		
 	this.showPage = function(n) {
-  		this.logga('till sida ' + n);
-		var to=document.getElementById('page-' + n);
-		if (!to) n=1; //om man knappar fel i URL så får man hamnar på förstasidan
-		for (var i=0; i <= this.maxPages; i++) {
-	  		var o=document.getElementById('page-' + i);
-			if (o && o.style) o.style.display = (i==n) ? 'block':'none';
-			if (!o) break;
-  		}
-		this.onpage = n;
-		this.setPageClass('on-page-'+n);
+  		if(this.addHighlights() < 0) {
+			this.logga('till sida ' + n);
+			var to=document.getElementById('page-' + n);
+			if (!to) n=1; //om man knappar fel i URL så får man hamnar på förstasidan
+			for (var i=0; i <= this.maxPages; i++) {
+		  		var o=document.getElementById('page-' + i);
+				if (o && o.style) o.style.display = (i==n) ? 'block':'none';
+				if (!o) break;
+	  		}
+			this.onpage = n;
+			this.setPageClass('on-page-'+n);
+		}
 	}
 
 	this.setPageClass = function(name) {
@@ -179,6 +196,62 @@ var pageNavigation = function() {
 		x.className=z;
 		//this.logga( 'efter: '+ x.className );
 	}
+	
+	this.addHighlights = function() {
+		var page = $("page-" + this.onpage);
+		var obligatories = page.getElements( ".obligatory" );		
+		alert(obligatories.length);
+		for each(x in obligatories) {
+		
+		//$("page-" + this.onpage).getElements( ".obligatory" ).each(function(x){
+			alert("hej" + x);
+			var unanswered = true;
+			var last_elt;
+			
+			alert(obligatories.hasChild());
+			
+			var elements = x.getElements("INPUT");
+			for (elt in elements) {
+				if (elt.getValue()) { unanswered=false; last_elt=elt; break; }
+			}
+			if (unanswered) {
+				var e=this.findObligatoryParent(elt);
+				e.addClass("highlight");
+				count++;
+				if (!this.hasAddedEvents[this.onpage]) for (elt in elements) {
+					elt.addEvent('onchange', this.updateHighlight);
+				}
+			}
+		}
+		//});
+		return count;
+	}
+
+	this.removeAllHighlights = function() {
+		var page = $(".page-" + this.onpage);
+		var elements = page.getElements( ".highlight" );
+		for (elt in elements) { elt.removeClass("highlight"); }
+	}
+	
+	this.removeHighlight = function(elt) {
+		if (elt.getValue()) {
+			var e=this.findObligatoryParent(elt);
+			if (e && e!=elt) e.removeClass("highlight");
+		}
+	}
+	
+	this.updateHighlight = function(event) {
+	  if (!event) var event = window.event;
+		if (event.target.getValue()) this.removeHighlight(event.target);
+	}
+
+	this.findObligatoryParent = function(elt) {
+		for (var i=0; i<9; i++) {
+			if (elt.className.match(/obligatory/)) return elt;
+			elt = elt.parent;
+		}
+	}
+
 }
 
 /*
@@ -188,7 +261,7 @@ var pageNavigation = function() {
 * Checkbox and radio input replacement script.
 * Toggles defined class when input is selected.
 */
-
+/*
 var FancyForm = {
 	start: function(elements, options){
 		FancyForm.runningInit = 1;
@@ -253,7 +326,7 @@ var FancyForm = {
 					e.returnValue(true);
 				if (!chk.hasClass(FancyForm.onclasses[chk.type]))
 						FancyForm.select(chk);
-				else /* if(chk.type != 'radio')     - Kommenterars bort för att göra radioknappar urkryssbara. */
+				else // if(chk.type != 'radio')     - Kommenterars bort för att göra radioknappar urkryssbara.
 					FancyForm.deselect(chk);
 				FancyForm.focusing = 1;
 				chk.inputElement.focus();
@@ -315,6 +388,8 @@ var FancyForm = {
 		});
 	}
 };
-
-addLoadEvent(FancyForm.start);
-addLoadEvent(init);
+*/
+if (location.href.match(/form/)) { 
+	//addLoadEvent(FancyForm.start);
+	addLoadEvent(init);
+}

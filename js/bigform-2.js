@@ -114,6 +114,17 @@ function saveForm() {
 	});
 } 
 
+var autoSave_ = null;
+
+/* 
+ * @param run
+ */
+function autoSave(run) {
+	if (run == true) { autoSave_ = setInterval("saveForm()", 60 * 1000); }
+	else if (run == false) { clearInterval(autoSave_); }
+	
+}
+
 
 var pageNavigation = function() {
 	this.onpage = 1;
@@ -121,6 +132,7 @@ var pageNavigation = function() {
 	this.maxPages = 15;
 	this.data = document.location.search;
 	this.hasAddedEvents = Array();
+	this.missedQuestions = Array();
 
 	//if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
 	if ('welcome'== document.location.search) document.location.search='';
@@ -198,7 +210,7 @@ var pageNavigation = function() {
 		if (!this.firstLoad) {
 			var first = !pageNav.hasAddedEvents[pageNav.onpage];
 			var c = this.addHighlights();
-			alert("antal hittade obl.obesvarade: " + c);
+			// alert("antal hittade obl.obesvarade: " + c);
 			if (c!=0 && first) return false;
 		}
 		this.firstLoad = false;
@@ -239,6 +251,7 @@ var pageNavigation = function() {
 		if (!div) return 0;
 		div.addClass("highlight");
 		this.hasAddedEvents[this.onpage] = true;
+
 		return 1;
 	}
 
@@ -249,6 +262,9 @@ var pageNavigation = function() {
 				return elt.getValue();
 			} );
 		if (unanswered) {
+			pageNav.add_to_message( x.getElements('span.number')[0].innerHTML );
+			pageNav.print_message();
+			
 			var x = pageNav.addHighlight(all_inputs[0], all_inputs);
 			return x;
 		}
@@ -290,8 +306,92 @@ var pageNavigation = function() {
 			var elt = pageNav.findObligatoryParent(source_elt);
 			if (elt) {
 				elt.removeClass("highlight");
+				
+				pageNav.remove_from_message(elt.getElements('span.number')[0].innerHTML);
+				pageNav.print_message();
 			}
 			alert('denna HAR ju ha bytts ut :-9 '); 
+		}
+	}
+	
+	/*
+	 *	Funktionen används för att lägga till missade obligatoriska frågor till #message
+	 *	@param question_number - frågans nummer.
+	 *	@return true om den lyckades
+	 */
+	this.add_to_message = function(question_number) {
+		var foundQuestion = false;
+		for (var i=0; i < this.missedQuestions.length; i++) {
+						
+			if (this.missedQuestions[i] == question_number) {
+				foundQuestion = true;
+			}
+		}
+		
+		if (!foundQuestion) {
+			this.missedQuestions[this.missedQuestions.length] = question_number;
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/*
+	 *	Funcktionen används för att tabort missade frågor från #message
+	 *	@param question_number - frågans nummer.
+	 *	@return true om den lyckades
+	 */
+	this.remove_from_message = function(question_number) {
+		for (var i=0; i < this.missedQuestions.length; i++) {
+			if (this.missedQuestions[i] == question_number) {
+				this.missedQuestions[i] = "";
+				this.clean_missed_question();
+			}
+		}
+	}
+	
+	/*
+	 *	Städar this.missedQuestions[]
+	 *	Magnus: Kanske går att lösa detta på ett snyggare sätt.
+	 */
+	this.clean_missed_question = function() {
+		var tempArray = Array();
+		var tempArrayIndex = 0;
+		for (var i=0; i < this.missedQuestions.length; i++) {
+			if( this.missedQuestions[i] != "" ) {
+				tempArray[tempArrayIndex] = this.missedQuestions[i];
+				tempArrayIndex++;
+			}
+		}
+		this.missedQuestions = tempArray;
+	}
+	
+	/*
+	 *	Funktioner används för att skriva ut ett meddelanden med de missade frågorna
+	 *	TODO: Är inte inte gjord för språkhantering just nu... fixa! /magnus
+	 */
+	this.print_message = function() {
+		var messageString = "Det finns obligatoriska frågor som ej besvarats.";
+		var messageBox = document.getElementById("message");
+		if (!messageBox) { return false; }
+		
+		if (0 < this.missedQuestions.length) {
+			messageString += " Var god besvara";
+			for (var j=0; j < this.missedQuestions.length; j++) {
+				if (j != 0) { messageString += ", "; }
+				else { messageString += " "; }
+				
+				messageString += "<a onclick=''>fråga " + this.missedQuestions[j] + "</a>";
+			}
+		}
+				
+		if (this.missedQuestions.length == 0) {
+			messageBox.innerHTML = "";
+			messageBox.style.display = "hidden";
+		}
+		else {
+			messageBox.innerHTML = messageString;
+			messageBox.style.display = "block";
 		}
 	}
 }
