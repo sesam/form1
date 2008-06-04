@@ -1,4 +1,5 @@
-var fapp = { onSelect: function() { alert('denna ska ju ha bytts ut'); } };
+Ôªøvar fapp = { onSelect: function(){} };
+var pageNav;
 
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
 // Though it seems they are missing a way to populate cache without evalig the contents of the .js file.
@@ -10,27 +11,34 @@ function init() {
 	prepareForm();
 
 	fapp = new formApplication();
+	pageNav = fapp; // tas bort f√∂rst efter att alla gamla form*.html - filer har makulerats
 	FancyForm.onSelect = fapp.onSelect; //whee hoo!! monkeypatching ?
+
+	
+	fapp.lang = document.getElementsByTagName('html')[0].lang;
+	if ('sv'==fapp.lang) {
+		fapp.obl_text = "Det finns obligatoriska fr√•gor som ej besvarats.";
+		fapp.obl_text2= " Var god besvara ";
+		fapp.obl_text3= "fr√•ga";
+		fapp.unanswered_text= "Obesvarade fr√•gor har markerats med gul bakgrund."
+	} else {
+		//english and default is the same, and only needed for foreign languages since 'sv' is the master translation.
+		fapp.obl_text = fapp.messageStore_default['obl_text'] = "There are some obligatory questions still unanswered.";
+		fapp.obl_text2= fapp.messageStore_default['obl_text2']= " Please address ";
+		fapp.obl_text3= fapp.messageStore_default['obl_text3']= "question";
+		fapp.unanswered_text= fapp.messageStore_default['unanswered_text'] = "Unanswered questions are marked with a yellow background."
+
+		var o=document.createNode('script');
+		o.src='js/translations.js';
+		document.getElementById('form').appendNode(o);
+	}
+
 	if (!location.search.match(/print/)) {
 		fapp.loader();
 	} else {
 		fapp.setPageClass('print');		
 	}
 }
-/*
-function addLoadEvent(func) {
-	var oldonload = window.onload;
-	if (oldonload) {
-		if(typeof window.onload != 'function') {
-			window.onload = func;
-		} else {
-			window.onload = function() {
-				oldonload();
-				func();
-			}
-		}
-	}
-}*/
 
 function addLoadEvent(func) {
   var oldonload = window.onload;
@@ -102,13 +110,13 @@ function prepareForm(){
 }
 
 function saveForm() {
-	// Samlar ihop formul‰ret och skickar det till servern.
+	// Samlar ihop svar och skickar till servern.
 	formform = $('form_').send({
 		onComplete: function() {
 			var saved = document.getElementById("saved");
 			var date = new Date();
 			fapp.logga($('form_').toQueryString());
-			saved.innerHTML = date.getHours() + ":" + date.getMinutes();
+			saved.innerHTML = (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
 			document.getElementById("savetext").style.display='inline';
 		}
 	});
@@ -117,12 +125,11 @@ function saveForm() {
 var autoSave_ = null;
 
 /* 
- * @param run
+ * @param run true aktiverar sparning i tidsintervall
  */
 function autoSave(run) {
 	if (run == true) { autoSave_ = setInterval("saveForm()", 60 * 1000); }
 	else if (run == false) { clearInterval(autoSave_); }
-	
 }
 
 
@@ -131,8 +138,8 @@ var formApplication = function() {
 	this.currentPageDiv = document.getElementById('page-1');
 	this.maxPages = 15;
 	this.data = document.location.search;
-	this.hasAddedEvents = Array();
-	this.missedQuestions = Array();
+	this.hasAddedHighlights = Array();
+	this.missedQuestions = new Hash();
 
 	//if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
 	if ('welcome'== document.location.search) document.location.search='';
@@ -198,6 +205,10 @@ var formApplication = function() {
 		this.showPage(1);
 	}
 
+	/* 
+	 * Jump relative to current page
+	 * @diff -1 means back one page, 1 means forward one page
+	 */
 	this.jumpPages = function(diff) {
 		if (diff==-1 && 1==this.onpage) return; //inget finns fore sida 1
 		var ny=diff+this.onpage, to=document.getElementById('page-' + ny);
@@ -205,18 +216,20 @@ var formApplication = function() {
 		else this.showPage(ny);
   	}
 
-	this.firstLoad = true;
 	this.showPage = function(n) {
-		if (!this.firstLoad) {
-			var first = !fapp.hasAddedEvents[fapp.onpage];
+		if (this.notFirstLoad) { //don't highlight on first visit
+			var first = !this.hasAddedHighlights[fapp.onpage];
 			var c = this.addHighlights();
-			// alert("antal hittade obl.obesvarade: " + c);
-			if (c!=0 && first) return false;
+			if (c!=0 && first) {
+				fapp.message_print();
+				return false;
+			}
 		}
-		this.firstLoad = false;
+		this.notFirstLoad = true;
+
  		this.logga('till sida ' + n);
 		var to=document.getElementById('page-' + n);
-		if (!to) n=1; //om man knappar fel i URL sÂ fÂr man hamnar pÂ fˆrstasidan
+		if (!to) n=1; //page not found -- so show page 1
 		for (var i=0; i <= this.maxPages; i++) {
 	  		var o=document.getElementById('page-' + i);
 			if (o && o.style) o.style.display = (i==n) ? 'block':'none';
@@ -225,19 +238,24 @@ var formApplication = function() {
 		this.onpage = n;
 		this.setPageClass('on-page-'+n);
 		this.currentPageDiv = document.getElementById('page-' + n);
+		fapp.message_print();
 	}
 
+	/*
+	 * sets a page class, needed by css rules for marking current page in the page navigator
+	 */
 	this.setPageClass = function(name) {
 		var x=document.getElementsByTagName('body')[0];
 		if (!x) return;
 		if (!x.className) x.className='on-page-1';
-		//this.logga( 'fore: '+ x.className );
 		var y=x.className;
 		var z=y.replace(/on-page-\w+/, '') + name;
 		x.className=z;
-		//this.logga( 'efter: '+ x.className );
 	}
 	
+	/*
+	 * @return the aritmetic sum of all values in arr
+	 */
 	this.arraySum = function(arr) {
 		var sum=0;
 		for (var i=0; i<arr.length; i++) {
@@ -246,148 +264,107 @@ var formApplication = function() {
 		return sum;
 	}
 
-	this.addHighlight = function(elt, all_inputs) {
-		var div=this.findObligatoryParent(elt);
-		if (!div) return 0;
-		div.addClass("highlight");
-		this.hasAddedEvents[this.onpage] = true;
-
-		return 1;
+	this.isUnanswered = function(question_div) {
+		var inputs = question_div.getElements("INPUT");
+		return !inputs.some( function(elt) {
+			if (!elt || !elt.getValue) return false;
+			return elt.getValue();
+		} );
 	}
 
-	this.possiblyAddHighlight = function(x) {
-		var all_inputs = x.getElements("INPUT");
-		var unanswered = !all_inputs.some( function(elt) {
-				if (!elt || !elt.getValue) return false;
-				return elt.getValue();
-			} );
-		if (unanswered) {
-			fapp.message_add( x.getElements('span.number')[0].innerHTML );
-			fapp.message_print();
-			
-			var x = fapp.addHighlight(all_inputs[0], all_inputs);
-			return x;
+	this.addHighlight = function(question_div, isObligatory) {
+		question_div.addClass("highlight");
+		if (isObligatory) fapp.message_add( question_div );
+		this.hasAddedHighlights[this.onpage] = true;  //TODO fapp eller this ?
+	}
+
+	this.possiblyAddHighlight = function(question_div) {
+		var isObligatory = question_div.className.match(/obligatory/);
+		if (isObligatory || (fapp.mark_unanswered && 0==fapp.missedQuestions.length)) {
+			fapp.addHighlight(question_div, isObligatory);
 		}
-		else return 0;
+		//return (isObligatory ? 1 : 0);
 	}
 
 	this.addHighlights = function() {
-		var getter = (window.ie ? $(fapp.currentPageDiv.id): fapp.currentPageDiv).getElements;
-		var obligatories = fapp.currentPageDiv.getElements( ".obligatory" );
-		var arr = obligatories.map(fapp.possiblyAddHighlight);
-		return fapp.arraySum(arr);
+		if (window.ie) $(fapp.currentPageDiv.id); //denna rad ska troligen raderas
+
+		var question_divs = $(fapp.currentPageDiv).getElements('DIV.question');
+		var all_unanswered = question_divs.filter( fapp.isUnanswered );
+		fapp.mark_unanswered = (all_unanswered.length / question_divs.length < 0.3);
+		if (0==all_unanswered.length) fapp.mark_unanswered = false;
+		
+		//alert("this page: " + fapp.mark_unanswered);
+		all_unanswered.each(fapp.possiblyAddHighlight); //depends on fapp.mark_unanswered
+		return fapp.missedQuestions.length;
 	}
 
-	
-	this.removeAllHighlights = function() {
-		var elements = this.currentPageDiv.getElements( ".highlight" );
-		elements.map( function(elt) {
-			elt.removeClass("highlight");
-		});
-	}
-	
-	this.findObligatoryParent = function(elt) {
+	this.findQuestionDiv = function(elt) {
 		for (var i=0; i<9; i++) {
-			if (elt.className.match(/obligatory/)) return elt;
+			if (elt.className.match(/question/)) return elt;
 			elt = elt.parentNode;
 		}
 	}
 
-	this.onSelect = function(source_elt) {
-		if (fapp.hasAddedEvents[fapp.onpage]) {
-			var elt = fapp.findObligatoryParent(source_elt);
-			if (elt) {
-				elt.removeClass("highlight");
-				
-				fapp.message_remove(elt.getElements('span.number')[0].innerHTML);
-				fapp.message_print();
-			}
-			//	alert('denna HAR ju ha bytts ut :-9 '); 
+	this.onSelect = function(event_elt) {
+		if (!fapp.hasAddedHighlights[fapp.onpage]) return;
+		var elt = fapp.findQuestionDiv(event_elt);
+		elt.removeClass("highlight");
+		if (fapp.missedQuestions.hasKey(elt.id)) {
+			fapp.missedQuestions.remove(elt.id);
 		}
+		fapp.message_print();
 	}
-	
+
 	/*
-	 *	Funktionen anv‰nds fˆr att l‰gga till missade obligatoriska frÂgor till #message
-	 *	@param question_number - frÂgans nummer.
+	 *	Funktionen anv√§nds f√∂r att l√§gga till missade obligatoriska fr√•gor till #message
+	 *	@param question_number - fr√•gans nummer.
 	 *	@return true om den lyckades
 	 */
-	this.message_add = function(question_number) {
-		var foundQuestion = false;
-		for (var i=0; i < this.missedQuestions.length; i++) {
-						
-			if (this.missedQuestions[i] == question_number) {
-				foundQuestion = true;
-			}
-		}
-		
-		if (!foundQuestion) {
-			this.missedQuestions[this.missedQuestions.length] = question_number;
-			return true;
-		}
-		
+	this.message_add = function(elt) {
+		if (fapp.missedQuestions.hasKey(elt.id)) return true;
+		fapp.missedQuestions.set(elt.id, fapp.message_link( elt.id, elt.getElements('span.number')[0].innerHTML ));
 		return false;
 	}
-	
-	/*
-	 *	Funcktionen anv‰nds fˆr att tabort missade frÂgor frÂn #message
-	 *	@param question_number - frÂgans nummer.
-	 *	@return true om den lyckades
-	 */
-	this.message_remove = function(question_number) {
-		for (var i=0; i < this.missedQuestions.length; i++) {
-			if (this.missedQuestions[i] == question_number) {
-				this.missedQuestions[i] = "";
-				this.message_clean();
-			}
-		}
+
+	this.messageStore_default = { }
+	this.tran = function(which) {
+		fapp.messageStore = (msgStore && msgStore[fapp.lang]) ? msgStore[fapp.lang] : fapp.messageStore_default; //caching
+		var txt = fapp.store[which] || fapp.messageStore_default[which]; //if untranslated, falls back to default translations 
+		fapp[which] = txt; //caching
+		return txt;
 	}
-	
+
 	/*
-	 *	St‰dar this.missedQuestions[]
-	 *	Magnus: Kanske gÂr att lˆsa detta pÂ ett snyggare s‰tt.
-	 */
-	this.message_clean = function() {
-		var tempArray = Array();
-		var tempArrayIndex = 0;
-		for (var i=0; i < this.missedQuestions.length; i++) {
-			if( this.missedQuestions[i] != "" ) {
-				tempArray[tempArrayIndex] = this.missedQuestions[i];
-				tempArrayIndex++;
-			}
-		}
-		this.missedQuestions = tempArray;
-	}
-	
-	/*
-	 *	Funktioner anv‰nds fˆr att skriva ut ett meddelanden med de missade frÂgorna
-	 *	TODO: ƒr inte inte gjord fˆr sprÂkhantering just nu... fixa! /magnus
+	 *	Skriver ut ett meddelande ifall man missat:  obligatoriska fr√•gor, f√•tal vanliga fr√•gor
 	 */
 	this.message_print = function() {
-		var messageString = "Det finns obligatoriska frÂgor som ej besvarats.";
 		var messageBox = document.getElementById("message");
-		if (!messageBox) { return false; }
-		
-		if (0 < this.missedQuestions.length) {
-			messageString += " Var god besvara";
-			for (var j=0; j < this.missedQuestions.length; j++) {
-				if (j != 0) { messageString += ", "; }
-				else { messageString += " "; }
-				
-				messageString += "<a onclick=''>frÂga " + this.missedQuestions[j] + "</a>";
-			}
+		if (!messageBox) return;
+
+		var numMissed = fapp.missedQuestions.length;
+		var messageString = "&nbsp;";
+		if (numMissed > 0) {
+			messageString = fapp.obl_text || fapp.tran('obl_text');
+			var obl_text3 = fapp.obl_text3 || fapp.tran('obl_text3');
+			var links = fapp.missedQuestions.values();
+			var dots = "";
+			if (links.length>3) { links.length=3; dots=".."; }
+			var txt = links.join(", ") + dots;
+			messageString += fapp.obl_text2 || fapp.tran('obl_text2');
+			messageString += txt + ".";
+		} else if (fapp.mark_unanswered && (0<fapp.currentPageDiv.getElements('DIV.highlight').length)) {
+			messageString = fapp.unanswered_text || fapp.tran('unanswered_text');
 		}
-				
-		if (this.missedQuestions.length == 0) {
-			messageBox.innerHTML = "";
-			messageBox.style.display = "hidden";
-		}
-		else {
-			messageBox.innerHTML = messageString;
-			messageBox.style.display = "block";
-		}
+		if (!fapp.mark_unanswered) alert('not mark_unanswered');
+		messageBox.innerHTML = messageString;
+		messageBox.style.visibility = (messageString!="&nbsp;") ? "visible" : "hidden";
+	}
+	
+	this.message_link = function(id, number) {
+		return '<a href="#' + id + '">' + this.obl_text3 + " " + number + '</a>';
 	}
 }
-
 
 
 //code for version 0.94 ? :-)
