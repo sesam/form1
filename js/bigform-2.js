@@ -556,4 +556,21 @@ var FancyForm = {
 if (location.href.match(/form/)) {
 	addLoadEvent(function() {FancyForm.start(0, { onSelect: fapp.onSelect } ) } );
 	addLoadEvent(function() {init();});
+
+	/* Aktivera inlineEdit2 via klick i #header */
+	var h = $('header');
+	h.addEvent('click', function(a) { 
+		var nav = $('navigation');
+		var div = document.createElement('div');
+
+		//style = 'border: dashed 1px green; float:right; ';
+		div.innerHTML = 'frageeditor?';
+		nav.appendChild(div);
+
+		var f=$('form_');
+		f.getElements('h5').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+	});
 }
