@@ -2190,7 +2190,7 @@ IE7.loaded = true;
   viewport = quirksMode ? body : documentElement;
 
   // classes
-  body.className += " ie7_body";
+  body.className += " ie7_body ";
   documentElement.className += " ie7_html";
 
   if (quirksMode) ie7Quirks();

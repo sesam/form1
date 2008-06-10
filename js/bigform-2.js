@@ -4,6 +4,8 @@ var pageNav;
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
 // Though it seems they are missing a way to populate cache without evalig the contents of the .js file.
 
+//depends on mootools Element.Form, Remote.Ajax, Plugins.Hash
+
 function init() {
 	if (!document.getElementById) { return false; }
 	if (!document.getElementsByTagName) { return false; }
@@ -55,30 +57,17 @@ function addLoadEvent(func) {
 }
 
 function hasClassName(tempClassNames, wantedClassName) {
-	var classNames = tempClassNames.split(" ");
-	for (var i=0; i < classNames.length; i++) {
-		if( classNames[i] == wantedClassName) {
-			return true;
-		}
-	}
-	return false;
+	var re = new RegExp('\b' + wantedClassName + '\b');
+	return tempClassNames.match(re);
 }
 
 function prepareForm(){
-	var li = document.getElementsByTagName("li");
-	
-	for (var i=0; i < li.length; i++) {
-		if ( hasClassName(li[i].className, "checkedtextfield") ) {
-			var listItem = li[i];
-			var textField = li[i].getElementsByTagName("input")[0];
-
+	var elements = document.getElements('LI.checkedtextfield');
+	elements.each(
+	function(listItem) {
+			var textField = listItem.getElementsByTagName("input")[0];
 			var CHECK = "checked";
 			var UNCHECK = "unchecked";
-			
-			if (hasClassName(li[i].className, "ejkryss")) {
- 				CHECK = "";
-				UNCHECK = "";
-			}
 			
 			listItem.className = UNCHECK;
 
@@ -104,9 +93,7 @@ function prepareForm(){
 				}	
 			}
 		}
-	}
-	
-	li = null;
+	);
 }
 
 function saveForm() {
@@ -231,26 +218,26 @@ var formApplication = function() {
 		var to=document.getElementById('page-' + n);
 		if (!to) n=1; //page not found -- so show page 1
 		for (var i=0; i <= this.maxPages; i++) {
-	  		var o=document.getElementById('page-' + i);
+	  		var o=document.getElementById('page-' + i);			
 			if (o && o.style) o.style.display = (i==n) ? 'block':'none';
 			if (!o) break;
   		}
 		this.onpage = n;
 		this.setPageClass('on-page-'+n);
 		this.currentPageDiv = document.getElementById('page-' + n);
-		fapp.message_print();
+		if (fapp.mark_unanswered) fapp.message_print();
 	}
 
 	/*
 	 * sets a page class, needed by css rules for marking current page in the page navigator
 	 */
 	this.setPageClass = function(name) {
-		var x=document.getElementsByTagName('body')[0];
-		if (!x) return;
-		if (!x.className) x.className='on-page-1';
-		var y=x.className;
-		var z=y.replace(/on-page-\w+/, '') + name;
-		x.className=z;
+		var body = document.getElementsByTagName('body')[0];
+		if (!body) return;
+		if (!body.className) body.className='on-page-1';
+		var class_name = body.className;
+		var new_class_name = class_name.replace(/on-page-\w+/, '') + name;
+		body.className = new_class_name;
 	}
 	
 	/*
@@ -283,7 +270,7 @@ var formApplication = function() {
 		if (isObligatory || (fapp.mark_unanswered && 0==fapp.missedQuestions.length)) {
 			fapp.addHighlight(question_div, isObligatory);
 		}
-		//return (isObligatory ? 1 : 0);
+		return (isObligatory ? 1 : 0);
 	}
 
 	this.addHighlights = function() {
@@ -295,8 +282,8 @@ var formApplication = function() {
 		if (0==all_unanswered.length) fapp.mark_unanswered = false;
 		
 		//alert("this page: " + fapp.mark_unanswered);
-		all_unanswered.each(fapp.possiblyAddHighlight); //depends on fapp.mark_unanswered
-		return fapp.missedQuestions.length;
+		var arr = all_unanswered.map(fapp.possiblyAddHighlight); //depends on fapp.mark_unanswered
+		return fapp.arraySum(arr);
 	}
 
 	this.findQuestionDiv = function(elt) {
@@ -318,12 +305,12 @@ var formApplication = function() {
 
 	/*
 	 *	Funktionen används för att lägga till missade obligatoriska frågor till #message
-	 *	@param question_number - frågans nummer.
+	 *	@param 
 	 *	@return true om den lyckades
 	 */
 	this.message_add = function(elt) {
 		if (fapp.missedQuestions.hasKey(elt.id)) return true;
-		fapp.missedQuestions.set(elt.id, fapp.message_link( elt.id, elt.getElements('span.number')[0].innerHTML ));
+		fapp.missedQuestions.set(elt.id, fapp.message_link( elt.id, elt.getElements('span.number')[0].innerHTML, this.onpage ));
 		return false;
 	}
 
@@ -352,22 +339,34 @@ var formApplication = function() {
 			if (links.length>3) { links.length=3; dots=".."; }
 			var txt = links.join(", ") + dots;
 			messageString += fapp.obl_text2 || fapp.tran('obl_text2');
-			messageString += txt + ".";
+			messageString += txt + '.';
 		} else if (fapp.mark_unanswered && (0<fapp.currentPageDiv.getElements('DIV.highlight').length)) {
 			messageString = fapp.unanswered_text || fapp.tran('unanswered_text');
 		}
-		if (!fapp.mark_unanswered) alert('not mark_unanswered');
+		//if (!fapp.mark_unanswered) alert('not mark_unanswered');
 		messageBox.innerHTML = messageString;
 		messageBox.style.visibility = (messageString!="&nbsp;") ? "visible" : "hidden";
 	}
+	/*
+	this.message_link = function(id, number) {	
+		var page_number = this.find_question(id);
+		var link = '<a';
+		if(page_number != false) { link += ' href="#' + id + '" onclick="' + fapp.showPage(page_number) + '; false;"'; }
+		link += '>' + this.obl_text3 + ' ' + number + '</a>';
+		
+		return link;
+		// return '<a href="#' + id + '">' + this.obl_text3 + " " + number + '</a>';
+	}*/
 	
-	this.message_link = function(id, number) {
-		return '<a href="#' + id + '">' + this.obl_text3 + " " + number + '</a>';
+	this.message_link = function(id, number, page) {
+	return '<a href="#' + id + '" onclick="fapp.showPage(' + page + ')">' + this.obl_text3 + " " + number + '</a>';
 	}
 }
 
 
 //code for version 0.94 ? :-)
+
+//FancyForm depends on mootools Element.Event
 
 //WARNING: below code has been tested by a crazy person :-)
 
@@ -430,7 +429,7 @@ var FancyForm = {
 					chk.addEvent('click',function(ev){
 				if(e.event.stopPropagation)
 					e.event.stopPropagation();
-});
+				});
 				}
 			} else if( (chk.inputElement = chk.getElement('input')) && (FancyForm.classes[(chk.type = chk.inputElement.getProperty('type'))]) ){
 				return true;
