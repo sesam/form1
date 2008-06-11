@@ -4,8 +4,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<![if !(IE 5)]>
 	<link rel="stylesheet" type="text/css" href="style/form.css">
-	<link rel="alternate stylesheet" type="text/css" href="style/t_blue.css" title="blue">
-	<link rel="alternate stylesheet" type="text/css" href="style/t_yellow.css" title="yellow">
+	<link rel="alternate stylesheet" type="text/css" href="style/t_blue.css" title="t_blue">
+	<link rel="alternate stylesheet" type="text/css" href="style/t_yellow.css" title="t_yellow">
 	<![endif]>
 	<!--[if (IE 5)]>
 	<link rel="stylesheet" type="text/css" href="style/ie5-cleanup.css" >
@@ -23,7 +23,7 @@
 	<h1>Mall2007 medarbetarundersökning</h1>
 	
 	<div id="statusbar" class="navigation" >
-	<p><strong>Status:</strong> <span id="savetext" onclick="setActiveStyleSheet('blue');">Svar sparades kl </span><span id="saved"></span><span style="display: none;" id='laddar'> - laddar...</span></p>
+	<p><strong>Status:</strong> <span id="savetext" onclick="switchStyleSheet('blue');">Svar sparades kl </span><span id="saved"></span><span style="display: none;" id='laddar'> - laddar...</span></p>
 	<h3>Gå till sida:</h3>
 	<ul class="pages">
 
@@ -43,7 +43,7 @@
 			<a name="page-1"></a>
 
 			<div id="intro">
-				<h2 onclick="setActiveStyleSheet('yellow');">Välkommen till ORGANISATIONENs medarbetarundersökning!</h2>
+				<h2 onclick="switchStyleSheet('yellow');">Välkommen till ORGANISATIONENs medarbetarundersökning!</h2>
 
 				<p>Enkäten
 vänder sig till alla anställda inom ORGANISATIONEN. De flesta frågor
