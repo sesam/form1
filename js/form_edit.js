@@ -20,8 +20,10 @@ function switchStyleSheet(name) {
 	}
 	else {
 		alert("Hej IE : " + name);
-		if (document.styleSheets[0].href != null) {
-			document.styleSheets[0].href = "style/t_" + name + ".css";
+		var size = document.styleSheets.length;
+		if (document.styleSheets[3].href != null) {
+			document.styleSheets[3].href = "style/t_" + name + ".css";
+			alert(document.styleSheets[3].href);
 		}
 	}
 }
