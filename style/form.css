@@ -48,9 +48,6 @@ h5 {
 .scale-group.priority h5 {
 	padding-right: 657px;
 }
-	
-h5 span {
-	font-weight : bold; }
 
 h5 span.number {
 	display : block;
@@ -58,7 +55,8 @@ h5 span.number {
 	width : 2.5em;
 	padding-right : 0.5em; 
 	margin-left : -2.5em; 
-	top: 0.5em; }
+	top: 0.5em;
+	font-weight : bold;}
 
 .last h5 span.number {
 	top: 0.5em; /* Utan denhär hamnar sista frågan i scale-group (som har lite extra text i en SPAN) för långt ner. */ }
