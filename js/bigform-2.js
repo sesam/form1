@@ -568,7 +568,8 @@ if (location.href.match(/form/)) {
 		nav.appendChild(div);
 
 		var f=$('form_');
-		f.getElements('h5').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		//f.getElements('h5').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		f.getElements('span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
