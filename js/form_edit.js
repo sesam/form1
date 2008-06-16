@@ -25,3 +25,46 @@ function switchStyleSheet(name) {
 		}
 	}
 }
+// 
+function new_question(what) {
+	/*var div_question = document.createElement("div");
+	div_question = Element(div_question);
+	div_question.addClass("question");
+	div_question.innerHTML = what;
+	*/
+	
+	var div_question = new Element('div', {
+	    'class': 'question'
+	});
+	
+	div_question.innerHTML = what;
+	
+	var addQuestion = document.getElementById("addQuestion");
+	var previous_element = $(addQuestion).getPrevious();
+	//for (var i=0; !previous_element.className.match(/(question|group)/) && i<10 ;i++) previous_element = addQuestion.getPrevious();
+	
+	if (previous_element.hasClass("group")) {
+		var is_odd = previous_element.getLast("div.question").hasClass("odd");
+		if (!is_odd) {
+			div_question.addClass("odd");
+		}
+	}
+	else {
+		if(previous_element.hasClass("question")) {
+			if(!previous_element.hasClass("odd")) {
+				div_question.addClass("odd");
+			}
+		}
+	}
+	
+	addQuestion.parentNode.insertBefore(div_question, addQuestion);
+	
+}
+
+function create_question(what) {
+	
+}
+
+function delete_question(question) {
+	
+}
