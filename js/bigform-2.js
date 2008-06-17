@@ -168,7 +168,7 @@ var formApplication = function() {
 					for (var j=0; j<2; j++) o[j].checked = (val==o[j].value);
 					break;
 			 	default:
-			 		this.logga('not handled: '+o.type);
+			 		//this.logga('not handled: '+o.type);
 					break;
 			}
 		}
@@ -214,7 +214,7 @@ var formApplication = function() {
 		}
 		this.notFirstLoad = true;
 
- 		this.logga('till sida ' + n);
+ 		//this.logga('till sida ' + n);
 		var to=document.getElementById('page-' + n);
 		if (!to) n=1; //page not found -- so show page 1
 		for (var i=0; i <= this.maxPages; i++) {

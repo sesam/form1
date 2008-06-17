@@ -28,23 +28,43 @@ function switchStyleSheet(name) {
 // 
 var createQuestion_on = false;
 function new_question() {
-	/*var div_question = document.createElement("div");
-	div_question = Element(div_question);
-	div_question.addClass("question");
-	div_question.innerHTML = what;
-	*/
-	
 	if (!createQuestion_on) {
 		var div_question = new Element('div', {
 		    'id': 'createQuestion'
 		});
 
-		div_question.innerHTML = '<form><p>Frågetext: <input type="text" name="question_text"><br><a href="#" onclick="create_question(); delete_question(this.parentNode.parentNode); return false;">Färdig</a></p></form>';
-	
+		//div_question.innerHTML = '<form><p>Frågetext: <input type="text" name="question_text"><br><a href="#" onclick="create_question(); delete_question(this.parentNode.parentNode); return false;">Färdig</a></p></form>';
+		
+		var form = document.createElement("form");
+		var p = document.createElement("p");
+		
+		
+		var input = document.createElement("input");
+		input.type = "text";
+		input.name = "question_text";
+		
+		
+		var a = document.createElement("a");
+		a.href = "#";
+		a.setAttribute("onclick", "create_question(); delete_question(this.parentNode.parentNode); return false;");
+		
+		a.appendChild(document.createTextNode("Färdig"));
+		p.appendChild(document.createTextNode("Frågetext: "));
+		var input = p.appendChild(input);
+		p.appendChild(document.createElement("br"));
+		p.appendChild(a);
+		
+		form.appendChild(p);
+		
+		div_question.appendChild(form);
+		
+		
+		
 		var addQuestion = document.getElementById("addQuestion");
 		
 		addQuestion.parentNode.insertBefore(div_question, addQuestion);
 		
+		input.focus();
 		createQuestion_on = true;
 		
 	}
@@ -59,9 +79,7 @@ function create_question() {
 	var form = document.getElementById("createQuestion").getElementsByTagName("form")[0];
 	
 	if (form.question_text.value != null && form.question_text.value != "") {
-		var div_question = new Element('div', {
-		    'class': 'question'
-		});
+		var div_question = new Element('div', { 'class': 'question' });
 	
 		var addQuestion = document.getElementById("createQuestion");
 		var previous_element = $(addQuestion).getPrevious();
@@ -69,26 +87,37 @@ function create_question() {
 		
 		if (previous_element.hasClass("group")) {
 			var is_odd = previous_element.getLast("div.question").hasClass("odd");
-			if (!is_odd) {
-				div_question.addClass("odd");
-			}
+			if (!is_odd) { div_question.addClass("odd"); }
 		}
 		else {
 			if(previous_element.hasClass("question")) {
-				if(!previous_element.hasClass("odd")) {
-					div_question.addClass("odd");
-				}
+				if(!previous_element.hasClass("odd")) { div_question.addClass("odd"); }
 			}
 		}
 		
 		
-		div_question.innerHTML = '<h5><span class="number"></span><span class="qtxt">'+form.question_text.value+'</span></h5>';
+		//div_question.innerHTML = '<h5><span class="number"></span><span class="qtxt">'+form.question_text.value+'</span></h5>';
+		
+		var h5 = document.createElement("h5");
+		
+		var number = document.createElement("span");
+		number.className = "number";
+		
+		var qtxt = document.createElement("span");
+		qtxt.className = "qtxt";
+		qtxt.appendChild(document.createTextNode(form.question_text.value));
+		
+		h5.appendChild(number);
+		h5.appendChild(qtxt);
+		
+		div_question.appendChild(h5);
 		
 		addQuestion.parentNode.insertBefore(div_question, addQuestion);
+		form.question_text.focus();
+		
 		
 		// nollställer formuläret
 		form.question_text.value = "";
-		form.question_text.focus();
 	}
 	
 }
