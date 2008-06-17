@@ -26,45 +26,77 @@ function switchStyleSheet(name) {
 	}
 }
 // 
-function new_question(what) {
+var createQuestion_on = false;
+function new_question() {
 	/*var div_question = document.createElement("div");
 	div_question = Element(div_question);
 	div_question.addClass("question");
 	div_question.innerHTML = what;
 	*/
 	
-	var div_question = new Element('div', {
-	    'class': 'question'
-	});
+	if (!createQuestion_on) {
+		var div_question = new Element('div', {
+		    'id': 'createQuestion'
+		});
+
+		div_question.innerHTML = '<form><p>Frågetext: <input type="text" name="question_text"><br><a href="#" onclick="create_question(); delete_question(this.parentNode.parentNode); return false;">Färdig</a></p></form>';
 	
-	div_question.innerHTML = what;
-	
-	var addQuestion = document.getElementById("addQuestion");
-	var previous_element = $(addQuestion).getPrevious();
-	//for (var i=0; !previous_element.className.match(/(question|group)/) && i<10 ;i++) previous_element = addQuestion.getPrevious();
-	
-	if (previous_element.hasClass("group")) {
-		var is_odd = previous_element.getLast("div.question").hasClass("odd");
-		if (!is_odd) {
-			div_question.addClass("odd");
-		}
+		var addQuestion = document.getElementById("addQuestion");
+		
+		addQuestion.parentNode.insertBefore(div_question, addQuestion);
+		
+		createQuestion_on = true;
+		
 	}
 	else {
-		if(previous_element.hasClass("question")) {
-			if(!previous_element.hasClass("odd")) {
+		// hämtar allt från createQuestion's formulär och skickar vidare det till create_question(...)
+		// nollställer creaceQuestion's formulär.
+		create_question();
+	}
+}
+
+function create_question() {
+	var form = document.getElementById("createQuestion").getElementsByTagName("form")[0];
+	
+	if (form.question_text.value != null && form.question_text.value != "") {
+		var div_question = new Element('div', {
+		    'class': 'question'
+		});
+	
+		var addQuestion = document.getElementById("createQuestion");
+		var previous_element = $(addQuestion).getPrevious();
+		//for (var i=0; !previous_element.className.match(/(question|group)/) && i<10 ;i++) previous_element = addQuestion.getPrevious();
+		
+		if (previous_element.hasClass("group")) {
+			var is_odd = previous_element.getLast("div.question").hasClass("odd");
+			if (!is_odd) {
 				div_question.addClass("odd");
 			}
 		}
+		else {
+			if(previous_element.hasClass("question")) {
+				if(!previous_element.hasClass("odd")) {
+					div_question.addClass("odd");
+				}
+			}
+		}
+		
+		
+		div_question.innerHTML = '<h5><span class="number"></span><span class="qtxt">'+form.question_text.value+'</span></h5>';
+		
+		addQuestion.parentNode.insertBefore(div_question, addQuestion);
+		
+		// nollställer formuläret
+		form.question_text.value = "";
+		form.question_text.focus();
 	}
-	
-	addQuestion.parentNode.insertBefore(div_question, addQuestion);
-	
-}
-
-function create_question(what) {
 	
 }
 
 function delete_question(question) {
+	var parent = question.parentNode;
+	var oldParent = parent.parentNode;
 	
+	if (parent.id == "createQuestion") { createQuestion_on = false; } // Skapa-rutan är borta, dvs. den är inte på.
+	oldParent.removeChild(parent); 
 }
