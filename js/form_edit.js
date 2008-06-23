@@ -27,8 +27,10 @@ function switchStyleSheet(name) {
 }
 //
  
-var spec = document.createElement("div");
-spec.id = "spec";
+//var spec = document.createElement("div");
+//spec.id = "spec";
+
+/* Checkbox
 
 var input = document.createElement("input");
 input.type = "text";
@@ -63,9 +65,12 @@ spec.appendChild(p);
 spec.appendChild(next_p);
 
 var spec_checkbox = spec;
+*/
 
 
+var createQuestion_type = null;
 var createQuestion_on = false;
+
 function new_question() {
 	if (!createQuestion_on) {
 		var div_question = new Element('div', {
@@ -78,10 +83,27 @@ function new_question() {
 		form.setAttribute("name", "createForm");
 		var p = document.createElement("p");
 		
-		
 		var input = document.createElement("input");
 		input.type = "text";
 		input.name = "question_text";
+		
+		var select = document.createElement("select");
+		select.name = "question_type";
+		
+		var option = document.createElement("option");
+		option.selected = "selected";
+		option.appendChild(document.createTextNode("Typ"));
+		select.appendChild(option);
+		
+		
+		var select_values = new Array("checkbox", "textfield");
+		for (var i=0; i < select_values.length; i++) {
+			option = document.createElement("option");
+			option.value = select_values[i];
+			option.setAttribute("onclick", "show_spec('"+select_values[i]+"');");
+			option.appendChild(document.createTextNode(select_values[i]));
+			select.appendChild(option);
+		}
 		
 		var link_p = document.createElement("p");
 		var a = document.createElement("a");
@@ -93,14 +115,20 @@ function new_question() {
 		p.appendChild(document.createTextNode("Frågetext: "));
 		var input = p.appendChild(input);
 		p.appendChild(document.createElement("br"));
+		p.appendChild(select);
+		p.appendChild(document.createElement("br"));
 		
 		
 		form.appendChild(p);
 		
 		var form = div_question.appendChild(form);
 		
-		form.appendChild(spec_checkbox);
-
+		var spec = document.createElement("div");
+		spec.id = "spec";
+		
+		form.appendChild(spec);
+		//form.appendChild(spec_checkbox);
+		
 		form.appendChild(link_p);
 		
 		var addQuestion = document.getElementById("addQuestion");
@@ -126,7 +154,6 @@ function create_question() {
 	
 		var addQuestion = document.getElementById("createQuestion");
 		var previous_element = $(addQuestion).getPrevious();
-		//for (var i=0; !previous_element.className.match(/(question|group)/) && i<10 ;i++) previous_element = addQuestion.getPrevious();
 		
 		if (previous_element.hasClass("group")) {
 			var is_odd = previous_element.getLast("div.question").hasClass("odd");
@@ -152,35 +179,53 @@ function create_question() {
 		
 		div_question.appendChild(h5);
 		
-		
-		/**** CHECKBOX ****/
+
 		
 		var ul = document.createElement("ul");
-		var fetch = true;
-		var item_count = 0;
-		var checkboxes = document.createForm.new_checkbox;
-		while (fetch == true) {
-			if(checkboxes.item(item_count) != null) {
-				var li = document.createElement("li");
-				var label = document.createElement("label");
-				var checkbox = document.createElement("input");
-				checkbox.type = "checkbox";
+		
+		switch(createQuestion_type) {
+			case "checkbox":
+				var fetch = true;
+				var item_count = 0;
+				var checkboxes = document.createForm.new_checkbox;
+				while (fetch == true) {
+					if(checkboxes != null && checkboxes.item(item_count) != null) {
+						var li = document.createElement("li");
+						var label = document.createElement("label");
+						var checkbox = document.createElement("input");
+						checkbox.type = "checkbox";
 				
-				label.appendChild(checkbox);
-				label.appendChild(document.createTextNode(checkboxes.item(item_count).value));
-				li.appendChild(label);
-				ul.appendChild(li);
+						label.appendChild(checkbox);
+						label.appendChild(document.createTextNode(checkboxes.item(item_count).value));
+						li.appendChild(label);
+						ul.appendChild(li);
 				
-				item_count++;
-			} else {
-				fetch = false;
-			}
+						item_count++;
+					} else {
+						fetch = false;
+					}
+				}
+				break;
+				
+			case "textfield":
+				var textfield = document.createForm.textfield;
+				if (textfield != null) {
+					var li = document.createElement("li");
+					var label = document.createElement("label");
+					var text = document.createElement("input");
+					text.type = "text";
+					text.value = textfield.value;
+					
+					
+					label.appendChild(text);
+					li.appendChild(label);
+					ul.appendChild(li);
+				}
+				break;
 		}
 		
 		div_question.appendChild(ul);
-		
-		/**********/
-		
+				
 		
 		addQuestion.parentNode.insertBefore(div_question, addQuestion);
 		form.question_text.focus();
@@ -198,4 +243,61 @@ function delete_question(question) {
 	
 	if (parent.id == "createQuestion") { createQuestion_on = false; } // Skapa-rutan är borta, dvs. den är inte på.
 	oldParent.removeChild(parent); 
+}
+
+function show_spec(question_type) {
+	var spec = document.getElementById("spec");
+	spec.innerHTML = "";
+	if (spec) {
+		switch (question_type) {
+			case "checkbox":
+				//spec_container.appendChild(spec_checkbox);
+				var input = document.createElement("input");
+				input.type = "text";
+				input.setAttribute("name", "new_checkbox")
+
+				var next_input = document.createElement("input");
+				next_input.type = "text";
+				next_input.className = "disable";
+				next_input.onclick = function() {
+					this.className = "";
+					var p = document.createElement("p");
+					var new_input = document.createElement("input");
+					new_input.type = "text";
+					this.setAttribute("name", "new_checkbox");
+					new_input.className = "disable";
+					new_input.onclick = this.onclick;
+					new_input.onfocus = this.onclick;
+					this.onclick = null;
+					this.onfocus = null;
+					p.appendChild(new_input);
+					insertAfter(p, this.parentNode);
+				}
+				next_input.onfocus = next_input.onclick;
+
+				var p = document.createElement("p");
+				var next_p = document.createElement("p");
+
+				p.appendChild(input);
+				next_p.appendChild(next_input);
+
+				spec.appendChild(p);
+				spec.appendChild(next_p);
+				
+				createQuestion_type = "checkbox";
+				break;
+				
+			case "textfield":
+				var input = document.createElement("input");
+				var p = document.createElement("p");
+				input.type = "text";
+				input.setAttribute("name", "textfield");
+				
+				p.appendChild(input);
+				spec.appendChild(p);
+				
+				createQuestion_type = "textfield";
+				break;
+		}
+	}
 }
