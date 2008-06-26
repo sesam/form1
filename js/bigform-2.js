@@ -1,5 +1,6 @@
 ﻿var fapp = { onSelect: function(){} };
 var pageNav;
+var edit_mode = false;
 
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
 // Though it seems they are missing a way to populate cache without evalig the contents of the .js file.
@@ -231,12 +232,34 @@ var formApplication = function() {
 			if (o && o.style) o.style.display = (i==n) ? 'block':'none';
 			if (!o) break;
   		}
+				
 		this.onpage = n;
 		this.setPageClass('on-page-'+n);
 		this.currentPageDiv = document.getElementById('page-' + n);
+		
+		this.showEditLink();
+				
 		if (fapp.mark_unanswered) fapp.message_print();
 	}
 
+	this.showEditLink = function() {
+		var addQuestion = document.getElementById("addQuestion");
+		if (addQuestion) {
+		addQuestion = addQuestion.parentNode.removeChild(addQuestion); //
+		} else {
+			// Skapar createQuestion p-elementet
+			addQuestion = document.createElement("p");
+			addQuestion.id = "addQuestion";
+			var a = document.createElement("a");
+			a.setAttribute("href", "#");
+			a.setAttribute("onclick", "new_question(); return false;");
+			a.appendChild(document.createTextNode("Lägg till fråga"));
+			addQuestion.appendChild(a);
+		}
+		
+		if (edit_mode) { this.currentPageDiv.appendChild(addQuestion); } //
+		
+	}
 	/*
 	 * sets a page class, needed by css rules for marking current page in the page navigator
 	 */
@@ -575,6 +598,10 @@ if (location.href.match(/form/)) {
 		//style = 'border: dashed 1px green; float:right; ';
 		div.innerHTML = 'frageeditor?';
 		nav.appendChild(div);
+		
+		edit_mode = true;
+		fapp.showEditLink();
+		
 
 		var f=$('form_');
 		//f.getElements('h5').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );

@@ -26,6 +26,27 @@ function switchStyleSheet(name) {
 	}
 }
 
+function setDefaultInputEvents(element, input_value, font_color) {
+	if (element.nodeName.toLowerCase() == "input") {
+		element.style.color = font_color;
+		element.value = input_value;
+		element.onclick = function() {
+			if (element.value == input_value) {
+				element.value = "";
+				element.style.color = "";
+			}
+		}
+		element.onblur = function() {
+			if (element.value == "") { 
+				element.value = input_value;
+				element.style.color = font_color;
+			}
+		}
+	} else { alert("ERROR: setDefaultInputEvents(...) -> fel nodeName. Vill inte ha ["+element.nodeName.toLowerCase()+"]"); }
+	
+}
+
+
 var createQuestion_last = null;
 var createQuestion_type = null;
 var createQuestion_on = false;
@@ -46,6 +67,23 @@ function new_question() {
 		input.type = "text";
 		input.name = "question_text";
 		
+		input.value = "Frågetext";
+		input.style.color = "#666";
+		input.onclick = function() {
+			if (input.value == "Frågetext") {
+				input.value = "";
+				input.style.color = "#000";
+			}
+		}
+		input.onblur = function() {
+			if (input.value == "") { 
+				input.value = "Frågetext";
+				input.style.color ="#666";
+			}
+		}
+		
+		//setDefaultInputEvents(input);
+		
 		var select = document.createElement("select");
 		select.name = "question_type";
 		
@@ -63,6 +101,12 @@ function new_question() {
 			option = document.createElement("option");
 			option.value = select_values[i];
 		
+			if (i == 0) {
+				option.style.color = "#666";
+			} else {
+				option.style.color = "#000";
+			}
+			
 			//option.setAttribute("onclick", "show_spec('"+select_values[i]+"');");
 			option.appendChild(document.createTextNode(select_values[i]));
 			select.appendChild(option);
@@ -87,11 +131,9 @@ function new_question() {
 		a.appendChild(document.createTextNode("Färdig"));
 		link_p.appendChild(a);
 		
-		p.appendChild(document.createTextNode("Frågetext: "));
-		var input = p.appendChild(input);
+		var select = p.appendChild(select);
 		p.appendChild(document.createElement("br"));
-		p.appendChild(select);
-		p.appendChild(document.createElement("br"));
+		
 		
 		
 		form.appendChild(p);
@@ -110,7 +152,7 @@ function new_question() {
 		
 		addQuestion.parentNode.insertBefore(div_question, addQuestion);
 		
-		input.focus();
+		select.focus();
 		createQuestion_on = true;
 		
 	}
@@ -124,7 +166,7 @@ function new_question() {
 function create_question() {
 	var oddIratior = false;
 	var form = document.getElementById("createQuestion").getElementsByTagName("form")[0];
-	var question_text = form.elements[0];
+	var question_text = form.elements[1];
 	//if (form.question_text.value != null && form.question_text.value != "") {
 	if (question_text.value != null && question_text.value != "") {
 		var div_question = new Element('div', { 'class': 'question clearfix' });
@@ -315,7 +357,6 @@ function create_question() {
 			
 			// slut på headline
 			
-			
 			var fetch = true;
 			var item_count = 0;
 			var radios = $(document).getElements('input[name=new_scale_radio]');
@@ -414,6 +455,17 @@ function show_spec(question_type) {
 	if (spec) {
 		switch (question_type) {
 			case "checkbox":
+				var input_q = document.createElement("input");
+				input_q.type = "text";
+				input_q.name = "question_text";
+				// input_q.style.color = "#666";
+				
+				setDefaultInputEvents(input_q, "Frågetext", "#666");
+				var p_q = document.createElement("p");
+				p_q.appendChild(input_q);
+				spec.appendChild(p_q);
+				
+				
 				//spec_container.appendChild(spec_checkbox);
 				var input = document.createElement("input");
 				input.type = "text";
@@ -425,6 +477,7 @@ function show_spec(question_type) {
 				next_input.onclick = function() {
 					this.className = "";
 					var p = document.createElement("p");
+					p.className = "checkbox"; //
 					var new_input = document.createElement("input");
 					new_input.type = "text";
 					this.setAttribute("name", "new_checkbox");
@@ -439,8 +492,10 @@ function show_spec(question_type) {
 				next_input.onfocus = next_input.onclick;
 
 				var p = document.createElement("p");
+				p.className ="checkbox";
 				var next_p = document.createElement("p");
-
+				next_p.className = "checkbox";
+				
 				p.appendChild(input);
 				next_p.appendChild(next_input);
 
@@ -451,6 +506,15 @@ function show_spec(question_type) {
 				break;
 				
 			case "textfield":
+				var input_q = document.createElement("input");
+				input_q.type = "text";
+				input_q.name = "question_text";
+				
+				setDefaultInputEvents(input_q, "Frågetext", "#666");
+				var p_q = document.createElement("p");
+				p_q.appendChild(input_q);
+				spec.appendChild(p_q);
+				
 				var input = document.createElement("input");
 				var p = document.createElement("p");
 				input.type = "text";
@@ -463,6 +527,15 @@ function show_spec(question_type) {
 				break;
 			
 			case "textarea":
+				var input_q = document.createElement("input");
+				input_q.type = "text";
+				input_q.name = "question_text";
+				
+				setDefaultInputEvents(input_q, "Frågetext", "#666");
+				var p_q = document.createElement("p");
+				p_q.appendChild(input_q);
+				spec.appendChild(p_q);
+				
 				var textarea = document.createElement("textarea");
 				var p = document.createElement("p");
 				textarea.setAttribute("name", "textarea");
@@ -474,6 +547,15 @@ function show_spec(question_type) {
 				break;
 			
 			case "radio":
+				var input_q = document.createElement("input");
+				input_q.type = "text";
+				input_q.name = "question_text";
+				
+				setDefaultInputEvents(input_q, "Frågetext", "#666");
+				var p_q = document.createElement("p");
+				p_q.appendChild(input_q);
+				spec.appendChild(p_q);
+				
 				var input = document.createElement("input");
 				input.type = "text";
 				input.setAttribute("name", "new_radio")
@@ -484,6 +566,7 @@ function show_spec(question_type) {
 				next_input.onclick = function() {
 					this.className = "";
 					var p = document.createElement("p");
+					p.className = "radio";
 					var new_input = document.createElement("input");
 					new_input.type = "text";
 					this.setAttribute("name", "new_radio");
@@ -498,7 +581,9 @@ function show_spec(question_type) {
 				next_input.onfocus = next_input.onclick;
 
 				var p = document.createElement("p");
+				p.className = "radio";
 				var next_p = document.createElement("p");
+				next_p.className = "radio";
 
 				p.appendChild(input);
 				next_p.appendChild(next_input);
@@ -510,6 +595,15 @@ function show_spec(question_type) {
 			 	break;
 			
 			case "scale":
+				var input_q = document.createElement("input");
+				input_q.type = "text";
+				input_q.name = "question_text";
+				
+				setDefaultInputEvents(input_q, "Rubrik", "#666");
+				var p_q = document.createElement("p");
+				p_q.appendChild(input_q);
+				spec.appendChild(p_q);
+				
 				var input = document.createElement("input");
 				input.type = "text";
 				input.setAttribute("name", "new_scale_radio")

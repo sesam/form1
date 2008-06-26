@@ -594,3 +594,11 @@ body.print .scale-group.priority .header { background-color: blue; }
 .disable {
 	background-color: #777;
 }
+
+#createQuestion p.checkbox {
+	padding-left: 20px;
+	background: transparent url("../images/checkbox.gif") no-repeat; }
+
+#createQuestion p.radio {
+	padding-left: 20px;
+	background: transparent url("../images/radiobutton.gif") no-repeat; }
