@@ -602,3 +602,7 @@ body.print .scale-group.priority .header { background-color: blue; }
 #createQuestion p.radio {
 	padding-left: 20px;
 	background: transparent url("../images/radiobutton.gif") no-repeat; }
+
+.edit {
+	border-top: 1px solid #D1D1D1;
+}

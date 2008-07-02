@@ -63,27 +63,6 @@ function new_question() {
 		form.setAttribute("name", "createForm");
 		var p = document.createElement("p");
 		
-		var input = document.createElement("input");
-		input.type = "text";
-		input.name = "question_text";
-		
-		input.value = "Frågetext";
-		input.style.color = "#666";
-		input.onclick = function() {
-			if (input.value == "Frågetext") {
-				input.value = "";
-				input.style.color = "#000";
-			}
-		}
-		input.onblur = function() {
-			if (input.value == "") { 
-				input.value = "Frågetext";
-				input.style.color ="#666";
-			}
-		}
-		
-		//setDefaultInputEvents(input);
-		
 		var select = document.createElement("select");
 		select.name = "question_type";
 		
@@ -642,3 +621,221 @@ function show_spec(question_type) {
 		}
 	}
 }
+/* På G *
+function fetchQuestion(question) {
+	var type = null;
+	var parent_classname = question.parentNode.className;
+	if (hasClassName(parent_classname, "scale-group")) {
+		type = "scale";
+	} else if (hasClassName(parent_classname, "column-group")) {
+		type = "column";
+	} else {
+		
+	}
+}
+*/
+
+function showEditBox(element) {
+	var edit_div = $(element).getElement('.edit');
+	if (edit_div) {
+		
+	} else {
+		var edit_event = function(){ element.getElement(".qtext").inlineEdit()};
+		element.getElement(".qtext").addEvent( 'click',edit_event );
+
+		var edit_div = new Element('div', {'class': 'edit'});
+		
+		var form = document.createElement("form");
+		form.setAttribute("name", "createForm");
+		var p = document.createElement("p");
+		
+		var input = document.createElement("input");
+		input.type = "text";
+		input.name = "question_text";
+		
+		input.value = "Frågetext";
+		input.style.color = "#666";
+		input.onclick = function() {
+			if (input.value == "Frågetext") {
+				input.value = "";
+				input.style.color = "#000";
+			}
+		}
+		input.onblur = function() {
+			if (input.value == "") { 
+				input.value = "Frågetext";
+				input.style.color ="#666";
+			}
+		}
+
+		var select = document.createElement("select");
+		select.name = "question_type";
+
+		var option;
+				
+		var select_values = new Array("typ", "checkbox", "textfield", "textarea", "radio", "scale");
+		for (var i=0; i < select_values.length; i++) {
+			option = document.createElement("option");
+			option.value = select_values[i];
+		
+			if (i == 0) {
+				option.style.color = "#666";
+			} else {
+				option.style.color = "#000";
+			}
+			option.appendChild(document.createTextNode(select_values[i]));
+			select.appendChild(option);
+		}
+		
+		select.onchange = function() {
+			var options = select.getElementsByTagName("option");
+			for (var i=0; i < options.length; i++) {
+				if(options[i].selected) { show_settings(element, options[i].innerHTML); }
+			}
+		}
+		
+		var link_p = document.createElement("p");
+		var a = document.createElement("a");
+		a.href = "#";
+		$(a).addEvent('click', function() {
+			create_question();
+			delete_question(this.parentNode.parentNode);
+			return false;
+		});
+		a.appendChild(document.createTextNode("Färdig"));
+		link_p.appendChild(a);
+		
+		var select = p.appendChild(select);
+		p.appendChild(document.createElement("br"));
+		
+		
+		
+		form.appendChild(p);
+		
+		var form = edit_div.appendChild(form);
+		
+		var settings = document.createElement("div");
+		settings.className = "settings";
+		
+		form.appendChild(settings);
+		
+		form.appendChild(link_p);
+		
+		var delete_link = document.createElement("a");
+		delete_link.setAttribute("href", "#");
+		delete_link.onclick = function() { delete_question(this.parentNode); return false; };
+		delete_link.appendChild(document.createTextNode("Ta bort frågan"));
+		edit_div.appendChild(delete_link);
+		edit_div.appendChild(document.createElement("br"));
+		
+		var close_link = document.createElement("a");
+		close_link.onclick = function(){closeEditBox(element, edit_event); return false; };
+		close_link.setAttribute("href","#");
+		close_link.appendChild(document.createTextNode("Stäng"));
+		edit_div.appendChild(close_link);
+		
+		element.appendChild(edit_div);
+		//addQuestion.parentNode.insertBefore(edit_div, addQuestion);
+		
+		select.focus();		
+	}
+}
+
+function closeEditBox(element,edit_event) {
+	var edit_div = $(element).getElement('.edit');
+	if (edit_div) {
+		element.removeChild(edit_div);
+		element.getElement(".qtext").removeEvent( 'click', edit_event );
+	}
+}
+
+function show_settings(element, question_type) {
+		var settings = $(element).getElement(".settings");
+		settings.innerHTML = "";
+		
+		var delete_td = document.createElement("td");
+		var delete_link = document.createElement("a");
+		delete_link.href="#";
+		delete_link.onclick = function(){delete_table_row(this.parentNode.parentNode); return false;};
+		delete_link.appendChild(document.createTextNode("X"));
+		delete_td.appendChild(delete_link);
+		
+		var input_q = document.createElement("input");
+		input_q.type = "text";
+		input_q.name = "question_text";
+		setDefaultInputEvents(input_q, "Frågetext", "#666");
+		
+		var table = document.createElement("table");
+		table = settings.appendChild(table);
+		
+		var first_tr = document.createElement("tr");
+		var first_td = document.createElement("td");
+		var input = document.createElement("input");
+		input.type = "text";
+		input.setAttribute("name", "item");
+		first_td.appendChild(input);
+		first_tr.appendChild(first_td);
+		
+		var delete_td = document.createElement("td");
+		var delete_link = document.createElement("a");
+		delete_link.href="#";
+		delete_link.onclick = function(){delete_table_row(this.parentNode.parentNode); return false;};
+		delete_link.appendChild(document.createTextNode("X"));
+		delete_td.appendChild(delete_link);
+		
+		first_tr.appendChild(delete_td);
+		table.appendChild(first_tr);
+		
+		
+		var next_tr = document.createElement("tr");
+		var next_td = document.createElement("td");
+		//återanvänder input-variabeln.
+		input = document.createElement("input");
+		input.type = "text";
+		input.className = "disable";
+		input.onclick = function() {
+			this.className = "";
+			var new_tr = document.createElement("tr");
+			var new_td = document.createElement("td");
+			var new_input = document.createElement("input");
+			new_input.type = "text";
+			this.setAttribute("name", "item");
+			new_input.className = "disable";			
+			new_input.onclick = this.onclick;
+			new_input.onfocus = this.onclick;
+			this.onclick = null;
+			this.onfocus = null;
+			new_td.appendChild(new_input);
+			new_tr.appendChild(new_td);
+			
+			var delete_td = document.createElement("td");
+			var delete_link = document.createElement("a");
+			delete_link.href="#";
+			delete_link.onclick = function(){delete_table_row(this.parentNode.parentNode); return false;};
+			delete_link.appendChild(document.createTextNode("X"));
+			delete_td.appendChild(delete_link);
+			
+			new_tr.appendChild(delete_td);
+			insertAfter( new_tr, table.getLast("tr") );
+		}
+		input.onfocus = input.onclick;
+		
+		next_td.appendChild(input);
+		next_tr.appendChild(next_td);
+		
+		delete_td = document.createElement("td");
+		delete_link = document.createElement("a");
+		delete_link.href="#";
+		delete_link.onclick = function(){delete_table_row(this.parentNode.parentNode); return false;};
+		delete_link.appendChild(document.createTextNode("X"));
+		delete_td.appendChild(delete_link);
+		
+		next_tr.appendChild(delete_td);
+		
+		table.appendChild(next_tr);
+}
+
+function delete_table_row(table_row) {
+	var table = $(table_row).getParent("table");
+	table.removeChild(table_row);
+} 
