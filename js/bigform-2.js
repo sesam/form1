@@ -484,6 +484,7 @@ var FancyForm = {
 		});
 
 		//and then get them functional as well, binding the respective events together
+		if (!location.search.match(/edit/))
 		FancyForm.chks.each(function(chk){
 			chk.addEvent('click', function(f){
 				if(!FancyForm.initing && $type(chk.inputElement.onclick) == 'function')
@@ -606,11 +607,13 @@ if (location.href.match(/form/)) {
 		var f=$('form_');
 		//f.getElements('h5').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		//f.getElements('span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 		
 		f.getElements('.question').each( function(elt) {elt.addEvent('click',function(){
+			//fetchQuestion(this);
 			showEditBox(this);
 		}); } );
 		f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){alert("scale");}); } );

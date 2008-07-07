@@ -621,19 +621,21 @@ function show_spec(question_type) {
 		}
 	}
 }
-/* På G *
+/* På G */
 function fetchQuestion(question) {
 	var type = null;
 	var parent_classname = question.parentNode.className;
-	if (hasClassName(parent_classname, "scale-group")) {
+	var _inputs = new Array();
+	if (parent_classname == "scale-group") {
 		type = "scale";
-	} else if (hasClassName(parent_classname, "column-group")) {
-		type = "column";
 	} else {
+		var inputs = question.getElementsByTagName("input");
+		alert(inputs.length);
+		for (var i=0; i < inputs.length; i++) {
 		
+		}
 	}
 }
-*/
 
 function showEditBox(element) {
 	var edit_div = $(element).getElement('.edit');
