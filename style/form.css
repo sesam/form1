@@ -122,7 +122,8 @@ a:link {
 	background-color : #F8F8F8;
 	color : #000;
 	line-height : 2em; 
-	padding :1em 0.5em; }
+	padding :1em 0.5em;
+	position: relative; }
 
 #statusbar p {
 	margin-bottom : -2em; }
@@ -246,6 +247,10 @@ div.question ul {
 	float: left; }
 
 .scale-group .answer div {
+	float: left;
+}
+
+.answer { /*Magnus */
 	float: left;
 }
 	
@@ -605,4 +610,60 @@ body.print .scale-group.priority .header { background-color: blue; }
 
 .edit {
 	border-top: 1px solid #D1D1D1;
+	clear: left;
 }
+
+.edit a span.delete {
+	text-indent: -9999px;
+	background: transparent url("../images/delete.gif") no-repeat;
+	width: 50px;
+	height: 30px;
+}
+
+div.question .edit ul {
+	float: none;
+	clear: left;
+}
+
+.scale-group .question .edit ul li {
+	float: none;
+	width: auto;
+}
+
+.edit li {
+	background-color: #EEEEEE;
+	border: 1px solid #EEEEEE;
+	clear: left;
+}
+
+.delete {
+	width: 16px;
+	height: 16px;
+	background: transparent url("../images/delete.gif") no-repeat;
+	float: left;
+	margin-top: 2px;
+	padding-right: 7px;
+	cursor: pointer;
+}
+
+.delete span {
+	position: absolute;
+	left: -9999px;
+}
+.question .edit ul input {
+	float: left;
+	margin-right: 10px;
+} 
+
+#editlink {
+	width: 80px;
+	height: 25px;
+	background: transparent url("../images/edit.gif") no-repeat 0px 0px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+}
+
+.deactive { background-position: 0px 0px !important;}
+
+.active { background-position: 0px -31px !important; }

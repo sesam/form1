@@ -27,7 +27,6 @@
 	<p><strong>Status:</strong> <span id="savetext" onclick="switchStyleSheet('blue');">Svar sparades kl </span><span id="saved"></span><span style="display: none;" id='laddar'> - laddar...</span></p>
 	<h3>Gå till sida:</h3>
 	<ul class="pages">
-
 		<li><a class="goto-1" href="#page-1" onclick="fapp.showPage(1);">1</a></li>
 		<li><a class="goto-2" href="#page-2" onclick="fapp.showPage(2);">2</a></li>
 		<li><a class="goto-3" href="#page-3" onclick="fapp.showPage(3);">3</a></li>
@@ -459,12 +458,11 @@ mycket du instämmer i påståendet:</p>
 					<h5><span class="number">18</span> <span class="qtext">Jag har haft medarbetarsamtal under de senaste 12 månaderna</span></h5>
 
 					<div class="answer">
-					<ul class="grade">
-					<li><label><input class="r" name="q18" id="q18_1" type="radio"> Ja</label></li>
-					<li><label><input class="r" name="q18" id="q18_2" type="radio"> Nej</label></li>
-					<li><label><input class="r" name="q18" id="q18_3" type="radio"> Nej, jag har inte varit anställd/arbetat under den senaste 12 månadersperioden</label></li>
-					</ul>
-
+						<ul class="grade">
+						<li><label><input class="r" name="q18" id="q18_1" type="radio"> Ja</label></li>
+						<li><label><input class="r" name="q18" id="q18_2" type="radio"> Nej</label></li>
+						<li><label><input class="r" name="q18" id="q18_3" type="radio"> Nej, jag har inte varit anställd/arbetat under den senaste 12 månadersperioden</label></li>
+						</ul>
 					</div>
 				</div>
 				
@@ -691,25 +689,29 @@ mycket du instämmer i påståendet:</p>
 			
 			<div class="question odd clearfix" id="q30">
 				<h5><span class="number">30*</span> <span class="qtext">På ORGANISATIONEN förekommer diskriminering</span></h5>
-				<ul>
-				<li><label><input class="cb" name="q30" value="1" id="q30_1" type="checkbox"> Nej</label></li>
-				<li><label><input class="cb" name="q30" value="2" id="q30_2" type="checkbox"> Ja, p g a kön</label></li>
-				<li><label><input class="cb" name="q30" value="3" id="q30_3" type="checkbox"> Ja, p g a etniskt ursprung</label></li>
-				<li><label><input class="cb" name="q30" value="4" id="q30_4" type="checkbox"> Ja, p g a sexuell läggning</label></li>
-				<li><label><input class="cb" name="q30" value="5" id="q30_5" type="checkbox"> Ja, p g a ålder</label></li>
-				<li><label><input class="cb" name="q30" value="6" id="q30_6" type="checkbox"> Ja, p g a religion</label></li>
-				<li><label><input class="cb" name="q30" value="7" id="q30_7" type="checkbox"> Ja, p g a funktionshinder</label></li>
-				<li class="checkedtextfield textfield"><label class="textfield">Ja, p g a annat, nämligen: <input type="text" class="textline" name="tx30_9" id="q30_9" size="30"/></label></li>
-				</ul>
+				<div class="answer">
+					<ul>
+					<li><label><input class="cb" name="q30" value="1" id="q30_1" type="checkbox"> Nej</label></li>
+					<li><label><input class="cb" name="q30" value="2" id="q30_2" type="checkbox"> Ja, p g a kön</label></li>
+					<li><label><input class="cb" name="q30" value="3" id="q30_3" type="checkbox"> Ja, p g a etniskt ursprung</label></li>
+					<li><label><input class="cb" name="q30" value="4" id="q30_4" type="checkbox"> Ja, p g a sexuell läggning</label></li>
+					<li><label><input class="cb" name="q30" value="5" id="q30_5" type="checkbox"> Ja, p g a ålder</label></li>
+					<li><label><input class="cb" name="q30" value="6" id="q30_6" type="checkbox"> Ja, p g a religion</label></li>
+					<li><label><input class="cb" name="q30" value="7" id="q30_7" type="checkbox"> Ja, p g a funktionshinder</label></li>
+					<li class="checkedtextfield textfield"><label class="textfield">Ja, p g a annat, nämligen: <input type="text" class="textline" name="tx30_9" id="q30_9" size="30"/></label></li>
+					</ul>
+				</div>
 			</div>
 
 			
 			<div class="question clearfix" id="q31">
 				<h5><span class="number">31</span> <span class="qtext">På ORGANISATIONEN har kvinnor och män samma möjligheter</span></h5>
-				<ul>
-				<li><label><input class="r" name="q31" id="q31_1" type="radio"> Ja</label></li>
-				<li><label><input class="r" name="q31" id="q31_2" type="radio"> Nej</label></li>
-				</ul>
+				<div class="answer">
+					<ul>
+					<li><label><input class="r" name="q31" id="q31_1" type="radio"> Ja</label></li>
+					<li><label><input class="r" name="q31" id="q31_2" type="radio"> Nej</label></li>
+					</ul>
+				</div>
 			</div>
 			</div>	
 				
@@ -805,28 +807,34 @@ mycket du instämmer i påståendet:</p>
 				<div class="column-group">
 					<div class="question odd" id="q36">
 						<h5><span class="number">36</span> <span class="qtext">Ålder</span></h5>
+						<div class="answer">
 						<ul>
 						<li><label><input class="r" name="q36" id="q36_1" type="radio"> <span>Yngre än 30 år</span></label></li>
 						<li><label><input class="r" name="q36" id="q36_2" type="radio"> <span>30-50 år</span></label></li>
 						<li><label><input class="r" name="q36" id="q36_3" type="radio"> <span>Äldre än 50</span></label></li>
 						</ul>
+						</div>
 					</div>
 					
 					<div class="question odd" id="q37">
 						<h5><span class="number">37</span> <span class="qtext">Kön</span></h5>
+						<div class="answer">
 						<ul>
 						<li><label><input class="r" name="q37" id="q37_1" type="radio"> <span>Kvinna</span></label></li>
 						<li><label><input class="r" name="q37" id="q37_2" type="radio"> <span>Man</span></label></li>
 						</ul>
+						</div>
 					</div>
 					
 					<div class="question odd" id="q38">
 						<h5><span class="number">38</span> <span class="qtext">Anställningstid</span></h5>
+						<div class="answer">
 						<ul>
 						<li><label><input type="radio" class="r" name="q38" id="q38_1" /> <span>Mindre än 1 år</span></label></li>
 						<li><label><input type="radio" class="r" name="q38" id="q38_2" /> <span>1 till 5 år</span></label></li>
 						<li><label><input type="radio" class="r" name="q38" id="q38_3" /> <span>5 år eller mer</span></label></li>
 						</ul>
+						</div>
 					</div>
 
 				</div>

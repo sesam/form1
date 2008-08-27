@@ -57,6 +57,48 @@ function addLoadEvent(func) {
   }
 }
 
+var List = function() {
+	this.mItems = new Array();
+	this.length = 0;
+		
+	this.add = function(element) {
+		if (element) {
+			this.mItems[this.length] = element;
+			this.length++;
+		}
+	}
+	
+	this.remove = function(index) {
+		if (0 <= index < this.length ) {
+			var newArray = new Array();
+			var j = 0;
+			for (var i = 0; i < this.length; i++) {
+				if (index != i) {
+					newArray[j] = this.mItems[i];
+					j++;
+				}
+			}
+			this.mItems = newArray;
+			this.length = newArray.length;
+		}
+	}
+	
+	this.get = function(index) {
+		if (0 <= index < this.length ) { return this.mItems[index]; }
+	}
+	
+	this.toString = function() {
+		return this.mItems.toString();
+	}
+}
+
+function getFirstTextNode(x) {
+	var children = x.childNodes;
+	for (i=0;i<children.length;i++) { 
+		if (children[i].nodeType==3) return children[i].data;
+	}
+}
+
 function hasClassName(tempClassNames, wantedClassName) {
 	var re = new RegExp('\b' + wantedClassName + '\b');
 	return tempClassNames.match(re);
@@ -259,6 +301,11 @@ var formApplication = function() {
 		
 		if (edit_mode) { this.currentPageDiv.appendChild(addQuestion); } //
 		
+	}
+	
+	this.removeEditLink = function() {
+		var addQuestion = document.getElementById("addQuestion");
+		if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
 	}
 	/*
 	 * sets a page class, needed by css rules for marking current page in the page navigator
@@ -589,33 +636,40 @@ var FancyForm = {
 if (location.href.match(/form/)) {
 	addLoadEvent(function() {FancyForm.start(0, { onSelect: fapp.onSelect } ) } );
 	addLoadEvent(function() {init();});
-
+	
 	/* Aktivera inlineEdit2 via klick i #header */
-	var h = $('header');
-	h.addEvent('click', function(a) { 
-		var nav = $('navigation');
-		var div = document.createElement('div');
-
-		//style = 'border: dashed 1px green; float:right; ';
-		div.innerHTML = 'frageeditor?';
-		nav.appendChild(div);
-		
-		edit_mode = true;
-		fapp.showEditLink();
-		
-
-		var f=$('form_');
-		//f.getElements('h5').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-		//f.getElements('span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-		f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-		f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-		f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-		
-		f.getElements('.question').each( function(elt) {elt.addEvent('click',function(){
-			//fetchQuestion(this);
-			showEditBox(this);
-		}); } );
-		f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){alert("scale");}); } );
+	
+	var statusbar = $('statusbar');
+	var edit_link = document.createElement('div');
+	edit_link.id = "editlink";
+	edit_link.className = "deactive";
+	
+	//var h = $('header');
+	//h.addEvent('click', function(a) { 
+	$(edit_link).addEvent('click', function(a) {
+		if(this.className == "deactive") { // Knappen var "av", så knappen slås på.
+			edit_mode = true;
+			fapp.showEditLink();
+			this.className = "active";			
+			var f = $('form_');	
+			f.getElements('label').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+			f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+			f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+			f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+			f.getElements('.question').each( function(elt) {elt.addEvent('click',function(){fetchQuestion(this);}); } );
+			f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){alert("scale");}); } );
+			f.getElements('.scale-group .question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+			//f.getElements('.scale-group .priority .question h5 span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		} else {
+			edit_mode = false;
+			this.className = "deactive";
+			fapp.removeEditLink();
+			
+			var edit_boxes = document.getElements('.edit');
+			edit_boxes.each(function(elt) { elt.parentNode.removeChild(elt); });
+			
+			// Här måste alla inlineEdit tas bort från click-event
+		}
 	});
+	statusbar.appendChild(edit_link);
 }
