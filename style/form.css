@@ -600,13 +600,13 @@ body.print .scale-group.priority .header { background-color: blue; }
 	background-color: #777;
 }
 
-#createQuestion p.checkbox {
+#createQuestion p.checkbox, .edit li.checkbox, .edit li.checkbox_line {
 	padding-left: 20px;
-	background: transparent url("../images/checkbox.gif") no-repeat; }
+	background: #eee url("../images/checkbox.gif") no-repeat; }
 
-#createQuestion p.radio {
+#createQuestion p.radio, .edit li.radio, .edit li.radio_line {
 	padding-left: 20px;
-	background: transparent url("../images/radiobutton.gif") no-repeat; }
+	background: #eee url("../images/radiobutton.gif") no-repeat; }
 
 .edit {
 	border-top: 1px solid #D1D1D1;

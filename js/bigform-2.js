@@ -84,7 +84,8 @@ var List = function() {
 	}
 	
 	this.get = function(index) {
-		if (0 <= index < this.length ) { return this.mItems[index]; }
+		if (0 <= index < this.length ) { console.info(index + " är okej"); return this.mItems[index]; }
+		else {console.error(index + " är inte okej!"); }
 	}
 	
 	this.toString = function() {
@@ -147,9 +148,11 @@ function prepareForm(){
 		}
 	);
 }
-
+var formform;
 function saveForm() {
 	// Samlar ihop svar och skickar till servern.
+	try {
+
 	formform = $('form_').send({
 		onComplete: function() {
 			var saved = document.getElementById("saved");
@@ -159,6 +162,9 @@ function saveForm() {
 			document.getElementById("savetext").style.display='inline';
 		}
 	});
+	} catch(NS_ERROR_FILE_NOT_FOUND) {
+	
+	}
 } 
 
 var autoSave_ = null;
@@ -190,7 +196,7 @@ var formApplication = function() {
 	
 	if (this.ta) this.ta=this.ta[0];
 
-	this.logga = function(x) { if (this.ta) this.ta.value += x + '\n'; }
+	this.logga = function(x) { /*if (this.ta) this.ta.value += x + '\n';*/ console.info(x); }
 
 	this.showanswers = function() {
   		var frm=document.forms[0];
@@ -198,7 +204,7 @@ var formApplication = function() {
 		frm.disabled = true;
 		var elt = document.getElementById('laddar');
  		elt.style.display = 'inline';
-
+		
   		var arr=this.data.split(/[\?&]/);
   		var t='#';
   		for (var i=0; i<arr.length; i++) {
@@ -266,7 +272,7 @@ var formApplication = function() {
 		}
 		this.notFirstLoad = true;
 
- 		//this.logga('till sida ' + n);
+ 		this.logga('till sida ' + n);
 		var to=document.getElementById('page-' + n);
 		if (!to) n=1; //page not found -- so show page 1
 		for (var i=0; i <= this.maxPages; i++) {

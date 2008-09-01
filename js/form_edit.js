@@ -145,12 +145,12 @@ function new_question() {
 function question(action, question) {
 	var oddIratior = false;
 	var form = null;
-
+		
 	/* Kontrollerar att 'action' parametern är rätt */
 	if (action.toLowerCase() != "create" && action.toLowerCase() != "edit") {
 		alert("[question(action, question)]: kan inte utföra '" + action + "', du kanske menade 'create' eller 'edit'?");
 	}
-	
+		
 	/* Kollar om parametern 'question' finns */
 	if (question == null) { form = document.getElementById("createQuestion").getElementsByTagName("form")[0]; }
 	else { form = question.getElementsByTagName('form')[0]; }
@@ -165,38 +165,57 @@ function question(action, question) {
 		if (form.elements[count].name == "question_text") {
 			question_text = form.elements[count];
 		}
-		else if (form.elements[count].name == "new_checkbox" || form.elements[count].name == "new_radio" || form.elements[count].name == "new_scale_radio" || form.elements[count].questionType == "radio" || form.elements[count].questionType == "checkbox" || form.elements[count].questionType == "textline") {
+		else if (form.elements[count].name == "new_checkbox" || form.elements[count].name == "new_radio" || form.elements[count].name == "new_scale_radio" || form.elements[count].questionType == "radio" || form.elements[count].questionType == "checkbox" || form.elements[count].questionType == "checkbox_line" || form.elements[count].questionType == "radio_line") {
 			/* Vi vill bara ha fälten som innehåller någonting. */
 			if (form.elements[count].value != "") {
 				answers.add(form.elements[count]);
+				console.info("Hittade ett " + form.elements[count].questionType + ": ", form.elements[count]);
+				
 			}
 		}
-		else if (form.elements[count].name == "textfield" || form.elements[count].name == "textarea") {
+		else if (form.elements[count].name == "textfield" || form.elements[count].name == "textarea" || form.elements[count].questionType == "text" || form.elements[count].questionType == "textarea") {
 			/* Textfält och textarea får vara tomma */
 			answers.add(form.elements[count]);
+			console.info("Hittade ett " + form.elements[count].questionType + ": ", form.elements[count]);
 		}
 	}	
 	
+	console.info("Hittade totalt " + answers.length + " st input-element (svarsalternativ).");
+	
+	var need_to_prepare_form = false;	//Om prepareForm() måste köras
 	var active_ul = null;
 	var answer_div = document.createElement("div");
 	answer_div.className = "answer";
-		
+	
+	/* Förbereder div:en 'answer' som frågan kommer innehålla. */
 	for (var i = 0; i < answers.length; i++) {
 		var element = answers.get(i);
-		if( element.questionType == "radio" || element.questionType == "checkbox" || element.questionType == "textline" ) {
+		console.info(element);
+		
+		if( element.questionType == "radio" || element.questionType == "checkbox" || element.questionType == "checkbox_line" || element.questionType == "radio_line" ) {
 			var li = document.createElement("li");
 			var label = document.createElement("label");
 			var input = document.createElement("input");
 			input.className = element.questionType;
-			if(element.questionType == "textline") {
+			
+			/* Omvandlar alla checkbox_line svarsalternativ till input-typen: 'text'. */
+			if(element.questionType == "checkbox_line") {
 				input.type = "text";
+				input.className = "textline";
+				li.className = "checkedtextfield";
+				label.className = "textfield";
+				
+				label.appendChild(document.createTextNode(answers.get(i).value));
+				label.appendChild(input);
+				li.appendChild(label);
+				
+				need_to_prepare_form = true;
 			} else {
 				input.type = element.questionType;
+				label.appendChild(input);
+				label.appendChild(document.createTextNode(answers.get(i).value));
+				li.appendChild(label);
 			}
-			
-			label.appendChild(input);
-			label.appendChild(document.createTextNode(answers.get(i).value));
-			li.appendChild(label);
 						
 			if (active_ul != null) {
 				// Stoppar li-elementet i det aktiva ul-elementet
@@ -208,13 +227,16 @@ function question(action, question) {
 				answer_div.appendChild(active_ul);
 			}
 		}
-		// if …  	om det inte är en radio/checkbox/textline dvs, det är en textarea, så ska den skapas utan någon ul-element.
-		// eller om det är en likertfråga så ska det utformas på sitt sätt.
+		else if (element.questionType == "text" || element.questionType == "textarea") {
+			var input = document.createElement("input");
+			input.type = element.questionType
+			answer_div.appendChild(input);
+		}
 	}
 	
 	
 	if (action.toLowerCase() == "create" && question_text != null && question_text.value != "") {
-		alert("create");
+		console.info("[action == create]");
 		
 		var div_question = new Element('div', { 'class': 'question clearfix' });
 	
@@ -247,10 +269,16 @@ function question(action, question) {
 		fapp.currentPageDiv.appendChild(div_question);
 	}
 	else if (action.toLowerCase() == "edit") {
-		alert("edit");
-		var old_answer = $(question).getElement(".answer");		
+		console.group("Edit " + question.id);
+		console.info("Redigerade: ", question);
+		console.groupEnd();
+		var old_answer = $(question).getElement(".answer");	
 		question.removeChild(old_answer);
-		question.getElementsByTagName('h5')[0].appendChild(answer_div);
+		//question.getElementsByTagName('h5')[0].appendChild(answer_div);
+		insertAfter(answer_div, question.getElementsByTagName('h5')[0]);
+		
+		if (need_to_prepare_form) { prepareForm(); }
+		FancyForm.start(0, { onSelect: fapp.onSelect } );	
 	}
 }
 
@@ -613,6 +641,7 @@ function show_spec(question_type) {
 				var p = document.createElement("p");
 				input.type = "text";
 				input.setAttribute("name", "textfield");
+				input.questionType = "text";
 				
 				p.appendChild(input);
 				spec.appendChild(p);
@@ -633,6 +662,7 @@ function show_spec(question_type) {
 				var textarea = document.createElement("textarea");
 				var p = document.createElement("p");
 				textarea.setAttribute("name", "textarea");
+				textarea.questionType = "textarea";
 				
 				p.appendChild(textarea);
 				spec.appendChild(p);
@@ -781,13 +811,23 @@ function showEditBox(element, inputs) {
 					inputfield.type = "text";
 					inputfield.value = getFirstTextNode(label);
 					
-					//inputfield.questionType = clone.getElementsByTagName('input')[0].className;
-					switch (clone.getElementsByTagName('input')[0].className) {
+					var item = clone.getElementsByTagName('input')[0];
+					switch (item.className) {
 						case "r": inputfield.questionType = "radio"; break;
 						case "cb": inputfield.questionType = "checkbox"; break;
-						default : inputfield.questionType = clone.getElementsByTagName('input')[0].className;
+						case "textline":
+							/* Kollar vad fältets list-element har för klassnamn, för att avgöra om textfältet är av typ checkbox/radio. */
+							if (item.parentNode.parentNode.className == "checked" || item.parentNode.parentNode.className == "unchecked") {
+								inputfield.questionType = "checkbox_line";
+							}
+							else if (item.parentNode.parentNode.className == "selected" || item.parentNode.parentNode.className == "unselected") {
+								inputfield.questionType = "radio_line";
+							}
+							break;
+						default : inputfield.questionType = item.className;
 					}
-					
+
+					li.setAttribute("class", inputfield.questionType);
 					
 					li.appendChild(inputfield);
 					
@@ -806,6 +846,7 @@ function showEditBox(element, inputs) {
 				}
 			
 				var next_li = document.createElement("li");
+				next_li.className = "checkbox";
 				var next_input = document.createElement("input");
 				next_input.type = "text";
 				next_input.className = "disable";
@@ -914,7 +955,6 @@ function showEditBox(element, inputs) {
 			close_link.appendChild(document.createTextNode("Stäng"));
 			edit_form.appendChild(close_link);
 			edit_form.appendChild(document.createElement("br"));
-			
 			
 			var save_link = document.createElement("a");
 			save_link.onclick = function(){ question("edit", this.parentNode.parentNode.parentNode); return false; };
