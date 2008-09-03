@@ -57,6 +57,7 @@ function addLoadEvent(func) {
   }
 }
 
+/*
 var List = function() {
 	this.mItems = new Array();
 	this.length = 0;
@@ -64,6 +65,7 @@ var List = function() {
 	this.add = function(element) {
 		if (element) {
 			this.mItems[this.length] = element;
+			console.info("list add: ",this.length, this.mItems[this.length].label);
 			this.length++;
 		}
 	}
@@ -84,14 +86,20 @@ var List = function() {
 	}
 	
 	this.get = function(index) {
-		if (0 <= index < this.length ) { console.info(index + " är okej"); return this.mItems[index]; }
-		else {console.error(index + " är inte okej!"); }
+		if ((0 <= index) && (index < this.length)) {
+			for(var i=0; i < this.mItems.length; i++) {
+				console.info(": ", this.mItems[i].label); 
+			}
+			return this.mItems[index];
+		}
+		else { console.error(index, " är inte korrekt.");}
 	}
 	
 	this.toString = function() {
 		return this.mItems.toString();
 	}
 }
+*/
 
 function getFirstTextNode(x) {
 	var children = x.childNodes;

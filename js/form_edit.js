@@ -1,3 +1,24 @@
+/* FETCH DATA: 								Beskrivning:
+ * -----------------------------------------------------------------------------------------
+ * questionType : 	radio					vilken typ av fråga det är.
+ *					radio_line
+ *					checkbox
+ *					checkbox_line
+ *					text
+ *					textarea
+ *
+ * label: 									vad som står i labeln.
+ *
+ * value: 									om det ska stå något i text/textarea fältet
+ */
+
+
+var Answer = function() {
+	var questionType = null;
+	var label = null;
+	var value = null;
+}
+
 function switchStyleSheet(name) {
 	if(!window.ie) {
 		var linkTag, linkTitle = "t_" + name;
@@ -134,6 +155,87 @@ function new_question() {
 	}
 }
 
+/* Gräver sig ner i question-div:en för att leta rätt på inputs-fält och textarea. */
+function fetch(question) {
+	var parent_classname = question.parentNode.className;
+	
+	console.info("fetching");
+	var answers = new Array();
+	var nodes = $(question).getElement(".answer").childNodes;
+	for (var i=0; i < nodes.length; i++) {
+		if(nodes[i].nodeType == 1) {
+			var answer = new Answer();
+			
+			switch(nodes[i].nodeName) {
+				case "UL": 
+					var li = nodes[i].getElementsByTagName("li");
+					for(var x=0; x < li.length; x++) {
+						var label = li[x].getElementsByTagName('label')[0];
+						var input = li[x].getElementsByTagName('input')[0];
+						
+						if (parent_classname == "column-group") { label = label.getElementsByTagName('span')[0]; }
+						
+						switch (input.className) {
+							case "r": answer.questionType = "radio"; break;
+							case "cb": answer.questionType = "checkbox"; break;
+							case "textline":
+								/* Kollar vad fältets list-element har för klassnamn, för att avgöra om textfältet är av typ checkbox/radio. */
+								if (input.parentNode.parentNode.className == "checked" || input.parentNode.parentNode.className == "unchecked") {
+									answer.questionType = "checkbox_line";
+								}
+								else if (input.parentNode.parentNode.className == "selected" || input.parentNode.parentNode.className == "unselected") {
+									answer.questionType = "radio_line";
+								}
+								break;
+							default : answer.questionType = item.className;
+						}
+
+						answer.label = getFirstTextNode(label);
+						if (answer.questionType == "checkbox_line" || answer.questionType == "radio_line") { answer.value = input.value; }
+						
+						
+						console.info(answer.questionType);
+						console.info(answer.label);
+						console.info(answer.value);
+						
+						answers.push(answer);
+
+						/* debug */
+						for(var q=0; q < answers.length; q++) {
+							console.info(q, answers[q].label);
+						}
+						
+					}
+					break;
+					
+				case "LABEL":
+					if(nodes[i].hasChildNodes()) {
+						answers.push(nodes[i].childNodes[0]);
+						alert("ojdå!!!");
+					}
+					break;
+					
+				case "INPUT":
+					answers.push(nodes[i]);
+					alert("ajaj!");
+					break;
+					
+				case "TEXTAREA":
+					answer.questionType = "textarea";
+					answer.value = nodes[i].value;
+					answers.push(answer);
+					
+					console.info(answer.questionType);
+					console.info(answer.label);
+					console.info(answer.value);
+					break;
+			}
+		}
+	}
+	
+	return answers;
+}
+
 
 /* SKAPA OCH REDIGERA/UPPDATERA EN FRÅGA.
  *
@@ -191,12 +293,15 @@ function question(action, question) {
 	for (var i = 0; i < answers.length; i++) {
 		var element = answers.get(i);
 		console.info(element);
-		
 		if( element.questionType == "radio" || element.questionType == "checkbox" || element.questionType == "checkbox_line" || element.questionType == "radio_line" ) {
 			var li = document.createElement("li");
 			var label = document.createElement("label");
 			var input = document.createElement("input");
-			input.className = element.questionType;
+			switch(element.questionType) {
+				case "radio": input.className = "r"; break;
+				case "checkbox": input.className = "cb"; break;
+				default: input.className = element.questionType;
+			}
 			
 			/* Omvandlar alla checkbox_line svarsalternativ till input-typen: 'text'. */
 			if(element.questionType == "checkbox_line") {
@@ -227,10 +332,16 @@ function question(action, question) {
 				answer_div.appendChild(active_ul);
 			}
 		}
-		else if (element.questionType == "text" || element.questionType == "textarea") {
+		else if (element.questionType == "text") {
 			var input = document.createElement("input");
 			input.type = element.questionType
 			answer_div.appendChild(input);
+			active_ul = null;
+		}
+		else if (element.questionType == "textarea") {
+			var input = document.createElement("textarea");
+			answer_div.appendChild(input);
+			active_ul = null;
 		}
 	}
 	
@@ -767,6 +878,13 @@ function show_spec(question_type) {
 	}
 }
 
+/*
+ * TODO: Funktionen ska ta frågan, gå igenom alla inputs, kontrollera att vissa inte är tomma.
+ * Sen ska alla inputs få sin questionType-variabel och läggas i en lista som skickas vidare.
+ *
+ * Funktionen borde användas när man klickar på en fråga för redigering, men även när man skapar en ny fråga.
+ *
+ */
 function fetchQuestion(question) {
 	var parent_classname = question.parentNode.className;
 	var _inputs = new Array();
@@ -781,7 +899,119 @@ function fetchQuestion(question) {
 	}
 }
 
-function showEditBox(element, inputs) {
+
+function showEditBox(question) {
+	var answers = fetch(question); // DEBUG;
+	if (!answers) { console.error("Hittade inga svarsalternativ"); return false; }
+	
+	var edit_div = $(question).getElement('.edit');
+	if (!edit_div) {
+		if(answers != null) {	
+			var edit_event = function(){ question.getElement(".qtext").inlineEdit(); };
+			question.getElement(".qtext").addEvent('click',edit_event );
+			
+			var edit_div = new Element('div', {'class': 'edit'});
+			var edit_form = new Element('form');
+			
+			var ul = document.createElement("ul");
+	
+			for (var i=0; i < answers.length; i++) {
+				var answer = answers[i];
+				
+				var li = document.createElement("li");
+				var inputfield = document.createElement("input");
+				inputfield.type = "text";
+				inputfield.value = answer.label;
+				
+				li.setAttribute("class", answer.questionType);
+			
+				li.appendChild(inputfield);
+			
+				var removeField = document.createElement("div");
+				removeField.className = "delete";
+				removeField.onclick = function() {
+					var input = this.parentNode;
+					input.parentNode.removeChild(input);
+					return false;
+				};
+				var removeField_span = document.createElement("span");
+				removeField_span.appendChild(document.createTextNode("X"));
+				removeField.appendChild(removeField_span);
+				li.appendChild(removeField);
+				ul.appendChild(li);
+			}
+	
+			var next_li = document.createElement("li");
+			next_li.className = "checkbox";
+			var next_input = document.createElement("input");
+			next_input.type = "text";
+			next_input.className = "disable";
+			next_input.onclick = function() {
+				this.className = "";
+				var li = document.createElement("li");
+				li.className = "checkbox";
+				var new_input = document.createElement("input");
+				new_input.type = "text";
+				this.questionType = "checkbox";
+				new_input.className = "disable";
+				new_input.onclick = this.onclick;
+				new_input.onfocus = this.onclick;
+				this.onclick = null;
+				this.onfocus = null;
+			
+				/* Tabort-krysset */
+				var removeField = document.createElement("div");
+				removeField.className = "delete";
+				removeField.onclick = function() {
+					var input = this.parentNode;
+					input.parentNode.removeChild(input);
+					return false;
+				};
+				var removeField_span = document.createElement("span");
+				removeField_span.appendChild(document.createTextNode("X"));
+				removeField.appendChild(removeField_span);
+				this.parentNode.appendChild(removeField);
+			
+				li.appendChild(new_input);
+				insertAfter(li, this.parentNode);
+			}
+			next_input.onfocus = next_input.onclick;
+			next_li.appendChild(next_input);
+			ul.appendChild(next_li);
+		
+			edit_form.appendChild(ul);
+			
+			var delete_link = document.createElement("a");
+			delete_link.setAttribute("href", "#");
+			delete_link.onclick = function() { delete_question(this.parentNode.parentNode); return false; };
+			delete_link.appendChild(document.createTextNode("Ta bort frågan"));
+			edit_form.appendChild(delete_link);
+			edit_form.appendChild(document.createElement("br"));
+		
+			var close_link = document.createElement("a");
+			close_link.onclick = function(){closeEditBox(element, edit_event); return false; };
+			close_link.setAttribute("href","#");
+			close_link.appendChild(document.createTextNode("Stäng"));
+			edit_form.appendChild(close_link);
+			edit_form.appendChild(document.createElement("br"));
+			
+			var save_link = document.createElement("a");
+			save_link.onclick = function(){ question("edit", this.parentNode.parentNode.parentNode); return false; };
+			save_link.setAttribute("href","#");
+			save_link.appendChild(document.createTextNode("Spara"));
+			edit_form.appendChild(save_link);
+			
+			
+			edit_div.appendChild(edit_form);
+			question.appendChild(edit_div);
+		}
+	}
+}
+
+
+function old_showEditBox(element, inputs) {
+	fetch(element); // DEBUG;
+	
 	var edit_div = $(element).getElement('.edit');
 	if (edit_div) {
 		
@@ -967,88 +1197,11 @@ function showEditBox(element, inputs) {
 			element.appendChild(edit_div);
 		}
 		else {
-			var edit_event = function(){ alert("click"); element.getElement(".qtext").inlineEdit(); }
-			element.getElement(".qtext").addEvent('click',edit_event );
-			alert("click");
-			var edit_div = new Element('div', {'class': 'edit'});
-		
-			var form = document.createElement("form");
-			form.setAttribute("name", "createForm");
-			var p = document.createElement("p");
-		
-			var select = document.createElement("select");
-			select.name = "question_type";
-
-			var option;
-				
-			var select_values = new Array("typ", "checkbox", "textfield", "textarea", "radio", "scale");
-			for (var i=0; i < select_values.length; i++) {
-				option = document.createElement("option");
-				option.value = select_values[i];
-		
-				if (i == 0) {
-					option.style.color = "#666";
-				} else {
-					option.style.color = "#000";
-				}
-				option.appendChild(document.createTextNode(select_values[i]));
-				select.appendChild(option);
-			}
-		
-			select.onchange = function() {
-				var options = select.getElementsByTagName("option");
-				for (var i=0; i < options.length; i++) {
-					if(options[i].selected) { show_settings(element, options[i].innerHTML); }
-				}
-			}
-		
-			var link_p = document.createElement("p");
-			var a = document.createElement("a");
-			a.href = "#";
-			$(a).addEvent('click', function() {
-				create_question();
-				delete_question(this.parentNode.parentNode);
-				return false;
-			});
-			a.appendChild(document.createTextNode("Färdig"));
-			link_p.appendChild(a);
-		
-			var select = p.appendChild(select);
-			p.appendChild(document.createElement("br"));
-		
-		
-		
-			form.appendChild(p);
-		
-			var form = edit_div.appendChild(form);
-		
-			var settings = document.createElement("div");
-			settings.className = "settings";
-		
-			form.appendChild(settings);
-		
-			form.appendChild(link_p);
-		
-			var delete_link = document.createElement("a");
-			delete_link.setAttribute("href", "#");
-			delete_link.onclick = function() { delete_question(this.parentNode); return false; };
-			delete_link.appendChild(document.createTextNode("Ta bort frågan"));
-			edit_div.appendChild(delete_link);
-			edit_div.appendChild(document.createElement("br"));
-		
-			var close_link = document.createElement("a");
-			close_link.onclick = function(){closeEditBox(element, edit_event); return false; };
-			close_link.setAttribute("href","#");
-			close_link.appendChild(document.createTextNode("Stäng"));
-			edit_div.appendChild(close_link);
-		
-			element.appendChild(edit_div);
-			//addQuestion.parentNode.insertBefore(edit_div, addQuestion);
-		
-			select.focus();		
+			
 		}
 	}
 }
+
 
 function closeEditBox(element,edit_event) {
 	var edit_div = $(element).getElement('.edit');
