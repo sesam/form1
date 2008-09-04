@@ -670,7 +670,7 @@ if (location.href.match(/form/)) {
 			f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 			f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 			f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-			f.getElements('.question').each( function(elt) {elt.addEvent('click',function(){fetchQuestion(this);}); } );
+			f.getElements('.question').each( function(elt) {elt.addEvent('click',function(){showEditBox(this);}); } );
 			f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){alert("scale");}); } );
 			f.getElements('.scale-group .question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 			//f.getElements('.scale-group .priority .question h5 span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
