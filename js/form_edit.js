@@ -19,6 +19,11 @@ var Answer = function() {
 	var value = null;
 }
 
+/**
+ * ÄNDRA STYLESHEET
+ * 
+ * @param name - namnet på css-stylesheet filen.
+ */
 function switchStyleSheet(name) {
 	if(!window.ie) {
 		var linkTag, linkTitle = "t_" + name;
@@ -47,6 +52,13 @@ function switchStyleSheet(name) {
 	}
 }
 
+/**
+ * Används när man vill att ett textfält ska innehålla text som försvinner vid FOCUS.
+ * 
+ * @param element - textfältet.
+ * @param input_value - vad som ska stå i textfältet.
+ * @param font-color - textens färg när fältet inte är i focus.
+ */
 function setDefaultInputEvents(element, input_value, font_color) {
 	if (element.nodeName.toLowerCase() == "input") {
 		element.style.color = font_color;
@@ -71,6 +83,10 @@ var createQuestion_last = null;
 var createQuestion_type = null;
 var createQuestion_on = false;
 
+/**
+ * Visar formuläret för att skapa nya frågor.
+ *
+ */
 function new_question() {
 	if (!createQuestion_on) {
 		var div_question = new Element('div', {
@@ -98,7 +114,6 @@ function new_question() {
 				option.style.color = "#000";
 			}
 			
-			//option.setAttribute("onclick", "show_spec('"+select_values[i]+"');");
 			option.appendChild(document.createTextNode(select_values[i]));
 			select.appendChild(option);
 		}
@@ -113,9 +128,7 @@ function new_question() {
 		var link_p = document.createElement("p");
 		var a = document.createElement("a");
 		a.href = "#";
-		//a.setAttribute("onclick", "create_question(); delete_question(this.parentNode.parentNode); return false;");
 		$(a).addEvent('click', function() {
-			//create_question();
 			alert($(this).getParent(".question"));
 			question("create", document.getElementById('createQuestion'));
 			delete_question(this.parentNode.parentNode);
@@ -150,20 +163,22 @@ function new_question() {
 		
 	}
 	else {
-		//create_question();
 		question("create", null)
 	}
 }
 
-/* Gräver sig ner i question-div:en för att leta rätt på inputs-fält och textareas. Den använder både för att hämta inputs från formuläret
- 	men även inputs från editboxen/skapa-nya-frågor-boxen  
-
-TODO: Just nu är det något fel när man försöker hämta inputs från editboxen */
+/**
+ * HÄMTAR FORM-FÄLTEN FRÅN EN FRÅGA/EDITBOX.
+ *
+ * @param question - Frågan som form-fält ska hämtas ifrån.
+ * @param getClass - Används om man vill hämta form-fält från ett annat klassnamn i frågan, som standard hämtas fälten från '.answer'.
+ * @return en array som innehåller svarsobject (answer).
+ */
 function fetch(question, getClass) {
 	if (!getClass) { getClass = ""; }
 	var parent_classname = question.parentNode.className;
 	
-	console.info("fetching");
+	console.info("fetching", question.id);
 	var answers = new Array();
 	var nodes;
 	if (getClass) { nodes = $(question).getElement(getClass).childNodes[0].childNodes; }
@@ -179,9 +194,8 @@ function fetch(question, getClass) {
 						answer = new Answer();
 						var label = li[x].getElementsByTagName('label')[0];
 						var input = li[x].getElementsByTagName('input')[0];
-						
-						if (parent_classname == "column-group") { label = label.getElementsByTagName('span')[0]; }
-						
+
+						if ((parent_classname == "column-group" || $(question).hasClass("big-text")) && !getClass) { label = label.getElementsByTagName('span')[0]; }
 						if(!input.questionType) {
 							switch (input.className) {
 								case "r": answer.questionType = "radio"; break;
@@ -202,6 +216,10 @@ function fetch(question, getClass) {
 						}
 
 						if (label != null) { answer.label = getFirstTextNode(label); }
+						if (getClass) {
+							answer.label = input.value;
+							answer.questionType = input.questionType;
+						}
 						
 						if (answer.questionType == "checkbox_line" || answer.questionType == "radio_line" || answer.questionType == "textline") { answer.value = input.value; }
 						
@@ -258,7 +276,7 @@ function fetch(question, getClass) {
 }
 
 
-/* SKAPA OCH REDIGERA/UPPDATERA EN FRÅGA.
+/** SKAPA OCH REDIGERA/UPPDATERA EN FRÅGA.
  *
  * @param action - edit/create.
  * @param question - frågan som ska redigeras/uppdaters. Obligatorisk vid redigering/uppdatering.
@@ -266,6 +284,7 @@ function fetch(question, getClass) {
  * exempel: question("edit", this); question("create", this);
  */
 function question(action, question) {
+	console.group(action, question.id);
 	var oddIratior = false;
 		
 	/* Kontrollerar att 'action' parametern är rätt */
@@ -277,11 +296,11 @@ function question(action, question) {
 	 *	For-loopen kan fyllas på om fler fält ska hittas.
 	 */
 	var answers;
-	if (action.toLowerCase() == "edit") { answers = fetch(question, "." + action); }
+	if (action.toLowerCase() == "edit" || action.toLowerCase() == "create") { answers = fetch(question, "." + action); }
 	else { answers = fetch(question); }
 	
 	if (answers == null) { console.error("Misslyckades att hämta svarsalternativen från frågan"); }	
-	console.info("Hittade totalt " + answers.length + " st input-element (svarsalternativ).");
+	console.info("Question => Hittade totalt " + answers.length + " st input-element (svarsalternativ).");
 	
 	var need_to_prepare_form = false;	//Om prepareForm() måste köras
 	var active_ul = null;
@@ -301,7 +320,7 @@ function question(action, question) {
 				case "checkbox": input.className = "cb"; break;
 				default: input.className = answer.questionType;
 			}
-			
+						
 			/* Omvandlar alla checkbox_line svarsalternativ till input-typen: 'text'. */
 			if(answer.questionType == "checkbox_line") {
 				input.type = "text";
@@ -317,7 +336,11 @@ function question(action, question) {
 			} else {
 				input.type = answer.questionType;
 				label.appendChild(input);
-				label.appendChild(document.createTextNode(answer.label));
+				if (question.parentNode.className == "column-group" || $(question).hasClass("big-text")) {
+					var span = document.createElement("span");
+					span.appendChild(document.createTextNode(answer.label));
+					label.appendChild(span);
+				} else { label.appendChild(document.createTextNode(answer.label)); }
 				li.appendChild(label);
 			}
 						
@@ -382,7 +405,7 @@ function question(action, question) {
 		console.group("Edit " + question.id);
 		console.info("Redigerade: ", question);
 		console.groupEnd();
-		var old_answer = $(question).getElement(".answer");	
+		var old_answer = $(question).getElement(".answer");
 		question.removeChild(old_answer);
 		//question.getElementsByTagName('h5')[0].appendChild(answer_div);
 		insertAfter(answer_div, question.getElementsByTagName('h5')[0]);
@@ -390,6 +413,8 @@ function question(action, question) {
 		if (need_to_prepare_form) { prepareForm(); }
 		FancyForm.start(0, { onSelect: fapp.onSelect } );	
 	}
+	
+	console.groupEnd();
 }
 
 function old_question(action, question) {
@@ -419,14 +444,12 @@ function old_question(action, question) {
 			/* Vi vill bara ha fälten som innehåller någonting. */
 			if (form.elements[count].value != "") {
 				answers.add(form.elements[count]);
-				console.info("Hittade ett " + form.elements[count].questionType + ": ", form.elements[count]);
 				
 			}
 		}
 		else if (form.elements[count].name == "textfield" || form.elements[count].name == "textarea" || form.elements[count].questionType == "text" || form.elements[count].questionType == "textarea") {
 			/* Textfält och textarea får vara tomma */
 			answers.add(form.elements[count]);
-			console.info("Hittade ett " + form.elements[count].questionType + ": ", form.elements[count]);
 		}
 	}	
 	
@@ -440,7 +463,6 @@ function old_question(action, question) {
 	/* Förbereder div:en 'answer' som frågan kommer innehålla. */
 	for (var i = 0; i < answers.length; i++) {
 		var element = answers.get(i);
-		console.info(element);
 		if( element.questionType == "radio" || element.questionType == "checkbox" || element.questionType == "checkbox_line" || element.questionType == "radio_line" ) {
 			var li = document.createElement("li");
 			var label = document.createElement("label");
@@ -543,7 +565,7 @@ function old_question(action, question) {
 
 
 
-/* TAR BORT EN FRÅGA
+/** TAR BORT EN FRÅGA
  *
  * @param question - frågan som ska tas bort.
  */
@@ -557,6 +579,12 @@ function delete_question(question) {
 	FancyForm.start(0, { onSelect: fapp.onSelect } );
 }
 
+
+/**
+ * Visar formulärfält för den valda frågetypen
+ *
+ * @param question_type - vilken typ av fråga det är (checkbox, radio, textfield, textarea, scale);
+ */
 function show_spec(question_type) {
 	var spec = document.getElementById("spec");
 	spec.innerHTML = "";
@@ -572,7 +600,6 @@ function show_spec(question_type) {
 				var p_q = document.createElement("p");
 				p_q.appendChild(input_q);
 				spec.appendChild(p_q);
-				
 				
 				//spec_container.appendChild(spec_checkbox);
 				var input = document.createElement("input");
@@ -755,7 +782,8 @@ function show_spec(question_type) {
 	}
 }
 
-/*
+
+/**
  * TODO: Funktionen ska ta frågan, gå igenom alla inputs, kontrollera att vissa inte är tomma.
  * Sen ska alla inputs få sin questionType-variabel och läggas i en lista som skickas vidare.
  *
@@ -777,7 +805,13 @@ function fetchQuestion(question) {
 }
 
 
+/**
+ * Visar redigeringsrutan för en fråga.
+ *
+ * @param _question - frågan som ska redigeras.
+ */
 function showEditBox(_question) {	
+	if (_question.parentNode.className == "scale-group" || _question.parentNode.className == "scale-group priority") return false;
 	var edit_div = $(_question).getElement('.edit');
 	if (!edit_div) {
 		var answers = fetch(_question);
@@ -798,7 +832,7 @@ function showEditBox(_question) {
 				var li = document.createElement("li");
 				var inputfield = document.createElement("input");
 				inputfield.type = "text";
-				inputfield.value = answer.label;
+				if(answer.label) { inputfield.value = answer.label; }
 				inputfield.questionType = answer.questionType;
 				
 				li.setAttribute("class", answer.questionType);
@@ -886,8 +920,9 @@ function showEditBox(_question) {
 	}
 }
 
-
-
+/**
+ * Stänger redigeringsrutan.
+ */
 function closeEditBox(element,edit_event) {
 	var edit_div = $(element).getElement('.edit');
 	if (edit_div) {

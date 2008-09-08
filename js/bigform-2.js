@@ -57,60 +57,11 @@ function addLoadEvent(func) {
   }
 }
 
-/*
-var List = function() {
-	this.mItems = new Array();
-	this.length = 0;
-		
-	this.add = function(element) {
-		if (element) {
-			this.mItems[this.length] = element;
-			console.info("list add: ",this.length, this.mItems[this.length].label);
-			this.length++;
-		}
-	}
-	
-	this.remove = function(index) {
-		if (0 <= index < this.length ) {
-			var newArray = new Array();
-			var j = 0;
-			for (var i = 0; i < this.length; i++) {
-				if (index != i) {
-					newArray[j] = this.mItems[i];
-					j++;
-				}
-			}
-			this.mItems = newArray;
-			this.length = newArray.length;
-		}
-	}
-	
-	this.get = function(index) {
-		if ((0 <= index) && (index < this.length)) {
-			for(var i=0; i < this.mItems.length; i++) {
-				console.info(": ", this.mItems[i].label); 
-			}
-			return this.mItems[index];
-		}
-		else { console.error(index, " är inte korrekt.");}
-	}
-	
-	this.toString = function() {
-		return this.mItems.toString();
-	}
-}
-*/
-
 function getFirstTextNode(x) {
 	var children = x.childNodes;
 	for (i=0;i<children.length;i++) { 
 		if (children[i].nodeType==3) return children[i].data;
 	}
-}
-
-function hasClassName(tempClassNames, wantedClassName) {
-	var re = new RegExp('\b' + wantedClassName + '\b');
-	return tempClassNames.match(re);
 }
 
 function insertAfter(new_element, target_element) {
@@ -178,7 +129,7 @@ function saveForm() {
 var autoSave_ = null;
 
 /* 
- * @param run true aktiverar sparning i tidsintervall
+ * @param run - true aktiverar sparning i tidsintervall
  */
 function autoSave(run) {
 	if (run == true) { autoSave_ = setInterval("saveForm()", 60 * 1000); }
@@ -198,12 +149,13 @@ var formApplication = function() {
 	if ('welcome'== document.location.search) document.location.search='';
 	
 	// Debug - Skriver ut debug-information i <textarea>
+	/*
 	if (document.getElementsByTagName('textarea')) {
 		this.ta=document.getElementsByTagName('textarea');
-	}
-	
+	}*/
+	/*
 	if (this.ta) this.ta=this.ta[0];
-
+	*/
 	this.logga = function(x) { /*if (this.ta) this.ta.value += x + '\n';*/ console.info(x); }
 
 	this.showanswers = function() {
@@ -670,7 +622,7 @@ if (location.href.match(/form/)) {
 			f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 			f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 			f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-			f.getElements('.question').each( function(elt) {elt.addEvent('click',function(){showEditBox(this);}); } );
+			f.getElements('.question').each(function(elt) {elt.addEvent('click',function(){ showEditBox(this);});});
 			f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){alert("scale");}); } );
 			f.getElements('.scale-group .question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
 			//f.getElements('.scale-group .priority .question h5 span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
