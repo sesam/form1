@@ -157,7 +157,7 @@ div.question ul {
 	margin : 0 50px 0 0;
 	padding : 0; }
 
-.question li {
+.question li, .scale-group .edit ul li {
 	float: left;
 	margin-right: 2em;
 	margin-top: 0.5em; }
@@ -265,7 +265,7 @@ div.question ul {
 	top: -2em;
 	left: 0; }
 
-.v {
+.answer .v {
 	margin-left: 24px !important;
 	margin-right: -12px !important;
 	}
@@ -611,6 +611,7 @@ body.print .scale-group.priority .header { background-color: blue; }
 .edit {
 	border-top: 1px solid #D1D1D1;
 	clear: left;
+	width: 100%;
 }
 
 .edit a span.delete {
@@ -628,6 +629,21 @@ div.question .edit ul {
 .scale-group .question .edit ul li {
 	float: none;
 	width: auto;
+}
+
+.scale-group .edit {
+	float: left;
+}
+
+.scale-group .menu {
+	float: left;
+}
+.scale-group .menu li {
+	clear: none;
+}
+
+.scale-group .menu li, .scale-group .menu .ul {
+	float: left;
 }
 
 .edit li {
@@ -650,10 +666,17 @@ div.question .edit ul {
 	position: absolute;
 	left: -9999px;
 }
-.question .edit ul input {
+
+.question .edit ul input, .scale-group .edit ul { width: 100%; }
+.question .edit ul input, .scale-group .edit ul li { width: 80%;}
+.question .edit ul input, .scale-group .edit .menu ul { width: auto;}
+.question .edit ul input, .scale-group .edit .menu li { width: auto;}
+
+.question .edit ul input, .scale-group .edit ul input {
 	float: left;
 	margin-right: 10px;
-} 
+	width: 90%;
+}
 
 #editlink {
 	width: 80px;
@@ -667,3 +690,5 @@ div.question .edit ul {
 .deactive { background-position: 0px 0px !important;}
 
 .active { background-position: 0px -31px !important; }
+
+#addQuestion { clear: left; }

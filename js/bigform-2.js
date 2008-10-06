@@ -1,7 +1,86 @@
 ﻿var fapp = { onSelect: function(){} };
 var pageNav;
 var edit_mode = false;
+var orginal_html = document.getElementsByTagName('html')[0].innerHTML;
 
+
+function save() {
+	var textarea_div = document.createElement("div");
+	textarea_div.id = "bygg";
+	var textarea_form = document.createElement("form");
+	textarea_form.setAttribute("name", "textareaForm");
+	textarea_form.setAttribute("method", "post");
+	textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/form_spara.asp");
+	var textarea = document.createElement("textarea");
+	textarea.setAttribute("cols", "80%");
+	textarea.setAttribute("rows", "2");
+	textarea.setAttribute("name", "html");
+	textarea.style.display = "none";
+	var textarea_link = document.createElement("input");
+	
+	var editlink = document.getElementById("editlink");
+	var editlink_parent = editlink.parentNode;
+	var addQuestion = document.getElementById("addQuestion");
+	var addQuestion_parent = addQuestion.parentNode;
+	editlink_parent.removeChild(editlink);
+
+	
+	
+	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
+	
+	var inner_html = document.getElementsByTagName("html")[0].innerHTML;
+	var pat = /style="position: absolute; left: -9999px;" /g;
+	inner_html = inner_html.replace(/style=\"position: absolute; left: -9999px;\" /g, "");
+	
+	inner_html = inner_html.replace(/ class=\"unselected\"/g, "");
+	inner_html = inner_html.replace(/ class=\"selected\"/g, "");
+	inner_html = inner_html.replace(/ class=\"checked\"/g, "");
+	inner_html = inner_html.replace(/ class=\"unchecked\"/g, "");
+	inner_html = inner_html.replace(/<li><label class=\"textfield\">/g, '<li class="checkedtextfield textfield"><label class="textfield">');	
+	inner_html = inner_html.replace(/<div style=\"display: block;\"/g, '<div');
+	inner_html = inner_html.replace(/<div style=\"display: none;\"/g, '<div');
+	
+	orginal_html = orginal_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
+	orginal_html = orginal_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
+	orginal_html = orginal_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
+	orginal_html = orginal_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
+	orginal_html = orginal_html.replace(/.*<\/body>/, "<\/body>\n");
+	
+	inner_html = inner_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
+	inner_html = inner_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
+	inner_html = inner_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
+	inner_html = inner_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
+	inner_html = inner_html.replace(/.*<\/body>/, "<\/body>\n");
+	
+	inner_html= inner_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
+	inner_html= inner_html.replace(/^[ \t]*[\r\n]+/g, '')
+	orginal_html= orginal_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
+	orginal_html= orginal_html.replace(/^[ \t]*[\r\n]+/g, '')
+	
+
+	inner_html = inner_html.replace(/<script.+<\/script>\r*\n*/g, "");
+	orginal_html = orginal_html.replace(/<script.+<\/script>\r*/g, "");
+	alert(orginal_html == inner_html);
+	textarea.value = inner_html;
+	
+	//fapp.logga(inner_html);
+	//textarea.value = orginal_html;
+	
+	textarea_link.type = "submit";
+	textarea_link.value = "Spara";
+	
+	
+	textarea_form.appendChild(textarea);
+	textarea_form.appendChild(textarea_link);
+	textarea_div.appendChild(textarea_form);
+	
+	editlink_parent.appendChild(editlink);
+	addQuestion_parent.appendChild(addQuestion);
+	
+	
+	$("addQuestion").appendChild(textarea_div);
+	document.textareaForm.submit();
+}
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
 // Though it seems they are missing a way to populate cache without evalig the contents of the .js file.
 
@@ -16,7 +95,6 @@ function init() {
 	fapp = new formApplication();
 	pageNav = fapp; // tas bort först efter att alla gamla form*.html - filer har makulerats
 	FancyForm.onSelect = fapp.onSelect; //whee hoo!! monkeypatching ?
-
 	
 	fapp.lang = document.getElementsByTagName('html')[0].lang;
 	if ('sv'==fapp.lang) {
@@ -80,6 +158,7 @@ function prepareForm(){
 			var textField = listItem.getElementsByTagName("input")[0];
 			var CHECK = "checked";
 			var UNCHECK = "unchecked";
+			listItem.checkedtextfield = true;
 			
 			listItem.className = UNCHECK;
 
@@ -137,6 +216,47 @@ function autoSave(run) {
 }
 
 
+function fetch_questions() {
+	var questions = document.getElements(".question");
+	var strings = new Array();
+	
+	//console.group("To: bygg_statistik.asp");
+	for (var i=0; i<questions.length; i++) {
+		var question_text = $(questions[i]).getElement(".qtext").innerHTML;
+		var question_type = "-";
+		var question_have_other = "";
+		if(!questions[i].parentNode.hasClass("scale-group")) {
+			var labels = $(questions[i]).getElements(".answer label");
+			
+			for (var x=0; x<labels.length;x++) {
+				var children = labels[x].childNodes;
+				for (var y=0; y<children.length;y++) {
+					if(children[y].nodeName == "SPAN") {
+						question_text += "|" + children[y].innerHTML;
+					} else if (children[y].nodeType == 3 && children[y].data != " ") {
+						question_text += "|" + children[y].data;
+					}
+				}
+				if(labels[x].parentNode.checkedtextfield) { question_have_other = "last-is-textfield"; }
+			}
+				
+		var inputs = $(questions[i]).getElements(".answer input");
+		if(inputs[0]) {
+			if(inputs[0].hasClass("r")) { question_type = "-5"; }
+			else if(inputs[0].hasClass("cb")) { question_type = "8"; }
+		}
+		if(questions[i].hasClass("big-text")) { question_type = "-1"; }
+		} else { question_type = "0"; }
+		
+		var string = questions[i].id + "," + question_type + ",#" + question_text + "#," + questions[i].className + " " + question_have_other + "\n\n";
+		console.info(string);
+		strings.push(string);
+	}
+	//console.groupEnd();
+	return strings;
+}
+
+
 var formApplication = function() {
 	this.onpage = 1;
 	this.currentPageDiv = document.getElementById('page-1');
@@ -144,7 +264,12 @@ var formApplication = function() {
 	this.data = document.location.search;
 	this.hasAddedHighlights = Array();
 	this.missedQuestions = new Hash();
-
+	this.exit = 'exit';
+	this.tack = 'tack';
+	this.logout_close = 'logout_close.asp';
+	this.yellow = 'yellow';
+	this.blue= 'blue';
+	
 	//if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
 	if ('welcome'== document.location.search) document.location.search='';
 	
@@ -156,7 +281,11 @@ var formApplication = function() {
 	/*
 	if (this.ta) this.ta=this.ta[0];
 	*/
-	this.logga = function(x) { /*if (this.ta) this.ta.value += x + '\n';*/ console.info(x); }
+	this.logga = function(x) {
+		/*if (this.ta) this.ta.value += x + '\n';*/ /*console.info(x);*/
+		try{/*console.info(x);*/}
+		catch(e){}
+	}
 
 	this.showanswers = function() {
   		var frm=document.forms[0];
@@ -263,6 +392,53 @@ var formApplication = function() {
 			a.setAttribute("onclick", "new_question(); return false;");
 			a.appendChild(document.createTextNode("Lägg till fråga"));
 			addQuestion.appendChild(a);
+			
+			addQuestion.appendChild(document.createTextNode(" "));
+			
+			var aa = document.createElement("a");
+			aa.setAttribute("href", "#statistik");
+			aa.appendChild(document.createTextNode("Bygg resultattexter"));
+			aa.onclick = function() {
+				var textarea_div = document.createElement("div");
+				textarea_div.id = "statistik";
+				var textarea_form = document.createElement("form");
+				textarea_form.setAttribute("method", "post");
+				textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/bygg_statistik.asp");
+				var textarea = document.createElement("textarea");
+				textarea.setAttribute("cols", "80%");
+				textarea.setAttribute("rows", "2");
+				textarea.setAttribute("name", "String");
+				textarea.style.display = "none";
+				var textarea_link = document.createElement("input");
+				var fq = fetch_questions();
+				for(var i=0; i<fq.length; i++) { textarea.value += fq[i];}
+				
+				textarea_link.type = "submit";
+				textarea_link.value = "Spara resultattexter";
+				
+				textarea_form.appendChild(textarea);
+				textarea_form.appendChild(textarea_link);
+				textarea_div.appendChild(textarea_form);
+				
+				$("addQuestion").appendChild(textarea_div);
+				
+				//console.info(document.getElementsByTagName("html")[0].innerHTML);
+				return false;
+			}
+			
+			addQuestion.appendChild(aa);
+			
+			var spara = document.createElement("a");
+			spara.setAttribute("href", "#bygg");
+			spara.appendChild(document.createTextNode("Spara Formulär"));
+			spara.onclick = function() {
+				save();
+				
+				return false;
+			}
+			
+			addQuestion.appendChild(spara);
+			
 		}
 		
 		if (edit_mode) { this.currentPageDiv.appendChild(addQuestion); } //
@@ -603,39 +779,5 @@ if (location.href.match(/form/)) {
 	addLoadEvent(function() {FancyForm.start(0, { onSelect: fapp.onSelect } ) } );
 	addLoadEvent(function() {init();});
 	
-	/* Aktivera inlineEdit2 via klick i #header */
-	
-	var statusbar = $('statusbar');
-	var edit_link = document.createElement('div');
-	edit_link.id = "editlink";
-	edit_link.className = "deactive";
-	
-	//var h = $('header');
-	//h.addEvent('click', function(a) { 
-	$(edit_link).addEvent('click', function(a) {
-		if(this.className == "deactive") { // Knappen var "av", så knappen slås på.
-			edit_mode = true;
-			fapp.showEditLink();
-			this.className = "active";			
-			var f = $('form_');	
-			f.getElements('label').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-			f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-			f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-			f.getElements('p').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-			f.getElements('.question').each(function(elt) {elt.addEvent('click',function(){ showEditBox(this);});});
-			f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){alert("scale");}); } );
-			f.getElements('.scale-group .question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-			//f.getElements('.scale-group .priority .question h5 span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
-		} else {
-			edit_mode = false;
-			this.className = "deactive";
-			fapp.removeEditLink();
-			
-			var edit_boxes = document.getElements('.edit');
-			edit_boxes.each(function(elt) { elt.parentNode.removeChild(elt); });
-			
-			// Här måste alla inlineEdit tas bort från click-event
-		}
-	});
-	statusbar.appendChild(edit_link);
 }
+

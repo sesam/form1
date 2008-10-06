@@ -65,6 +65,7 @@ var pageNavigation = function() {
 	this.onpage = 1;
 	this.maxPages = 15;
 	this.data = document.location.search;
+
 	if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
 	if ('welcome'== document.location.search) document.location.search='';
 	
