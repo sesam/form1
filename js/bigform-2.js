@@ -439,6 +439,11 @@ var formApplication = function() {
 			
 			addQuestion.appendChild(spara);
 			
+			var manual = document.createElement("a");
+			manual.href = "#";
+			manual.appendChild(document.createTextNode("Om frågeredigering"));
+			manual.onclick = function() { alert("Hjälptext kommer senare"); }
+			addQuestion.appendChild(manual);
 		}
 		
 		if (edit_mode) { this.currentPageDiv.appendChild(addQuestion); } //

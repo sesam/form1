@@ -248,7 +248,7 @@ function showGroupEditBox(group) {
 		
 		var save_li = document.createElement("li");
 		var save_a = document.createElement("a");
-		save_a.appendChild(document.createTextNode("Svara"));
+		save_a.appendChild(document.createTextNode("Spara"));
 		save_li.appendChild(save_a);
 		menu.appendChild(save_li);
 		save_a.onclick = function() { _group("edit", this.parentNode.parentNode.parentNode.parentNode.parentNode); return false; };
@@ -256,7 +256,7 @@ function showGroupEditBox(group) {
 		
 		var remove_li = document.createElement("li");
 		var remove_a = document.createElement("a");
-		remove_a.appendChild(document.createTextNode("Tabort grupp"));
+		remove_a.appendChild(document.createTextNode("Ta bort grupp"));
 		remove_li.appendChild(remove_a);
 		menu.appendChild(remove_li);
 		remove_a.onclick = function() { delete_question(this.parentNode.parentNode.parentNode.parentNode.parentNode); return false; };
