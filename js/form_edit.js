@@ -42,7 +42,7 @@ function toggleEditMode() {
 		f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );
 		//f.getElements('p').each( function(elt) { if(elt.id != "addQuestion") { elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit() }); } } );
 		f.getElements('.question').each(function(elt) {elt.addEvent('click',function(){ if(edit_mode) showEditBox(this);});});
-		f.getElements('.text').each(function(elt) {elt.addEvent('click',function(){ if(edit_mode) edit_text(this);});});
+		f.getElements('.text').each(function(elt) {elt.addEvent('dblclick',function(){ if(edit_mode) edit_text(this);});});
 		f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
 		f.getElements('.scale-group .question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('.scale-group .question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );
@@ -952,8 +952,151 @@ function old_question(action, question) {
 		}
 	}
 	
-	
-	if (action.toLowerCase() == "create" && question_text != null && question_text.value != "") {
+	if(action.toLowerCase() == "create" && createQuestion_type == "scale") {
+		// En Scale-group skapas.
+		
+		var scale_group = document.createElement("div");
+		scale_group.className="scale-group";
+		
+		//headline
+		var headline = document.createElement("div");
+		headline.className = "headline";
+		
+		var h4 = document.createElement("h4");
+		h4.appendChild(document.createTextNode(question_text.value)); //form.question_text.value
+		var an = document.createElement("div");
+		an.className="answer";
+		
+		var gr = document.createElement("div");
+		gr.className="grade";
+		
+		var h4_betyg = document.createElement("h4");
+		h4_betyg.appendChild(document.createTextNode("Betyg"));
+		
+		var ul = document.createElement("ul");
+		var li = document.createElement("li");
+		var span = document.createElement("span").appendChild(document.createTextNode("1"));
+		li.appendChild(span);
+		ul.appendChild(li);
+		
+		li = document.createElement("li");
+		li.appendChild(document.createTextNode("2"));
+		ul.appendChild(li);
+		
+		li = document.createElement("li");
+		span = document.createElement("span").appendChild(document.createTextNode("3"));
+		li.appendChild(span);
+		ul.appendChild(li);
+		
+		li = document.createElement("li");
+		li.appendChild(document.createTextNode("4"));
+		ul.appendChild(li);
+		
+		li = document.createElement("li");
+		span = document.createElement("span").appendChild(document.createTextNode("5"));
+		li.appendChild(span);
+		ul.appendChild(li);
+		
+		li = document.createElement("li");
+		span = document.createElement("span").appendChild(document.createTextNode("Vet ej"));
+		li.className = "v";
+		li.appendChild(span);
+		ul.appendChild(li);
+		
+		headline.appendChild(h4);
+		gr.appendChild(h4_betyg);
+		gr.appendChild(ul)
+		an.appendChild(gr);
+		headline.appendChild(an);
+		
+		scale_group.appendChild(headline);
+		
+		h4.onclick = function() { this.inlineEdit() };	
+		
+		// slut på headline
+		
+		
+		var fetch = true;
+		var item_count = 0;
+		//var radios = $(document).getElements('input[name=new_scale_radio]');
+		//var radios = document.createForm.new_scale_radio;
+		while (fetch == true) {
+			//if(radios != null && radios.item(item_count) != null) {
+			if(answers != null && answers[item_count] != null) {
+				var question = new Element('div', { 'class': 'question' });
+				
+				if(oddIratior) {
+					question.addClass("odd");
+					oddIratior = false;
+				}
+				else {
+					oddIratior = true;
+				}
+				
+				if(item_count == 0) { question.addClass("first"); }
+				if(answers[item_count + 1] == null) { question.addClass("last"); }
+				
+				var h5 = document.createElement("h5");
+
+				var number = document.createElement("span");
+				number.className = "number";
+				
+				number.appendChild(document.createTextNode("0")); // Temporär.
+				
+				var qtxt = document.createElement("span");
+				qtxt.className = "qtext";
+				qtxt.appendChild( document.createTextNode(answers[item_count].value) ); //radios.item(item_count).value
+				h5.appendChild(number);
+				
+				h5.appendChild(qtxt);
+				
+				number.onclick = function() { this.inlineEdit(); }
+				qtxt.onclick = function() { this.inlineEdit(); }
+				
+				
+				question.appendChild(h5);
+				
+				var answer = document.createElement("div");
+				answer.className = "answer";
+
+				var grade = document.createElement("ul");
+				grade.className = "grade";
+
+				for (var i=0; i < 6; i++) {
+					var li = document.createElement("li");
+					var label = document.createElement("label");
+					var input = document.createElement("input");
+					input.type = "radio";
+					var span = document.createElement("span");
+					if (i == 5) { // 6:e
+						li.className = "v";
+						span.appendChild(document.createTextNode("Kan ej ta ställning") );
+					} else {
+						span.appendChild(document.createTextNode(i) );
+					}
+
+					label.appendChild(input);
+					label.appendChild(span);
+					li.appendChild(label);
+					grade.appendChild(li);
+				}
+
+				answer.appendChild(grade);
+				question.appendChild(answer);
+				scale_group.appendChild(question);
+				
+				item_count++;
+			} else {
+				fetch = false;
+			}
+		}
+		//$(fapp.currentPageDiv).getLast(".group").appendChild(scale_group);
+		$("createQuestion").getPrevious(".group").appendChild(scale_group);
+		headline.onclick = function() { showGroupEditBox( this.parentNode) };
+		
+		
+	}
+	else if (action.toLowerCase() == "create" && question_text != null && question_text.value != "") {
 		//console.info("[action == create]");
 		
 		var div_question = new Element('div', { 'class': 'question clearfix' });
@@ -1215,6 +1358,7 @@ function show_spec(question_type) {
 				var input = document.createElement("input");
 				input.type = "text";
 				input.setAttribute("name", "new_scale_radio")
+				input.questionType = "scale";
 
 				var next_input = document.createElement("input");
 				next_input.type = "text";
