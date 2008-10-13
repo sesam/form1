@@ -33,6 +33,9 @@ var inlineEdit = new Class({
 		this.inputBox.removeEvents();
 		this.newContent = this.inputBox.value.trim().replace(new RegExp("\n", "gi"), "<br>");
 		this.editting.setHTML(this.newContent);
+		if(this.inputBox.value == null || this.inputBox.value == "") {
+			this.editting.parentNode.removeChild(this.editting);
+		}
 		this.fireEvent('onComplete', [this.editting,this.oldContent,this.newContent]);
 	},
 	setAllStyles: function(prevel,el){

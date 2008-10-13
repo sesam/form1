@@ -14,7 +14,9 @@
  * name:									Namnet på inputfältet.
  */
 
+
 document.onkeypress = keyHandler;
+document.onmousedown = mouseHandler;
 
 /* Aktivera inlineEdit2 via klick i #header */
 var statusbar = $('statusbar');
@@ -38,7 +40,7 @@ function toggleEditMode() {
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );
-		f.getElements('p').each( function(elt) { if(elt.id != "addQuestion") { elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit() }); } } );
+		//f.getElements('p').each( function(elt) { if(elt.id != "addQuestion") { elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit() }); } } );
 		f.getElements('.question').each(function(elt) {elt.addEvent('click',function(){ if(edit_mode) showEditBox(this);});});
 		f.getElements('.text').each(function(elt) {elt.addEvent('click',function(){ if(edit_mode) edit_text(this);});});
 		f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
@@ -227,6 +229,7 @@ function showGroupEditBox(group) {
 	var edit_div = $(group).getElement('.edit');
 	if (!edit_div) {
 		edit_div = document.createElement("div");
+		var form = document.createElement("form");
 		edit_div.className = "edit";
 		var menu_div = document.createElement("div");
 		menu_div.id = "menu";
@@ -248,7 +251,7 @@ function showGroupEditBox(group) {
 		save_a.appendChild(document.createTextNode("Svara"));
 		save_li.appendChild(save_a);
 		menu.appendChild(save_li);
-		save_a.onclick = function() { alert("save"); return false; };
+		save_a.onclick = function() { _group("edit", this.parentNode.parentNode.parentNode.parentNode.parentNode); return false; };
 		save_a.href = "#";
 		
 		var remove_li = document.createElement("li");
@@ -256,17 +259,19 @@ function showGroupEditBox(group) {
 		remove_a.appendChild(document.createTextNode("Tabort grupp"));
 		remove_li.appendChild(remove_a);
 		menu.appendChild(remove_li);
-		remove_a.onclick = function() { delete_question(this.parentNode.parentNode.parentNode.parentNode); return false; };
+		remove_a.onclick = function() { delete_question(this.parentNode.parentNode.parentNode.parentNode.parentNode); return false; };
 		remove_a.href = "#";
 		
 		var input = document.createElement("input");
 		input.type = "text";
+		input.name = "headline";
 		var input_label = document.createTextNode("Rubrik ");
 		var headline = group.getElement(".headline h4");
-		if(headline) { input.value = headline.innerHTML; }
+		if(headline && headline.parentNode.className != "grade") { input.value = headline.innerHTML; }
 
 		
 		var scale = document.createElement("select");
+		scale.name = "scale";
 
 		var likert4 = document.createElement("option");
 		var likert5 = document.createElement("option");
@@ -286,16 +291,18 @@ function showGroupEditBox(group) {
 		
 		var v = document.createElement("input");
 		v.type = "checkbox";
+		v.name = "vetej";
 		var label_v = document.createElement("label");
 		label_v.innerHTML = "Visa <strong>Vet ej</strong>";
 		if(group.className.match("v")) { v.checked = "checked"; }
 		
 		var p = document.createElement("input");
 		p.type = "checkbox";
+		p.name = "prio";
 		var label_p = document.createElement("label");
 		label_p.innerHTML = "Visa <strong>Prioritet</strong>";
 		if(group.className.match("priority")) {p.checked = "checked"; }
-		
+		/*
 		edit_div.appendChild(menu_div);
 		edit_div.appendChild(input_label);
 		edit_div.appendChild(input);
@@ -304,6 +311,16 @@ function showGroupEditBox(group) {
 		edit_div.appendChild(label_v);
 		edit_div.appendChild(p);
 		edit_div.appendChild(label_p);
+		*/
+		
+		form.appendChild(menu_div);
+		form.appendChild(input_label);
+		form.appendChild(input);
+		form.appendChild(scale);
+		form.appendChild(v);
+		form.appendChild(label_v);
+		form.appendChild(p);
+		form.appendChild(label_p);
 		
 		
 		var questions_ul = document.createElement("ul");
@@ -312,6 +329,8 @@ function showGroupEditBox(group) {
 		for (var i=0;i<questions.length; i++) {
 			var questions_li = document.createElement("li");
 			var question_input = document.createElement("input");
+			question_input.name = "question_text";
+			
 			question_input.type = "text";
 			question_input.value = $(questions[i]).getElement(".qtext").innerHTML;
 			
@@ -336,12 +355,14 @@ function showGroupEditBox(group) {
 		next_li.className = "radio";
 		var next_input = document.createElement("input");
 		next_input.type = "text";
+		next_input.name = "question_text";
 		next_input.className = "disable";
 		next_input.onclick = function() {
 			this.className = "";
 			var li = document.createElement("li");
 			li.className = "radio";
 			var new_input = document.createElement("input");
+			new_input.name = "question_text";
 			new_input.type = "text";
 			new_input.className = "disable";
 			new_input.onclick = this.onclick;
@@ -369,7 +390,9 @@ function showGroupEditBox(group) {
 		next_li.appendChild(next_input);
 		questions_ul.appendChild(next_li);
 		
-		edit_div.appendChild(questions_ul);
+		//edit_div.appendChild(questions_ul);
+		form.appendChild(questions_ul);
+		edit_div.appendChild(form);
 		
 		group.appendChild(edit_div);
 	}
@@ -377,8 +400,207 @@ function showGroupEditBox(group) {
 /*
  * Liknar question(action, question), fast används vid scale-group.
  */
-function group(action, group) {
+function _group(action, group) {
+	var form = null;
+
+	/* Kontrollerar att 'action' parametern är rätt */
+	if (action.toLowerCase() != "create" && action.toLowerCase() != "edit") {
+		alert("[question(action, question)]: kan inte utföra '" + action + "', du kanske menade 'create' eller 'edit'?");
+	}
 	
+	form = group.getElementsByTagName("form")[0];
+
+	if (!form) { alert("[_group(action, group)]: hittade inget formulär att hämta från."); }
+		
+	/*	Loopar igenom formuläret för att leta efter ett fält med class="question_text".
+	 *	For-loopen kan fyllas på om fler fält ska hittas.
+	 */
+	var _headline = null;
+	var _scale = null;
+	var _vetej = false;
+	var _prio = false;
+	var _answers = new Array();
+	for (var count = 0; count < form.elements.length; count++) {
+		if (form.elements[count].name == "headline") {
+			_headline = form.elements[count].value;
+		}
+		else if (form.elements[count].name == "scale") {
+			var options = form.elements[count].getElementsByTagName("option");
+			for (var i=0; i < options.length; i++) {
+				if(options[i].selected) { _scale = options[i].value; }
+			}
+		}
+		else if (form.elements[count].name == "vetej" && form.elements[count].checked) { _vetej = true; }
+		else if (form.elements[count].name == "prio" && form.elements[count].checked) { _prio = true; }
+		else if (form.elements[count].name == "question_text") {
+			/* Vi vill bara ha fälten som innehåller någonting. */
+			if (form.elements[count].value != "") { _answers.push(form.elements[count]); }		
+		}
+	}
+	
+	console.info("Headline: ", _headline);
+	console.info("Scale: ", _scale);
+	console.info("vetej: ", _vetej);
+	console.info("prio: ", _prio);
+	console.info("answers.length: ", _answers.length);
+	
+	var scale_group = $(group).getParent();
+
+	if(_vetej) {
+		if(!scale_group.hasClass("v")) { scale_group.addClass("v"); }
+	}
+	else { scale_group.removeClass("v"); }
+	
+	if(_prio) {
+		if(!scale_group.hasClass("priority")) { scale_group.addClass("priority"); }
+	}
+	else { scale_group.removeClass("priority"); }
+	
+	var headline_div = $(scale_group).getElement(".headline");
+
+	//alert(headline_div.childNodes[0].nodeName);
+	console.info(headline_div.childNodes[0], headline_div.childNodes[0].nodeType);
+	
+	var childNode = headline_div.childNodes[0]
+	if(childNode.nodeType == 3) { childNode = headline_div.childNodes[1]; }
+	if( (childNode.nodeName.toLowerCase() == "h4" && (_headline == "" || _headline == null)) ) {
+		// finns en rubrik och _headline innehåller inget.
+		// ta bort h4 elementet
+		childNode.parentNode.removeChild(childNode);
+		//alert("tarbort");
+	}
+	else if ( (childNode.nodeName.toLowerCase() != "h4" && (_headline != "" || _headline != null)) ) {
+		// finns ingen rubrik men _headline innehåller något. Vi behöver en h4!
+		// skapa ett h4 element med _headlines innehåll
+		var h4 = document.createElement("h4");
+		h4.innerHTML = _headline;
+		headline_div.insertBefore(h4, childNode);
+		h4.onclick = function() { this.inlineEdit(); }
+		
+		//alert("lägger till");
+	}
+	else if( (childNode.nodeName.toLowerCase() == "h4" && (_headline != "" || _headline != null)) ) {
+		// det finns en rubrik och _headline innehåller något. Förnya rubrikens innehåll
+		childNode.innerHTML = _headline; 
+		//alert("uppdaterar");
+	}
+	console.info("har den blivit true? ", _prio);
+	uppdate_scale_answer(group.parentNode, _scale.replace(/likert/, ''), _prio, _vetej);
+	
+	FancyForm.start(0, { onSelect: fapp.onSelect } );	
+}
+
+function uppdate_scale_answer(group, scale, add_prio, add_vetej) {
+	/* ändrar likert-gruppens huvudskala */
+	var headline = $(group).getElement(".headline .answer");
+	headline.innerHTML = create_scale_answer(null, scale, null, null, add_vetej, false, true).innerHTML;
+	
+	
+	/* ändrar varje likertfrågas skala */
+	var questions = $(group).getElements(".question");
+	for (var i=0; i < questions.length; i++) {
+		var answer = questions[i].getElement(".answer");
+		console.info("Ska inte vara true: ", add_prio);
+		answer.innerHTML = create_scale_answer(questions[i].id.replace(/q/, ''), scale, add_prio, null, add_vetej, false, false).innerHTML;
+	}
+}
+
+
+/**
+ * Funktionen används för att ändra likertfrågornas skala. Funktionen skapar en ny div class="answer" med den nya skalan.
+ * Funktionen går också att använda under skapande processen av en likert fråga (inte bara vid redigering).
+ *
+ * @param question_number - frågans nummer. Används för till namnen på inputfälten
+ * @param scale - skalan som ska användas.
+ * @param add_prio - om prioritet ska finnas.
+ * @param headline - rubriken till svarsalternativen? headline i typ='grade' döljs.
+ * @param answers - array med alla svarsalternativ.
+ *
+ * @return en ny och fin div class="answer"
+ */
+function create_scale_answer(question_number, scale, add_prio, headline, vetej, prio_run, is_scale_headline) {
+	var loop_count = 5;
+	if(scale) { loop_count = scale; }
+	
+	console.info("add_prio: ", add_prio);
+	
+	var answer_div = document.createElement("div");
+	answer_div.className = "answer";
+	var div = document.createElement("div");
+	if (prio_run) { div.className = "priority"; }
+	else { div.className = "grade"; }
+	
+	var h4 = document.createElement("h4");
+	if(headline) { h4.appendChild(document.createTextNode(headline)); }
+	else { h4.appendChild(document.createTextNode("Betyg")); }
+	div.appendChild(h4);
+	
+	
+	var ul = document.createElement("ul");
+	if (is_scale_headline) {
+		for (var i=0; i < loop_count; i++) {
+			var li = document.createElement("li");
+			li.appendChild(document.createTextNode(i+1));
+			ul.appendChild(li);
+		}
+		
+		if(vetej) {
+			var li = document.createElement("li");
+			li.className = "v";
+			li.appendChild(document.createTextNode("Kan ej ta ställning"));
+			ul.appendChild(li);
+		}
+	} else {
+		var prefix = "q";
+		if (prio_run) { prefix = "p"; }
+		
+		for (var i=0; i < loop_count; i++) {
+			var li = document.createElement("li");
+			var label = document.createElement("label");
+			var input = document.createElement("input");
+			input.className = "r";
+			input.name = prefix + question_number;
+			input.id = prefix + question_number + "_" + i+1;
+			input.type = "radio";
+			var span = document.createElement("span");
+			span.appendChild(document.createTextNode(i+1));
+		
+			label.appendChild(input);
+			label.appendChild(span);
+			li.appendChild(label);
+			
+			ul.appendChild(li);
+		}
+		
+		if(vetej) {			
+			var li = document.createElement("li");
+			li.className = "v";
+			var label = document.createElement("label");
+			var input = document.createElement("input");
+			input.className = "r";
+			input.name = prefix + question_number;
+			input.id = prefix + question_number + "_" + loop_count+1;
+			input.type = "radio";
+			var span = document.createElement("span");
+			span.appendChild(document.createTextNode("Kan ej ta ställning"));
+		
+			label.appendChild(input);
+			label.appendChild(span);
+			li.appendChild(label);
+		
+			ul.appendChild(li);
+		}
+	}
+	
+	div.appendChild(ul);
+	answer_div.appendChild(div);
+	
+	if((add_prio == true) && prio_run == false ) {
+		answer_div.appendChild(create_scale_answer(question_number, scale, add_prio, "Prioritet", vetej, true, false).childNodes[0]);
+	}
+	
+	
+	return answer_div;
 }
 
 /**
@@ -790,6 +1012,8 @@ function edit_text(div) {
 		var textarea = document.createElement("textarea");
 		textarea.setAttribute("rows", 20);
 		textarea.setAttribute("cols", 130);
+		//textarea.style.width = "100%";
+		//textarea.style.height = "auto";
 		textarea.value = div.innerHTML;
 		
 		textarea.onblur = function() {
@@ -808,6 +1032,8 @@ function edit_text(div) {
 		textarea.focus();		
 	}
 }
+
+
 
 
 /** TAR BORT EN FRÅGA
@@ -1062,7 +1288,7 @@ function fetchQuestion(question) {
  */
 function showEditBox(_question) {	
 	//console.group("ShowEdit: ", _question.id);
-	if ($(_question).parentNode.hasClass("scale-group")) return false;
+	if ($(_question).getParent().hasClass("scale-group")) return false;
 	var edit_div = $(_question).getElement('.edit');
 	if (!edit_div) {
 		var answers = fetch(_question);
@@ -1152,7 +1378,15 @@ function showEditBox(_question) {
 			edit_form.appendChild(document.createElement("br"));
 		
 			var close_link = document.createElement("a");
-			close_link.onclick = function(){closeEditBox(_question, edit_event); return false; };
+			//close_link.onclick = function(){closeEditBox(_question, edit_event); return false; };
+			//close_link.addEventListener('click',function(){closeEditBox(_question, edit_event); return false; },true);
+			
+			$(close_link).addEvent('click', function(e) {
+				e = new Event(e).stop();
+				closeEditBox(_question, edit_event);
+				return false;
+			});
+			
 			close_link.setAttribute("href","#");
 			close_link.appendChild(document.createTextNode("Stäng"));
 			edit_form.appendChild(close_link);
@@ -1205,14 +1439,33 @@ function keyHandler(e) {
 	if(code == 13) { // ENTER
 		if(targ.nodeName.toLowerCase() == "input" && targ.className != "textline" && targ.name != "textfield" && targ.name != "question_text") { // TODO: ge editboxfälten en viss class som då går att filtrera bort i keyHandler.
 			var div = document.createElement("div");
-			div.onclick = function() { this.inlineEdit(); };
+			div.onclick = function() { $(this).inlineEdit(); };
 			insertAfter(div, targ.parentNode);
-			div.inlineEdit();
+			$(div).inlineEdit();
 		}
 		if(targ.nodeName.toLowerCase() == "textarea") { return true; }
-		else { return false; }
+		return false
 	}
 	
 	if(e.shiftKey && e.ctrlKey && code == 83) { alert("sparar"); return false; } // SHIFT + CTRL + S
 	if(e.shiftKey && e.ctrlKey && code == 82) { toggleEditMode(); return false; } // SHIFT + CTRL + R
+}
+
+function mouseHandler(e) {
+	var rightclick;
+	var targ = null;
+	if (!e) { var e = window.event; }
+	if (e.target) { targ = e.target; }
+	else if (e.srcElement) { targ = e.srcElement; }
+	if (targ.nodeType == 3) {// defeat Safari bug
+		targ = targ.parentNode;
+	}
+	
+	//if (e.which) rightclick = (e.which == 3);
+	else if (e.button) rightclick = (e.button == 2);
+	if(rightclick) {
+		console.info(targ);
+		console.info(targ.className);
+		if (((targ.nodeName == "H5") && targ.parentNode.hasClass("question")) || ((targ.nodeName == "SPAN") && targ.parentNode.parentNode.hasClass("question")) || targ.hasClass("question")) { console.info("question!!!"); }
+		 return false;}
 }

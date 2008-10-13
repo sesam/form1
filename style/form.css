@@ -443,7 +443,9 @@ div.question ul {
 
 
 
-
+.text { padding-left: 1em; }
+.group .text { padding-left: 0; }
+.text p, .text h1, .text h2, .text h3, .text h4, .text h5, .text h6 { margin-left: 0; }
 
 			
 .textline, textarea {
