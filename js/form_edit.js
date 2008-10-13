@@ -1451,6 +1451,17 @@ function keyHandler(e) {
 	if(e.shiftKey && e.ctrlKey && code == 82) { toggleEditMode(); return false; } // SHIFT + CTRL + R
 }
 
+
+function doSomething(e) {
+	var rightclick;
+	if (!e) var e = window.event;
+	if (e.which) rightclick = (e.which == 3);
+	else if (e.button) rightclick = (e.button == 2);
+	alert('Rightclick: ' + rightclick); // true or false
+}
+
+
+
 function mouseHandler(e) {
 	var rightclick;
 	var targ = null;
@@ -1461,11 +1472,13 @@ function mouseHandler(e) {
 		targ = targ.parentNode;
 	}
 	
-	//if (e.which) rightclick = (e.which == 3);
+	if (e.which) rightclick = (e.which == 3);
 	else if (e.button) rightclick = (e.button == 2);
+
 	if(rightclick) {
-		console.info(targ);
-		console.info(targ.className);
-		if (((targ.nodeName == "H5") && targ.parentNode.hasClass("question")) || ((targ.nodeName == "SPAN") && targ.parentNode.parentNode.hasClass("question")) || targ.hasClass("question")) { console.info("question!!!"); }
-		 return false;}
+		//console.info(targ);
+		//console.info(targ.className);
+		if (((targ.nodeName == "H5") && $(targ).parentNode.hasClass("question")) || ((targ.nodeName == "SPAN") && $(targ).parentNode.parentNode.hasClass("question")) || $(targ).hasClass("question")) { /*console.info("question!!!");*/ alert("question!"); }
+		if ($(targ).hasClass("headline")) { console.info("välj skala!!!"); }
+		return false;}
 }

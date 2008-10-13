@@ -604,10 +604,12 @@ body.print .scale-group.priority .header { background-color: blue; }
 
 #createQuestion p.checkbox, .edit li.checkbox, .edit li.checkbox_line {
 	padding-left: 20px;
+	width: 80%;
 	background: #eee url("../images/checkbox.gif") no-repeat; }
 
 #createQuestion p.radio, .edit li.radio, .edit li.radio_line {
 	padding-left: 20px;
+	width: 80%;
 	background: #eee url("../images/radiobutton.gif") no-repeat; }
 
 .edit {

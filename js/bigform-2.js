@@ -427,6 +427,8 @@ var formApplication = function() {
 			}
 			
 			addQuestion.appendChild(aa);
+			addQuestion.appendChild(document.createTextNode(" "));
+			
 			
 			var spara = document.createElement("a");
 			spara.setAttribute("href", "#bygg");
@@ -438,6 +440,8 @@ var formApplication = function() {
 			}
 			
 			addQuestion.appendChild(spara);
+			addQuestion.appendChild(document.createTextNode(" "));
+			
 			
 			var manual = document.createElement("a");
 			manual.href = "#";
