@@ -639,8 +639,8 @@ div.question .edit ul {
 	float: left;
 }
 
-.scale-group .menu {
-	float: left;
+.scale-group .menu, .question .menu {
+	float: left !important;
 }
 .scale-group .menu li {
 	clear: none;
@@ -696,3 +696,6 @@ div.question .edit ul {
 .active { background-position: 0px -31px !important; }
 
 #addQuestion { clear: left; }
+
+.inlineEdit, .inlineEdit:focus { margin: 0; width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown;  }
+.textEdit { border: 1px solid brown; background-color: #EAE2DE; }

@@ -192,6 +192,7 @@ function saveForm() {
 	try {
 
 	formform = $('form_').send({
+		method: 'get',
 		onComplete: function() {
 			var saved = document.getElementById("saved");
 			var date = new Date();
@@ -249,7 +250,7 @@ function fetch_questions() {
 		} else { question_type = "0"; }
 		
 		var string = questions[i].id + "," + question_type + ",#" + question_text + "#," + questions[i].className + " " + question_have_other + "\n\n";
-		console.info(string);
+		//console.info(string);
 		strings.push(string);
 	}
 	//console.groupEnd();
@@ -389,7 +390,14 @@ var formApplication = function() {
 			addQuestion.id = "addQuestion";
 			var a = document.createElement("a");
 			a.setAttribute("href", "#");
-			a.setAttribute("onclick", "new_question(); return false;");
+			//a.setAttribute("onclick", "new_question(); return false;");
+			
+			a.onclick = function () {
+				//alert("hej");
+				new_question();
+				return false;
+			}
+			
 			a.appendChild(document.createTextNode("Lägg till fråga"));
 			addQuestion.appendChild(a);
 			
