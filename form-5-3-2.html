@@ -18,7 +18,7 @@
 </head>
 <body class="on-page-1">
 
-<div id="header"  onclick="saveForm(); return false;" debugging="TODO remove this onclick">
+<div id="header">
 
 	<h1>Mall2007 medarbetarundersökning</h1>
 	
@@ -41,7 +41,7 @@
 		<div id="page-1">	
 			<a name="page-1"></a>
 
-			<div class="text" id="intro">
+			<div class="text element" id="intro">
 				<h2 onclick="switchStyleSheet(fapp.yellow);">Välkommen till ORGANISATIONENs medarbetarundersökning!</h2>
 
 				<p>Enkäten
@@ -61,8 +61,8 @@ mycket du instämmer i påståendet:</p>
 			</div>
 
 			<div id="group-1" class="group">
-			<h3>Allmänt</h3>
-			<div class="scale-group likert5 v">
+			<div class="text element"><h3>Allmänt</h3></div>
+			<div class="scale-group likert5 v element">
 				<div class="headline">
 					<div class="answer">
 						<ul class="grade">
@@ -77,7 +77,7 @@ mycket du instämmer i påståendet:</p>
 					
 				</div>
 
-				<div class="first question" id="q1">
+				<div class="first question element" id="q1">
 					<h5><span class="number">1</span> <span class="qtext">Mitt arbete engagerar mig mycket</span></h5>
 					<div class="answer">
 						<ul class="grade">
@@ -92,7 +92,7 @@ mycket du instämmer i påståendet:</p>
 					</div>
 				</div>
 
-				<div class="last question odd" id="q2">
+				<div class="last question odd element" id="q2">
 					<h5><span class="number">2</span> <span class="qtext">Totalt sett är jag nöjd med min arbetssituation</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -109,8 +109,8 @@ mycket du instämmer i påståendet:</p>
 			</div>
 			
 			<div id="group-2" class="group">
-			<h3>Närmaste chef</h3>
-			<div class="scale-group likert5 v">
+			<div class="text element"><h3>Närmaste chef</h3></div>
+			<div class="scale-group likert5 v element">
 
 				<div class="headline">
 					<h4>Jag tycker att min närmaste chef…</h4>
@@ -129,7 +129,7 @@ mycket du instämmer i påståendet:</p>
 
 						</div>
 				</div>
-				<div class="first question" id="q3">
+				<div class="first question element" id="q3">
 					<h5><span class="number">3</span> <span class="qtext">inger förtroende</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -143,7 +143,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q4">
+				<div class="question odd element" id="q4">
 					<h5><span class="number">4</span> <span class="qtext">är öppen och ärlig i sin kommunikation</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -156,7 +156,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question" id="q5">
+				<div class="question element" id="q5">
 					<h5><span class="number">5</span> <span class="qtext">kommunicerar nyheter, händelser, mål och strategier på ett  tydligt sätt</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -169,7 +169,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q6">
+				<div class="question odd element" id="q6">
 					<h5><span class="number">6</span> <span class="qtext">gör det tydligt vad som förväntas av mig</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -182,7 +182,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question" id="q7">
+				<div class="question element" id="q7">
 					<h5><span class="number">7</span> <span class="qtext">gör mig delaktig genom att t ex lyssna på mina synpunkter vid framtagning av förslag och förändringar</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -195,7 +195,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q8">
+				<div class="question odd element" id="q8">
 					<h5><span class="number">8</span> <span class="qtext">skapar en positiv laganda</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -208,7 +208,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question" id="q9">
+				<div class="question element" id="q9">
 					<h5><span class="number">9</span> <span class="qtext">behandlar mig med respekt</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -221,7 +221,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q10">
+				<div class="question odd element" id="q10">
 					<h5><span class="number">10</span> <span class="qtext">har ett beteende som överensstämmer med våra värderingar</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -234,7 +234,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question" id="q11">
+				<div class="question element" id="q11">
 					<h5><span class="number">11</span> <span class="qtext">underlättar genom att ta bort onödiga hinder i arbetet som jag eller vi i vår arbetsgrupp har påtalat</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -247,7 +247,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="last question odd" id="q12">
+				<div class="last question odd element" id="q12">
 					<h5><span class="number">12</span> <span class="qtext">ger mig konstruktiv återkoppling på hur jag utför mitt arbete</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -267,9 +267,9 @@ mycket du instämmer i påståendet:</p>
 		<div id="page-2">
 			<a name="page-2"></a> -->
 			<div id="group-3" class="group">	  	
-			<h3>Utveckling</h3>
+			<div class="text element"><h3>Utveckling</h3></div>
 			
-			<div class="scale-group priority likert5 v">
+			<div class="scale-group priority likert5 v element">
 				<div class="headline">
 					<div class="answer">	
 						<div class="grade">
@@ -287,7 +287,7 @@ mycket du instämmer i påståendet:</p>
 						</div>	
 					</div>
 				</div>
-				<div class="first question" id="q13">
+				<div class="first question element" id="q13">
 					<h5><span class="number">13</span> <span class="qtext">På ORGANISATIONEN uppmuntras nya idéer</span></h5>
 
 					<div class="answer">
@@ -320,7 +320,7 @@ mycket du instämmer i påståendet:</p>
 						</div>
 					</div>
 				</div>
-				<div class="question odd" id="q14">
+				<div class="question odd element" id="q14">
 					<h5><span class="number">14</span> <span class="qtext">Våra chefer framhåller att lärande är viktigt på ORGANISATIONEN</span></h5>
 					<div class="answer">
 						<div class="grade">
@@ -353,7 +353,7 @@ mycket du instämmer i påståendet:</p>
 					</div>
 					
 				</div>
-				<div class="question" id="q15">
+				<div class="question element" id="q15">
 					<h5><span class="number">15</span> <span class="qtext">Förslag på nya och bättre sätt att arbeta välkomnas</span></h5>
 					<div class="answer">
 						<div class="grade">
@@ -385,7 +385,7 @@ mycket du instämmer i påståendet:</p>
 						</div>
 					</div>
 				</div>
-				<div class="question odd" id="q16">
+				<div class="question odd element" id="q16">
 					<h5><span class="number">16</span> <span class="qtext">De förslag som förs fram leder till konkreta förändringar/förbättringar på min arbetsplats</span></h5>
 					<div class="answer">
 
@@ -418,7 +418,7 @@ mycket du instämmer i påståendet:</p>
 					</div>
 
 				</div>
-				<div class="last question" id="q17">
+				<div class="last question element" id="q17">
 					<h5><span class="number">17</span> <span class="qtext">Framtiden för ORGANISATIONEN ser positiv ut</span></h5>
 					<div class="answer">
 						<div class="grade">
@@ -452,7 +452,7 @@ mycket du instämmer i påståendet:</p>
 				</div>
 			</div>
 			
-				<div class="question odd clearfix" id="q18">
+				<div class="question odd clearfix element" id="q18">
 					<a name="q18"></a>
 					<h5><span class="number">18</span> <span class="qtext">Jag har haft medarbetarsamtal under de senaste 12 månaderna</span></h5>
 
@@ -465,9 +465,9 @@ mycket du instämmer i påståendet:</p>
 					</div>
 				</div>
 				
-				<div class="scale-group likert5 v">
+				<div class="scale-group likert5 v element">
 					<div class="headline">
-						<h4>I mitt senaste medarbetarsamtal</h4>
+						<div class="text element"><h4>I mitt senaste medarbetarsamtal</h4></div>
 						<div class="answer">
 							<div class="grade">
 								<h4>Betyg</h4>
@@ -485,7 +485,7 @@ mycket du instämmer i påståendet:</p>
 						
 						</div>
 					</div>
-					<div class="first question" id="q19">
+					<div class="first question element" id="q19">
 						<h5><span class="number">19</span> <span class="qtext">utformade vi konkreta mål</span></h5>
 
 						
@@ -502,7 +502,7 @@ mycket du instämmer i påståendet:</p>
 						</div>
 						
 					</div>
-					<div class="question odd" id="q20">
+					<div class="question odd element" id="q20">
 						<h5><span class="number">20</span> <span class="qtext">följde vi tydligt upp de mål som vi kom överens om vid föregående samtal</span></h5>
 
 						
@@ -518,7 +518,7 @@ mycket du instämmer i påståendet:</p>
 						</ul>
 						</div>
 					</div>
-					<div class="question" id="q21">
+					<div class="question element" id="q21">
 						<h5><span class="number">21</span> <span class="qtext">fick jag tydlig återkoppling om hur jag utfört mitt arbete</span></h5>
 
 						<div class="answer">
@@ -533,7 +533,7 @@ mycket du instämmer i påståendet:</p>
 						</ul>
 						</div>
 					</div>
-					<div class="last question odd" id="q22">
+					<div class="last question odd element" id="q22">
 						<h5><span class="number">22</span> <span class="qtext">kom vi överens om konkreta aktiviteter för min utveckling</span></h5>
 
 						<div class="answer">
@@ -555,9 +555,8 @@ mycket du instämmer i påståendet:</p>
 		<div id="page-3">
 			<a name="page-3"></a> -->
 			<div id="group-4" class="group">
-			<h3>Arbetsförutsättningar</h3>
-			
-			<div class="scale-group likert5 v">
+			<div class="text element"><h3>Arbetsförutsättningar</h3></div>
+			<div class="scale-group likert5 v element">
 				<div class="headline">
 					<div class="answer">
 
@@ -575,7 +574,7 @@ mycket du instämmer i påståendet:</p>
 					</div>
 				</div>
 				
-				<div class="first question" id="q23">
+				<div class="first question element" id="q23">
 					<a name="q23"></a>
 					<h5><span class="number">23</span> <span class="qtext">Vi har effektiva arbetsrutiner på min avdelning/enhet</span></h5>
 
@@ -591,7 +590,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q24">
+				<div class="question odd element" id="q24">
 					<h5><span class="number">24</span> <span class="qtext">Jag har tillräckliga kunskaper för att kunna arbeta enligt våra rutiner</span></h5>
 
 					<div class="answer">
@@ -606,7 +605,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question" id="q25">
+				<div class="question element" id="q25">
 					<h5><span class="number">25</span> <span class="qtext">Vi på min avdelning/enhet ser över och förbättrar våra rutiner kontinuerligt</span></h5>
 
 					<div class="answer">
@@ -621,7 +620,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q26">
+				<div class="question odd element" id="q26">
 					<h5><span class="number">26</span> <span class="qtext">Min fysiska arbetsmiljö är tillfredsställande</span></h5>
 
 					<div class="answer">
@@ -636,7 +635,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question" id="q27">
+				<div class="question element" id="q27">
 					<h5><span class="number">27</span> <span class="qtext">Jag kan påverka min löneutveckling</span></h5>
 
 					<div class="answer">
@@ -651,7 +650,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q28">
+				<div class="question odd element" id="q28">
 					<h5><span class="number">28</span> <span class="qtext">På min arbetsplats tar vi ansvar så att arbetet blir utfört och att inget hamnar "mellan stolarna"</span></h5>
 
 					<div class="answer">
@@ -666,7 +665,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="last question" id="q29">
+				<div class="last question element" id="q29">
 					<h5>
 
 						<span>Fråga 29 besvaras endast av dig som blivit anställd under de senaste 2 åren</span><br>
@@ -686,7 +685,7 @@ mycket du instämmer i påståendet:</p>
 				</div>
 			</div>
 			
-			<div class="question odd clearfix" id="q30">
+			<div class="question odd clearfix element" id="q30">
 				<h5><span class="number">30*</span> <span class="qtext">På ORGANISATIONEN förekommer diskriminering</span></h5>
 				<div class="answer">
 					<ul>
@@ -702,7 +701,7 @@ mycket du instämmer i påståendet:</p>
 				</div>
 			</div>
 
-			<div class="text odd clearfix" id="q300">
+			<div class="text odd clearfix element">
 				<font size=3>Botkyrka kommuns ledord: Öppen, Orädd och Energisk</font> 
 				</b> 
 				<br> 
@@ -716,7 +715,7 @@ mycket du instämmer i påståendet:</p>
 				Energisk</b> – vi har kraft att driva igenom det vi tror på.
 			</div>
 			
-			<div class="question clearfix" id="q31">
+			<div class="question clearfix element" id="q31">
 				<h5><span class="number">31</span> <span class="qtext">På ORGANISATIONEN har kvinnor och män samma möjligheter</span></h5>
 				<div class="answer">
 					<ul>
@@ -728,12 +727,13 @@ mycket du instämmer i påståendet:</p>
 			</div>	
 				
 			<div id="group-5" class="group">
-			<h3>Organisationens värderingar</h3>
-			<div class="text">
+			
+			<div class="text element">
+				<h3>Organisationens värderingar</h3>
 				<p>Värderingarna ska tydliggöras inom ORGANISATIONEN och ska skapa en gemensam idé och kultur inom företaget.</p>
 			</div>
 			
-			<div class="scale-group likert5 v">
+			<div class="scale-group likert5 v element">
 				<div class="headline">
 
 					<h4>Jag tycker att min närmaste chef…</h4>
@@ -753,7 +753,7 @@ mycket du instämmer i påståendet:</p>
 
 				</div>
 				
-				<div class="first question odd" id="q32">
+				<div class="first question odd element" id="q32">
 					<h5><span class="number">32</span> <span class="qtext">Jag förstår vad ORGANISATIONENs värderingar handlar om</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -766,7 +766,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question" id="q33">
+				<div class="question element" id="q33">
 					<h5><span class="number">33</span> <span class="qtext">Jag tror på ORGANISATIONENs värderingar</span></h5>
 					<div class="answer">
 					<ul class="grade">
@@ -779,7 +779,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="question odd" id="q34">
+				<div class="question odd element" id="q34">
 					<h5><span class="number">34</span> <span class="qtext">Jag tycker att ORGANISATIONEN genomsyras av dessa värderingar</span></h5>
 
 					<div class="answer">
@@ -794,7 +794,7 @@ mycket du instämmer i påståendet:</p>
 					</ul>
 					</div>
 				</div>
-				<div class="last question" id="q35">
+				<div class="last question element" id="q35">
 					<a name="q35"></a>
 
 					<h5><span class="number">35</span> <span class="qtext">Värderingarna hjälper mig i mitt dagliga arbete</span></h5>
@@ -815,11 +815,11 @@ mycket du instämmer i påståendet:</p>
 		<!--</div>	
 		<div id="page-4"> 
 			<a name="page-4"></a> -->
-			<div class="group">
-				<h3>Bakgrund</h3>
+			<div id="group-6" class="group">
+				<div class="text element"><h3>Bakgrund</h3></div>
 
-				<div class="column-group">
-					<div class="question odd" id="q36">
+				<div class="column-group element">
+					<div class="question odd element" id="q36">
 						<h5><span class="number">36</span> <span class="qtext">Ålder</span></h5>
 						<div class="answer">
 						<ul>
@@ -830,7 +830,7 @@ mycket du instämmer i påståendet:</p>
 						</div>
 					</div>
 					
-					<div class="question odd" id="q37">
+					<div class="question odd element" id="q37">
 						<h5><span class="number">37</span> <span class="qtext">Kön</span></h5>
 						<div class="answer">
 						<ul>
@@ -840,7 +840,7 @@ mycket du instämmer i påståendet:</p>
 						</div>
 					</div>
 					
-					<div class="question odd" id="q38">
+					<div class="question odd element" id="q38">
 						<h5><span class="number">38</span> <span class="qtext">Anställningstid</span></h5>
 						<div class="answer">
 						<ul>
@@ -854,9 +854,9 @@ mycket du instämmer i påståendet:</p>
 				</div>
 			</div>
 			
-			<div class="group">
-			<h3>Övrigt</h3>
-			<div class="big-text question clearfix" id="q39">
+			<div id="group-7" class="group">
+			<div class="text element"><h3>Övrigt</h3></div>
+			<div class="big-text question clearfix element" id="q39">
 				<h5 class="clearfix"><label for="q-39_1"><span class="number">39</span> <span class="qtext">Och till sist, har du övriga synpunkter angående ditt arbete?</span></label></h5>
 				<div class="answer">
 					<textarea name="q39" id="q-39" cols="70" rows="4"></textarea>

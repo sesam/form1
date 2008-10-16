@@ -671,6 +671,8 @@ div.question .edit ul {
 	left: -9999px;
 }
 
+.scale-group .delete { float: none; }
+
 .question .edit ul input, .scale-group .edit ul { width: 100%; }
 .question .edit ul input, .scale-group .edit ul li { width: 80%;}
 .question .edit ul input, .scale-group .edit .menu ul { width: auto;}
@@ -696,6 +698,8 @@ div.question .edit ul {
 .active { background-position: 0px -31px !important; }
 
 #addQuestion { clear: left; }
+
+.selected_question { background-color: #000 !important; color: #fff !important; }
 
 .inlineEdit, .inlineEdit:focus { margin: 0; width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown;  }
 .textEdit { border: 1px solid brown; background-color: #EAE2DE; }

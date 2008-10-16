@@ -190,9 +190,7 @@ var formform;
 function saveForm() {
 	// Samlar ihop svar och skickar till servern.
 	try {
-
 	formform = $('form_').send({
-		method: 'get',
 		onComplete: function() {
 			var saved = document.getElementById("saved");
 			var date = new Date();
@@ -212,6 +210,7 @@ var autoSave_ = null;
  * @param run - true aktiverar sparning i tidsintervall
  */
 function autoSave(run) {
+	console.info("autosaveing");
 	if (run == true) { autoSave_ = setInterval("saveForm()", 60 * 1000); }
 	else if (run == false) { clearInterval(autoSave_); }
 }
