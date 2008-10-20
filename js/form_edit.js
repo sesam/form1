@@ -23,6 +23,7 @@ var statusbar = $('statusbar');
 var edit_link = document.createElement('div');
 edit_link.id = "editlink";
 edit_link.className = "deactive";
+edit_link.title = "Öppna/stäng redigeringsläge här";
 
 //var h = $('header');
 //h.addEvent('click', function(a) { 
@@ -38,16 +39,15 @@ function toggleEditMode() {
 		edit_link.className = "active";			
 		var f = $('form_');	
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
-		f.getElements('.question').each(function(elt) {elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
-		f.getElements('.text').each(function(elt) {elt.addEvent('dblclick',function(){ if(edit_mode) edit_text(this);});});
-		f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('dblclick',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
+		f.getElements('.question').each(function(elt) { elt.title = "Dubbelklicka för frågans inställningar (funderar inte på likert-frågor)"; elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
+		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text(this);});});
+		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
 		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );	
 		
 		var toolbar = document.createElement("div");
 		toolbar.id = "toolbar";
-		toolbar.innerHTML = "<p>Redigerar…</p>";
-		
+		toolbar.innerHTML = '<p><strong>Redigerar…</strong> <a href="#toolbar" onclick="refreshOdd(); return false;">Städa upp bland zebraränderna.</a></p>';
 		document.getElementsByTagName("body")[0].appendChild(toolbar);
 		
 	} else {
@@ -160,7 +160,8 @@ function new_question() {
 		
 		var option;
 		
-		var select_values = new Array("typ", "checkbox", "textfield", "textarea", "radio", "scale", "text");
+		var select_values = new Array(	"typ",	"checkbox",		"textfield",	"textarea", 		"radio", 		"scale", 		"text");
+		var select_text = new Array(	"Typ",	"Kryssrutor",	"Textfält",		"Stort textfält", 	"Radioknappar",	"Likert-grupp",	"Fritext");
 		for (var i=0; i < select_values.length; i++) {
 			option = document.createElement("option");
 			option.value = select_values[i];
@@ -171,14 +172,14 @@ function new_question() {
 				option.style.color = "#000";
 			}
 			
-			option.appendChild(document.createTextNode(select_values[i]));
+			option.appendChild(document.createTextNode(select_text[i]));
 			select.appendChild(option);
 		}
 		
 		select.onchange = function() {
 			var options = select.getElementsByTagName("option");
 			for (var i=0; i < options.length; i++) {
-				if(options[i].selected) { show_spec(options[i].innerHTML); }
+				if(options[i].selected) { show_spec(options[i].value); }
 			}
 		}
 		var link_p = document.createElement("p");
@@ -270,6 +271,7 @@ function showGroupEditBox(group) {
 		var input = document.createElement("input");
 		input.type = "text";
 		input.name = "headline";
+		input.style.width = "300px";
 		var input_label = document.createTextNode("Rubrik ");
 		var headline = group.getElement(".headline h4");
 		if(headline && headline.parentNode.className != "grade") { input.value = headline.innerHTML; }
@@ -277,7 +279,7 @@ function showGroupEditBox(group) {
 		
 		var scale = document.createElement("select");
 		scale.name = "scale";
-
+		
 		var likert4 = document.createElement("option");
 		var likert5 = document.createElement("option");
 		
@@ -298,36 +300,33 @@ function showGroupEditBox(group) {
 		v.type = "checkbox";
 		v.name = "vetej";
 		var label_v = document.createElement("label");
-		label_v.innerHTML = "Visa <strong>Vet ej</strong>";
+		label_v.innerHTML = "<strong>Vet ej</strong> ";
 		
 		
 		var p = document.createElement("input");
 		p.type = "checkbox";
 		p.name = "prio";
 		var label_p = document.createElement("label");
-		label_p.innerHTML = "Visa <strong>Prioritet</strong>";
+		label_p.innerHTML = "<strong>Prioritet</strong> ";
 		
-		/*
-		edit_div.appendChild(menu_div);
-		edit_div.appendChild(input_label);
-		edit_div.appendChild(input);
-		edit_div.appendChild(scale);
-		edit_div.appendChild(v);
-		edit_div.appendChild(label_v);
-		edit_div.appendChild(p);
-		edit_div.appendChild(label_p);
-		*/
+		var o = document.createElement("input");
+		o.type = "checkbox";
+		o.name = "omvand";
+		var label_o = document.createElement("label");
+		label_o.innerHTML = "<strong>Omvänd</strong> ";
 		
 		form.appendChild(menu_div);
 		form.appendChild(input_label);
 		form.appendChild(input);
+		form.appendChild(document.createTextNode(" Skala: "));
 		form.appendChild(scale);
+		form.appendChild(document.createTextNode(" Visa: "));
 		form.appendChild(v);
 		form.appendChild(label_v);
 		form.appendChild(p);
 		form.appendChild(label_p);
-		
-		
+		form.appendChild(o);
+		form.appendChild(label_o);
 		
 		var questions_ul = document.createElement("ul");
 		questions_ul.className = "clearfix";
@@ -354,7 +353,6 @@ function showGroupEditBox(group) {
 			removeField_span.appendChild(document.createTextNode("X"));
 			removeField.appendChild(removeField_span);
 			questions_li.appendChild(removeField);
-			//questions_ul.appendChild(questions_li);
 		}
 
 		var next_li = document.createElement("li");
@@ -394,9 +392,7 @@ function showGroupEditBox(group) {
 		}
 		next_input.onfocus = next_input.onclick;
 		next_li.appendChild(next_input);
-		//questions_ul.appendChild(next_li);
-		
-		//edit_div.appendChild(questions_ul);
+
 		form.appendChild(questions_ul);
 		edit_div.appendChild(form);
 		
@@ -447,13 +443,7 @@ function _group(action, group) {
 			if (form.elements[count].value != "") { _answers.push(form.elements[count]); }		
 		}
 	}
-	/*
-	console.info("Headline: ", _headline);
-	console.info("Scale: ", _scale);
-	console.info("vetej: ", _vetej);
-	console.info("prio: ", _prio);
-	console.info("answers.length: ", _answers.length);
-	*/
+
 	var scale_group = $(group).getParent();
 
 	if(_vetej) {
@@ -472,36 +462,25 @@ function _group(action, group) {
 	}
 	
 	var headline_div = $(scale_group).getElement(".headline");
-
-	//alert(headline_div.childNodes[0].nodeName);
-	//console.info(headline_div.childNodes[0], headline_div.childNodes[0].nodeType);
 	
 	var childNode = headline_div.childNodes[0]
 	if(childNode.nodeType == 3) { childNode = headline_div.childNodes[1]; }
 	if( (childNode.nodeName.toLowerCase() == "h4" && (_headline == "" || _headline == null)) ) {
-		// finns en rubrik och _headline innehåller inget.
-		// ta bort h4 elementet
-		childNode.parentNode.removeChild(childNode);
-		//alert("tarbort");
+		/*finns en rubrik och _headline innehåller inget. ta bort h4 elementet. */
+		childNode.parentNode.removeChild(childNode); 
 	}
 	else if ( (childNode.nodeName.toLowerCase() != "h4" && (_headline != "" || _headline != null)) ) {
-		// finns ingen rubrik men _headline innehåller något. Vi behöver en h4!
-		// skapa ett h4 element med _headlines innehåll
+		/* finns ingen rubrik men _headline innehåller något. Vi behöver en h4! skapa ett h4 element med _headlines innehåll */
 		var h4 = document.createElement("h4");
 		h4.innerHTML = _headline;
 		headline_div.insertBefore(h4, childNode);
 		h4.onclick = function() { this.inlineEdit(); }
-		
-		//alert("lägger till");
 	}
 	else if( (childNode.nodeName.toLowerCase() == "h4" && (_headline != "" || _headline != null)) ) {
-		// det finns en rubrik och _headline innehåller något. Förnya rubrikens innehåll
+		/* det finns en rubrik och _headline innehåller något. Förnya rubrikens innehåll */
 		childNode.innerHTML = _headline; 
-		//alert("uppdaterar");
 	}
-	//console.info("har den blivit true? ", _prio);
-	update_scale_answer(group.parentNode, _scale.replace(/likert/, ''), _prio, _vetej);
-	
+	update_scale_answer(group.parentNode, _scale.replace(/likert/, ''), _prio, _vetej);	
 	FancyForm.start(0, { onSelect: fapp.onSelect } );	
 }
 
@@ -515,7 +494,6 @@ function update_scale_answer(group, scale, add_prio, add_vetej) {
 	var questions = $(group).getElements(".question");
 	for (var i=0; i < questions.length; i++) {
 		var answer = questions[i].getElement(".answer");
-		//console.info("Ska inte vara true: ", add_prio);
 		answer.innerHTML = create_scale_answer(questions[i].id.replace(/q/, ''), scale, add_prio, null, add_vetej, false, false).innerHTML;
 	}
 }
@@ -525,6 +503,10 @@ function update_scale_answer(group, scale, add_prio, add_vetej) {
  */
 function update_answers_id(question) {
 	var id = generate_id();
+	var a = question.getElementsByTagName("a");
+	for (var i=0; i < a.length; i++) { 
+		if(a[i].name == question.id) a[i].name = a[i].name.replace(/\d+/, id);
+	}
 	question.id = question.id.replace(/\d+/, id);
 	var answers = $(question).getElements("INPUT");
 	answers.each(function(a) {a.id = a.id.replace(/\d+_/, id + "_");});
@@ -548,8 +530,6 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 	var loop_count = 5;
 	if(scale) { loop_count = scale; }
 	
-	//console.info("add_prio: ", add_prio);
-	
 	var answer_div = document.createElement("div");
 	answer_div.className = "answer";
 	var div = document.createElement("div");
@@ -560,7 +540,6 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 	if(headline) { h4.appendChild(document.createTextNode(headline)); }
 	else { h4.appendChild(document.createTextNode("Betyg")); }
 	div.appendChild(h4);
-	
 	
 	var ul = document.createElement("ul");
 	if (is_scale_headline) {
@@ -640,7 +619,6 @@ function fetch(question, getClass) {
 	if (!getClass) { getClass = ""; }
 	var parent_classname = question.parentNode.className;
 	
-	//console.info("fetching", question.id);
 	var answers = new Array();
 	var nodes;
 	if (getClass) { nodes = $(question).getElement(getClass).childNodes[0].childNodes; }
@@ -684,8 +662,6 @@ function fetch(question, getClass) {
 						}
 						
 						if (answer.questionType == "checkbox_line" || answer.questionType == "radio_line" || answer.questionType == "textline") { answer.value = input.value; }
-
-						//console.info("QuestionType: ", answer.questionType,", Label: ",answer.label, ", Value: ", answer.value);
 						
 						if ( (!answer.value && getClass.toLowerCase() == "edit")) { /* ingenting */ }
 						else { answers.push(answer); }
@@ -724,8 +700,6 @@ function fetch(question, getClass) {
 					answer.value = nodes[i].value;
 					answers.push(answer);
 					
-					//console.info("QuestionType: ", answer.questionType, "Label: ",answer.label, "Value: ", answer.value);
-
 					break;
 			}
 		}
@@ -830,10 +804,10 @@ function question(action, question) {
 			}
 						
 			if (active_ul != null) {
-				// Stoppar li-elementet i det aktiva ul-elementet
+				/* Stoppar li-elementet i det aktiva ul-elementet */
 				active_ul.appendChild(li);
 			} else {
-				// Skapar ett ul-element och sätter den som active_ul
+				/* Skapar ett ul-element och sätter den som active_ul */
 				active_ul = document.createElement("ul");
 				active_ul.appendChild(li);
 				answer_div.appendChild(active_ul);
@@ -859,7 +833,6 @@ function question(action, question) {
 	
 	
 	if (action.toLowerCase() == "create" && question_text != null && question_text.value != "") {
-		//console.info("[action == create]");
 		
 		var div_question = new Element('div', { 'class': 'question clearfix' });
 		div_question.id = "q" + generate_id();
@@ -895,25 +868,20 @@ function question(action, question) {
 	else if (action.toLowerCase() == "edit") {
 		var old_answer = $(question).getElement(".answer");
 		question.removeChild(old_answer);
-		//question.getElementsByTagName('h5')[0].appendChild(answer_div);
 		insertAfter(answer_div, question.getElementsByTagName('h5')[0]);
 		
 		if (need_to_prepare_form) { prepareForm(); }
 		FancyForm.start(0, { onSelect: fapp.onSelect } );	
 	}
-	
-	//console.groupEnd();
 }
 
 function old_question(action, question) {
 	var oddIratior = false;
 	var form = null;
 	var generatedID = generate_id();
-	//alert(":" + generatedID);
+
 	if (!generatedID) { generatedID = generate_id(); alert("nytt_försök:" + generatedID);}
-	
-	
-	
+
 	/* Kontrollerar att 'action' parametern är rätt */
 	if (action.toLowerCase() != "create" && action.toLowerCase() != "edit") {
 		alert("[question(action, question)]: kan inte utföra '" + action + "', du kanske menade 'create' eller 'edit'?");
@@ -945,8 +913,6 @@ function old_question(action, question) {
 			answers.push(form.elements[count]);			
 		}
 	}	
-	
-	//console.info("Hittade totalt " + answers.length + " st input-element (svarsalternativ).");
 	
 	var need_to_prepare_form = false;	//Om prepareForm() måste köras
 	var active_ul = null;
@@ -1087,10 +1053,8 @@ function old_question(action, question) {
 		
 		var fetch = true;
 		var item_count = 0;
-		//var radios = $(document).getElements('input[name=new_scale_radio]');
-		//var radios = document.createForm.new_scale_radio;
+
 		while (fetch == true) {
-			//if(radios != null && radios.item(item_count) != null) {
 			if(answers != null && answers[item_count] != null) {
 				var question = new Element('div', { 'class': 'question element' });
 				question.id = "q" + generatedID;
@@ -1162,14 +1126,12 @@ function old_question(action, question) {
 				fetch = false;
 			}
 		}
-		//$(fapp.currentPageDiv).getLast(".group").appendChild(scale_group);
 		$("createQuestion").getPrevious(".group").appendChild(scale_group);
 		headline.onclick = function() { showGroupEditBox( this.parentNode) };
 		
 		
 	}
 	else if (action.toLowerCase() == "create" && question_text != null && question_text.value != "") {
-		//console.info("[action == create]");
 		
 		var div_question = new Element('div', { 'class': 'question clearfix element' });
 		div_question.id = "q" + generatedID;
@@ -1217,16 +1179,11 @@ function old_question(action, question) {
 			div_question.appendChild(answer_div);
 		}
 		
-		//fapp.currentPageDiv.appendChild(div_question);
 		$("createQuestion").getPrevious(".group").appendChild(div_question);
 	}
 	else if (action.toLowerCase() == "edit") {
-		//console.group("Edit " + question.id);
-		//console.info("Redigerade: ", question);
-		//console.groupEnd();
 		var old_answer = $(question).getElement(".answer");	
 		question.removeChild(old_answer);
-		//question.getElementsByTagName('h5')[0].appendChild(answer_div);
 		insertAfter(answer_div, question.getElementsByTagName('h5')[0]);
 		
 		if (need_to_prepare_form) { prepareForm(); }
@@ -1239,8 +1196,6 @@ function edit_text(div) {
 		var textarea = document.createElement("textarea");
 		textarea.setAttribute("rows", 20);
 		textarea.setAttribute("cols", 130);
-		//textarea.style.width = "100%";
-		//textarea.style.height = "auto";
 		textarea.value = div.innerHTML;
 		textarea.className = "textEdit";
 		
@@ -1302,14 +1257,12 @@ function show_spec(question_type) {
 				var input_q = document.createElement("input");
 				input_q.type = "text";
 				input_q.name = "question_text";
-				// input_q.style.color = "#666";
 				
 				setDefaultInputEvents(input_q, "Frågetext", "#666");
 				var p_q = document.createElement("p");
 				p_q.appendChild(input_q);
 				spec.appendChild(p_q);
 				
-				//spec_container.appendChild(spec_checkbox);
 				var input = document.createElement("input");
 				input.type = "text";
 				input.setAttribute("name", "new_checkbox");
@@ -1321,7 +1274,7 @@ function show_spec(question_type) {
 				next_input.onclick = function() {
 					this.className = "";
 					var p = document.createElement("p");
-					p.className = "checkbox"; //
+					p.className = "checkbox"; 
 					var new_input = document.createElement("input");
 					new_input.type = "text";
 					this.setAttribute("name", "new_checkbox");
@@ -1335,6 +1288,7 @@ function show_spec(question_type) {
 					insertAfter(p, this.parentNode);
 				}
 				next_input.onfocus = next_input.onclick;
+
 
 				var p = document.createElement("p");
 				p.className ="checkbox";
@@ -1533,7 +1487,6 @@ function fetchQuestion(question) {
  * @param _question - frågan som ska redigeras.
  */
 function showEditBox(_question) {	
-	//console.group("ShowEdit: ", _question.id);
 	if($(_question.getParent()) == null) { return false; }
 	if ($(_question).getParent().hasClass("scale-group")) return false;
 	var edit_div = $(_question).getElement('.edit');
@@ -1627,7 +1580,6 @@ function showEditBox(_question) {
 			edit_form.appendChild(document.createElement("br"));
 			var close_link = document.createElement("a");
 			close_link.onclick = function(){closeEditBox(_question); return false; };
-			//close_link.addEventListener('click',function(){closeEditBox(_question); return false; },true);
 			$(close_link).addEvent('click', function(e) {
 				e = new Event(e).stop();
 				closeEditBox(_question);
@@ -1693,7 +1645,6 @@ function showEditBox(_question) {
 			_question.appendChild(edit_div);
 		}
 	}
-	//console.groupEnd();
 }
 
 /**
@@ -1740,17 +1691,14 @@ var selected_question = null;  // Innehåller den markerade frågan.
 function setSelect(question) {
 	if(question.hasClass("element")) {
 		if(selected_question) {
-			//if(selected_question.hasClass("question")) {
 				var del = selected_question.getElementById("action");
 				del.parentNode.removeChild(del);
-			//}
 			selected_question.removeClass("selected_question");
 		}
 		
 		if(selected_question == question) {
 			if($(selected_question).getParent().hasClass("scale-group")) { refreshScaleQuestions(selected_question.parentNode); }
 			selected_question = null;
-			//console.info("Unselected:", question);
 			
 		} else {
 			selected_question = question;
@@ -1764,6 +1712,7 @@ function setSelect(question) {
 				var removeField = document.createElement("div");
 				removeField.className = "delete";
 				removeField.className = "delete";
+				removeField.title = "Ta bort frågan";
 				removeField.onclick = function() {
 					var selected_question_parent = selected_question.parentNode;
 					var q = this.parentNode.parentNode.parentNode;
@@ -1781,11 +1730,9 @@ function setSelect(question) {
 				var new_question = document.createElement("a");
 				new_question.appendChild(document.createTextNode("+"));
 				new_question.className = "add";
+				new_question.title = "Kopiera frågan";
 				new_question.href = "#";
 				new_question.onclick = function() {
-					//var a = $(selected_question).getElementById("action");
-					//a.parentNode.removeChild(a);
-				
 					var old_select = selected_question;
 				
 					setSelect(selected_question);
@@ -1809,11 +1756,6 @@ function setSelect(question) {
 						temp.ondblclick = function() { edit_text(this); }
 					}
 					refreshScaleQuestions(old_select.parentNode);
-					//var action = temp.getElementById("action");
-					//console.info("uh?:", temp.getElementById("action"));
-					//console.info(temp);
-					//action.parentNode.removeChild(action);
-				
 					return false;
 				};
 				div.appendChild(new_question);
@@ -1821,6 +1763,7 @@ function setSelect(question) {
 				var move_up = document.createElement("a");
 				move_up.appendChild(document.createTextNode("Flytta upp"));
 				move_up.href = "#";
+				move_up.title = "Flytta upp frågan ett steg";
 				move_up.onclick = function() {
 					move_question("up");
 					return false;
@@ -1830,6 +1773,7 @@ function setSelect(question) {
 				var move_down = document.createElement("a");
 				move_down.appendChild(document.createTextNode("Flytta ner"));
 				move_down.href = "#";
+				move_down.title = "Flytta ner frågan ett steg";
 				move_down.onclick = function() {
 					move_question("down");
 					return false;
@@ -1840,7 +1784,6 @@ function setSelect(question) {
 					question.appendChild(div);
 				} else { h5.appendChild(div); }
 			}
-			//console.info("Selected:", question);
 		}
 	}
 }
@@ -1860,7 +1803,6 @@ function move_question(direction) {
 			} else {
 				var temp = selected_question.parentNode.getPrevious(".group")
 				if(temp) {
-					//console.info(temp.getLast(".element"));
 					insertAfter(selected_question, temp.getLast(".element"));
 				}
 			}	
@@ -1872,7 +1814,6 @@ function move_question(direction) {
 			} else {
 				var temp = selected_question.getParent().getNext(".group")
 				if(temp) {
-					//console.info(temp.getFirst(".element"));
 					var temp_first = temp.getFirst(".element");
 					temp_first.parentNode.insertBefore(selected_question, temp_first);
 				}
@@ -1899,10 +1840,7 @@ function keyHandler(e) {
 	if (e.target) targ = e.target;
 	else if (e.srcElement) targ = e.srcElement;
 	
-	if (targ.nodeType == 3) { // defeat Safari bug
-		targ = targ.parentNode;
-	}
-	//var character = String.fromCharCode(code);
+	if (targ.nodeType == 3) { targ = targ.parentNode; } // defeat Safari bug
 	
 	if(code == 13) { // ENTER
 		if(targ.nodeName.toLowerCase() == "input" && targ.className != "textline" && targ.name != "textfield" && targ.name != "question_text") { // TODO: ge editboxfälten en viss class som då går att filtrera bort i keyHandler.
@@ -1915,6 +1853,7 @@ function keyHandler(e) {
 		if(targ.nodeName.toLowerCase() == "textarea") { return true; }
 		return false
 	}
+	if(code == 27) { if(targ.nodeName.toLowerCase() == "input" || targ.nodeName.toLowerCase() == "textarea") { targ.blur(); } return false; } // ESC
 	
 	if(e.shiftKey && e.ctrlKey && code == 83) { saveForm(); return false; } // SHIFT + CTRL + S
 	if(e.shiftKey && e.ctrlKey && code == 82) { toggleEditMode(); return false; } // SHIFT + CTRL + R
@@ -1930,29 +1869,8 @@ function keyHandler(e) {
 /**
  * Hanterar musknapparna, just nu bara för högerklick.
  */
-//function mouseHandler(e) {
-//	var rightclick;
-//	var targ = null;
-//	if (!e) { var e = window.event; }
-//	if (e.target) { targ = e.target; }
-//	else if (e.srcElement) { targ = e.srcElement; }
-//	if (targ.nodeType == 3) {// defeat Safari bug
-//		targ = targ.parentNode;
-//	}
-	
-//	if (e.which) rightclick = (e.which == 3);
-//	else if (e.button) rightclick = (e.button == 2);
-//
-//	if(rightclick) {
-		//if (((targ.nodeName == "H5") && $(targ).parentNode.hasClass("question")) || ((targ.nodeName == "SPAN") && $(targ).parentNode.parentNode.hasClass("question")) || $(targ).hasClass("question")) { /*console.info("question!!!");*/ if(edit_mode) { setSelect($(targ).parentNode); } }
-//		if($(targ).getParent("element") || $(targ).getParent("element") ) { if(edit_mode) setSelect($(targ).getParent("element")); }
-//		if ($(targ).hasClass("headline")) { /*console.info("välj skala!!!"); */}
-//		if ($(targ).hasClass("text") && $(targ).hasClass("element")) { if(edit_mode) setSelect(targ); }
-//	return false;}
-//}
-
 function mouseHandler(e) {
-        var rightclick, ev=e || window.event, targ = ev.target || ev.srcElement;
+        var rightclick, ev = e || window.event, targ = ev.target || ev.srcElement;
         if (!edit_mode || !ev) return;
         if (targ.nodeType == 3) targ = targ.parentNode; // defeat Safari bug
 

@@ -240,8 +240,7 @@ function saveForm() {
 			var saved = document.getElementById("saved");
 			var date = new Date();
 			fapp.logga($('form_').toQueryString());
-			saved.innerHTML = (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
-			document.getElementById("savetext").style.display='inline';
+			saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
 		}
 	});
 	} catch(NS_ERROR_FILE_NOT_FOUND) {
@@ -332,7 +331,7 @@ var formApplication = function() {
 	*/
 	this.logga = function(x) {
 		/*if (this.ta) this.ta.value += x + '\n';*/ /*console.info(x);*/
-		try{/*console.info(x);*/}
+		try{console.info(x);}
 		catch(e){}
 	}
 

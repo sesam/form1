@@ -12,7 +12,6 @@ var inlineEdit = new Class({
 			this.editting = element;
 			this.oldContent = element.innerHTML;
 			var content = this.oldContent.trim().replace(new RegExp("<br>", "gi"), "\n");
-			// ...setStyles('margin:0;background:#FFFF66;width:99.5%;font-size:100%;border:1 solid #000;')
 			this.inputBox = new Element(this.options.type).setProperty('value',content).addClass("inlineEdit");
 			if(!this.inputBox.value){this.inputBox.setHTML(content)}
 			this.setAllStyles(element,this.inputBox);

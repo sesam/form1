@@ -23,8 +23,8 @@
 	<h1>Mall2007 medarbetarundersökning</h1>
 	
 	<div id="statusbar" class="navigation">
-	<p><strong>Status:</strong> <span id="savetext" onclick="switchStyleSheet(fapp.blue);">Svar sparades kl </span><span id="saved"></span><span style="display: none;" id="laddar"> - laddar...</span></p>
-	<h3>Gå till sida:</h3>
+	<p><strong>Status:</strong><span id="saved"></span><span style="display: none;" id="laddar"> - laddar...</span></p>
+	<!-- ><h3>Gå till sida:</h3>
 	<ul class="pages">
 		<li><a class="goto-1" href="#page-1" onclick="fapp.showPage(1);">1</a></li>
 		<li><a class="goto-2" href="#page-2" onclick="fapp.showPage(2);">2</a></li>
@@ -32,7 +32,7 @@
 		<li><a class="goto-4" href="#page-4" onclick="fapp.showPage(4);">4</a></li>
 		<li><a class="goto-0" href="#page-0" onclick="fapp.showPage(0);">Sista</a></li>
 	</ul>
-
+	-->
 	</div>
 </div>
 
@@ -667,9 +667,7 @@ mycket du instämmer i påståendet:</p>
 				</div>
 				<div class="last question element" id="q29">
 					<h5>
-
-						<span>Fråga 29 besvaras endast av dig som blivit anställd under de senaste 2 åren</span><br>
-						<span class="number">29</span> <span class="qtext">När jag anställdes fick jag bra introduktion till mitt arbete</span></h5>
+						<span class="number">29</span> <span class ="qtext">Fråga 29 besvaras endast av dig som blivit anställd under de senaste 2 åren</span><div class="qtext">När jag anställdes fick jag bra introduktion till mitt arbete</div></h5>
 					<div class="answer">
 					<ul class="grade">
 					<li><label><input class="r" name="q29" value="1" id="q29_1" type="radio"> <span>Instämmer inte alls</span></label></li>
@@ -868,15 +866,16 @@ mycket du instämmer i påståendet:</p>
 			<!-- <p id="addQuestion"><a href="#" onclick="new_question(); return false;">Lägg till fråga</a></p> -->
 		</div>
 
-		<div id="page-0" class="infopage">
-			<a name="page-0"></a>
+		<div id="_page-0" class="infopage">
+			<a name="_page-0"></a>
 			<h2>Är du färdig med dina svar?</h2>
 			<p>Efter att svaren skickats in går de ej att ändra.</p>
 			<input onclick="fapp.showPage(fapp.tack); return false;" value="Skicka in nu" type="submit">
 			&nbsp;&nbsp;
+			<!--
 			<input onclick="fapp.showPage(1);" value="Nej, tillbaka till frågeformuläret" type="button">
 			&nbsp;&nbsp;
-
+			-->
 			<input onclick="window.location=fapp.logout_close.asp;" value="Fortsätt senare" type="button">
 			<p style="color: gray;">Efter att du har skickat in enkäten bör du stänga din webbläsare för att säkra din anonymitet.</p>
 		</div>
@@ -908,7 +907,7 @@ mycket du instämmer i påståendet:</p>
 
 	</div> <!-- #form -->
 
-	<div id="navigation" class="navigation">
+	<!-- <div id="navigation" class="navigation">
 		<h3>Menyn</h3>
 		<ul class="menu clearfix">
 			<li><input class="back_button" onclick="fapp.jumpPages(-1); return false;" name="prev" value="Föregående sida" type="submit"></li>
@@ -926,7 +925,7 @@ mycket du instämmer i påståendet:</p>
 
 			<li><a class="goto-0" href="#page-0" onclick="fapp.showPage(0);">Sista</a></li>
 		</ul>
-	</div>
+	</div> -->
 </form>
 
 <div id="footer">

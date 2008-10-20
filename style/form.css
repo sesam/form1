@@ -123,7 +123,8 @@ a:link {
 	color : #000;
 	line-height : 2em; 
 	padding :1em 0.5em;
-	position: relative; }
+	position: relative; 
+	min-height: 23px; }
 
 #statusbar p {
 	margin-bottom : -2em; }
@@ -592,6 +593,8 @@ body.print .scale-group.priority .header { background-color: blue; }
 		xxxborder-bottom-width: 2px !important;
 		border-bottom-color: #D1D1D1 !important;
 	}
+	
+	#toolbar { display: none; }
 }
 
 
@@ -637,6 +640,7 @@ div.question .edit ul {
 
 .scale-group .edit {
 	float: left;
+	background-color: #ccc;
 }
 
 .scale-group .menu, .question .menu {
@@ -651,8 +655,8 @@ div.question .edit ul {
 }
 
 .edit li {
-	background-color: #EEEEEE;
-	border: 1px solid #EEEEEE;
+	/*background-color: #EEEEEE;
+	border: 1px solid #EEEEEE; */
 	clear: left;
 }
 
@@ -708,3 +712,4 @@ div.question .edit ul {
 #action .add { font-size: 130%; text-decoration: none; }
 
 #toolbar { position: fixed; top: 0; left: 0; background-color: #000; color: #fff; height: 20px; width: 100%; }
+#toolbar a { color: #fff; }
