@@ -154,7 +154,7 @@ div.question ul {
 	background-color: transparent !important; }
 	
 .question ul input {
-	margin : 0 50px 0 0;
+	/* margin : 0 50px 0 0;  Bortkommenterad för att göra mindre avstånd mellan annat-frågor. */
 	padding : 0; }
 
 .question li, .scale-group .edit ul li {
@@ -455,7 +455,7 @@ div.question ul {
 	clear: left;
 	float: none; }
 	
-.big-text.question textarea {
+.big-text.question textarea, .small-text.question input {
 	margin-left: 3em;
 }
 
@@ -699,7 +699,12 @@ div.question .edit ul {
 
 #addQuestion { clear: left; }
 
-.selected_question { background-color: #000 !important; color: #fff !important; }
+.selected_question { background-color: #fcc !important; /*background-color: #000 !important; color: #fff !important;*/ }
 
 .inlineEdit, .inlineEdit:focus { margin: 0; width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown;  }
 .textEdit { border: 1px solid brown; background-color: #EAE2DE; }
+
+#action div, #action a { margin-right: 0.5em; color: #000; font-weight: bold;}
+#action .add { font-size: 130%; text-decoration: none; }
+
+#toolbar { position: fixed; top: 0; left: 0; background-color: #000; color: #fff; height: 20px; width: 100%; }

@@ -38,16 +38,18 @@ function toggleEditMode() {
 		edit_link.className = "active";			
 		var f = $('form_');	
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
-		//f.getElements('h4').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );
-		//f.getElements('h3').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );
-		//f.getElements('p').each( function(elt) { if(elt.id != "addQuestion") { elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit() }); } } );
-		f.getElements('.question').each(function(elt) {elt.addEvent('click',function(){ if(edit_mode) showEditBox(this);});});
+		f.getElements('.question').each(function(elt) {elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
 		f.getElements('.text').each(function(elt) {elt.addEvent('dblclick',function(){ if(edit_mode) edit_text(this);});});
-		f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
+		f.getElements('.scale-group .headline').each( function(elt) {elt.addEvent('dblclick',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
 		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
-		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );
-	
-		//f.getElements('.scale-group .priority .question h5 span').each( function(elt) {elt.addEvent('click',function(){elt.inlineEdit()}); } );
+		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );	
+		
+		var toolbar = document.createElement("div");
+		toolbar.id = "toolbar";
+		toolbar.innerHTML = "<p>Redigerar…</p>";
+		
+		document.getElementsByTagName("body")[0].appendChild(toolbar);
+		
 	} else {
 		edit_mode = false;
 		edit_link.className = "deactive";
@@ -55,7 +57,12 @@ function toggleEditMode() {
 	
 		var edit_boxes = document.getElements('.edit');
 		edit_boxes.each(function(elt) { elt.parentNode.removeChild(elt); });
-	
+		
+		$('form_').getElements('DIV.selected_question').each( setSelect );
+		
+		var toolbar = document.getElementById("toolbar");
+		toolbar.parentNode.removeChild(toolbar);
+		
 		// Här måste alla inlineEdit tas bort från click-event
 	}
 	window.location.hash="edit";
@@ -126,7 +133,6 @@ function setDefaultInputEvents(element, input_value, font_color) {
 			}
 		}
 	} else { alert("ERROR: setDefaultInputEvents(...) -> fel nodeName. Vill inte ha ["+element.nodeName.toLowerCase()+"]"); }
-	
 }
 
 var createQuestion_last = null;
@@ -514,6 +520,17 @@ function update_scale_answer(group, scale, add_prio, add_vetej) {
 	}
 }
 
+/**
+ * Används när man vill uppdatera en frågas svars id och namn.
+ */
+function update_answers_id(question) {
+	var id = generate_id();
+	question.id = question.id.replace(/\d+/, id);
+	var answers = $(question).getElements("INPUT");
+	answers.each(function(a) {a.id = a.id.replace(/\d+_/, id + "_");});
+	
+}
+
 
 /**
  * Funktionen används för att ändra likertfrågornas skala. Funktionen skapar en ny div class="answer" med den nya skalan.
@@ -785,11 +802,22 @@ function question(action, question) {
 				li.className = "checkedtextfield";
 				label.className = "textfield";
 				
-				label.appendChild(document.createTextNode(answer.label));
+				label.appendChild(document.createTextNode(answer.label + " "));
 				label.appendChild(input);
 				li.appendChild(label);
 				
 				need_to_prepare_form = true;
+			} else if(answer.questionType == "radio_line") {
+					input.type = "text";
+					input.className = "textline";
+					li.className = "radiotextfield";
+					label.className = "textfield";
+
+					label.appendChild(document.createTextNode(answer.label + " "));
+					label.appendChild(input);
+					li.appendChild(label);
+
+					need_to_prepare_form = true;
 			} else {
 				input.type = answer.questionType;
 				label.appendChild(input);
@@ -881,7 +909,7 @@ function old_question(action, question) {
 	var oddIratior = false;
 	var form = null;
 	var generatedID = generate_id();
-	alert(":" + generatedID);
+	//alert(":" + generatedID);
 	if (!generatedID) { generatedID = generate_id(); alert("nytt_försök:" + generatedID);}
 	
 	
@@ -1145,6 +1173,8 @@ function old_question(action, question) {
 		
 		var div_question = new Element('div', { 'class': 'question clearfix element' });
 		div_question.id = "q" + generatedID;
+		if(createQuestion_type == "textarea") { div_question.addClass("big-text"); }
+		else if(createQuestion_type == "textfield") { div_question.addClass("small-text"); }
 	
 		var addQuestion = document.getElementById("createQuestion");
 		var previous_element = $(addQuestion).getPrevious();
@@ -1181,7 +1211,7 @@ function old_question(action, question) {
 			div_question.className = "text element";
 			div_question.id = null;
 			div_question.innerHTML = answer_div.innerHTML;
-			div_question.onclick = function() { if(edit_mode) edit_text(this); }
+			div_question.ondblclick = function() { if(edit_mode) edit_text(this); }
 		} else {
 			div_question.appendChild(h5);
 			div_question.appendChild(answer_div);
@@ -1465,7 +1495,8 @@ function show_spec(question_type) {
 			case "text":
 				var textarea = document.createElement("textarea");
 				spec.appendChild(textarea);
-				
+				textarea.setAttribute("rows", 20);
+				textarea.setAttribute("cols", 130);
 				textarea.questionType = "_text";
 				createQuestion_type = "_text";
 				break;
@@ -1511,18 +1542,17 @@ function showEditBox(_question) {
 		if (!answers) { /*console.error("Hittade inga svarsalternativ");*/ return false; }
 		
 		if(answers != null) {	
-			/*var edit_event = function(){ _question.getElement(".qtext").inlineEdit(); };
-			_question.getElement(".qtext").addEvent('click',edit_event );
-			var edit_number_event = function(){ _question.getElement(".number").inlineEdit(); };
-			_question.getElement(".number").addEvent('click',edit_event );
-			*/
 			var edit_div = new Element('div', {'class': 'edit'});
 			var edit_form = new Element('form');
 			
 			var ul = document.createElement("ul");
-	
+		
+			var next_type;
+			
 			for (var i=0; i < answers.length; i++) {
 				var answer = answers[i];
+				
+				if(i == answers.length - 1) next_type = answer.questionType;
 				
 				var li = document.createElement("li");
 				var inputfield = document.createElement("input");
@@ -1547,19 +1577,20 @@ function showEditBox(_question) {
 				li.appendChild(removeField);
 				ul.appendChild(li);
 			}
-	
+			
 			var next_li = document.createElement("li");
-			next_li.className = "checkbox";
+			if(next_type) { next_li.className = next_type; }
+			else { next_li.className = "checkbox"; }
 			var next_input = document.createElement("input");
 			next_input.type = "text";
 			next_input.className = "disable";
 			next_input.onclick = function() {
 				this.className = "";
 				var li = document.createElement("li");
-				li.className = "checkbox";
+				if(next_type) { li.className = next_type; this.questionType = next_type; }
+				else {li.className = "checkbox"; this.questionType = "checkbox"; }
 				var new_input = document.createElement("input");
 				new_input.type = "text";
-				this.questionType = "checkbox";
 				new_input.className = "disable";
 				new_input.onclick = this.onclick;
 				new_input.onfocus = this.onclick;
@@ -1594,11 +1625,9 @@ function showEditBox(_question) {
 			delete_link.appendChild(document.createTextNode("Ta bort frågan"));
 			edit_form.appendChild(delete_link);
 			edit_form.appendChild(document.createElement("br"));
-		
 			var close_link = document.createElement("a");
 			close_link.onclick = function(){closeEditBox(_question); return false; };
-			close_link.addEventListener('click',function(){closeEditBox(_question); return false; },true);
-			
+			//close_link.addEventListener('click',function(){closeEditBox(_question); return false; },true);
 			$(close_link).addEvent('click', function(e) {
 				e = new Event(e).stop();
 				closeEditBox(_question);
@@ -1609,12 +1638,55 @@ function showEditBox(_question) {
 			close_link.appendChild(document.createTextNode("Stäng"));
 			edit_form.appendChild(close_link);
 			edit_form.appendChild(document.createElement("br"));
-						
+				
 			var save_link = document.createElement("a");
 			save_link.onclick = function(){ question("edit", this.parentNode.parentNode.parentNode); return false; };
 			save_link.setAttribute("href","#");
 			save_link.appendChild(document.createTextNode("Spara"));
 			edit_form.appendChild(save_link);
+			
+			var add_other = document.createElement("a");
+			add_other.onclick = function(){
+				var q = fapp.findQuestionDiv(this);
+				var edit = $(q).getElement("DIV.edit");
+				
+				var lis = edit.getElementsByTagName("li");
+				
+				var li = document.createElement("li");
+				var inputfield = document.createElement("input");
+				inputfield.type = "text";
+				
+				if(lis[0].className == "checkbox") {
+					inputfield.questionType = "checkbox_line";
+					li.setAttribute("class", "checkbox_line");
+				}
+				else if(lis[0].className == "radio") {
+					inputfield.questionType = "radio_line";
+					li.setAttribute("class", "radio_line");
+				}
+				
+			
+				li.appendChild(inputfield);
+			
+				var removeField = document.createElement("div");
+				removeField.className = "delete";
+				removeField.onclick = function() {
+					var input = this.parentNode;
+					input.parentNode.removeChild(input);
+					return false;
+				};
+				var removeField_span = document.createElement("span");
+				removeField_span.appendChild(document.createTextNode("X"));
+				removeField.appendChild(removeField_span);
+				li.appendChild(removeField);
+				
+				lis[lis.length - 1].parentNode.insertBefore(li, lis[lis.length - 1]);
+				
+				return false;
+			};
+			add_other.setAttribute("href","#");
+			add_other.appendChild(document.createTextNode("Lägg till 'annat'"));
+			edit_form.appendChild(add_other);
 			
 			
 			edit_div.appendChild(edit_form);
@@ -1629,96 +1701,180 @@ function showEditBox(_question) {
  */
 function closeEditBox(element) {
 	var edit_div = $(element).getElement('.edit');
-	if (edit_div) {
-		element.removeChild(edit_div);
-		/*if(edit_event) { element.getElement(".qtext").removeEvent( 'click', edit_event ); }
-		if(edit_number_event) { element.getElement(".number").removeEvent( 'click', edit_number_event ); }*/
-	}
+	if (edit_div) { element.removeChild(edit_div); }
 }
 
+
+/**
+ * Används för att rätta till .odd klassen på frågorna
+ */
+function refreshOdd() {
+	var odd = false;
+	$("form_").getElements("DIV.question").each(function(question) {
+		question.removeClass("odd");
+		if(odd) { question.addClass("odd"); odd = false; }
+		else { odd = true; }
+	});
+}
+
+
+/**
+ * Ordnar så att första frågan i en scale-group har ".first" och den sista har ".last". 
+ */
 function refreshScaleQuestions(scale_group) {
 	var q = $(scale_group).getElements(".question");
 	for(var i=0; i < q.length; i++) {
-		q[i].removeClass("first");
+		$(q[i]).removeClass("first");
 		q[i].removeClass("last");
 		if(i == 0) { q[i].addClass("first"); }
 		if(i == q.length - 1) { q[i].addClass("last");}
 	}
 }
 
-var selected_question = null;
+var selected_question = null;  // Innehåller den markerade frågan.
 
+/**
+ * Markerar en fråga så man kan flytta den.
+ * @param question - Frågan som ska markeras.
+ */ 
 function setSelect(question) {
 	if(question.hasClass("element")) {
 		if(selected_question) {
-			var del = selected_question.getElementById("delete");
-			del.parentNode.removeChild(del);
+			//if(selected_question.hasClass("question")) {
+				var del = selected_question.getElementById("action");
+				del.parentNode.removeChild(del);
+			//}
 			selected_question.removeClass("selected_question");
 		}
 		
 		if(selected_question == question) {
-			if(selected_question.parentNode.hasClass("scale-group")) { refreshScaleQuestions(selected_question.parentNode); }
+			if($(selected_question).getParent().hasClass("scale-group")) { refreshScaleQuestions(selected_question.parentNode); }
 			selected_question = null;
-			console.info("Unselected:", question);
+			//console.info("Unselected:", question);
 			
 		} else {
 			selected_question = question;
 			selected_question.addClass("selected_question");
 			
-			var h5 = question.getElementsByTagName("h5")[0];
-			var removeField = document.createElement("div");
-			removeField.className = "delete";
-			removeField.id = "delete";
-			removeField.onclick = function() {
-				var selected_question_parent = selected_question.parentNode;
-				var q = this.parentNode.parentNode;
-				q.parentNode.removeChild(q);
-				if(selected_question_parent.hasClass("scale-group")) { refreshScaleQuestions(selected_question_parent); }
-				selected_question = null;
+			if(question) {
+				var h5 = question.getElementsByTagName("h5")[0];
+				var div = document.createElement("div");
+				div.id = "action";
+			
+				var removeField = document.createElement("div");
+				removeField.className = "delete";
+				removeField.className = "delete";
+				removeField.onclick = function() {
+					var selected_question_parent = selected_question.parentNode;
+					var q = this.parentNode.parentNode.parentNode;
+					q.parentNode.removeChild(q);
+					if(selected_question_parent.hasClass("scale-group")) { refreshScaleQuestions(selected_question_parent); }
+					selected_question = null;
 				
-				return false;
-			};
-			var removeField_span = document.createElement("span");
-			removeField_span.appendChild(document.createTextNode("X"));
-			removeField.appendChild(removeField_span);
-			h5.appendChild(removeField);
+					return false;
+				};
+				var removeField_span = document.createElement("span");
+				removeField_span.appendChild(document.createTextNode("X"));
+				removeField.appendChild(removeField_span);
+				div.appendChild(removeField);
 			
+				var new_question = document.createElement("a");
+				new_question.appendChild(document.createTextNode("+"));
+				new_question.className = "add";
+				new_question.href = "#";
+				new_question.onclick = function() {
+					//var a = $(selected_question).getElementById("action");
+					//a.parentNode.removeChild(a);
+				
+					var old_select = selected_question;
+				
+					setSelect(selected_question);
+				
+					var temp = $(old_select).clone()
+					temp.injectAfter(old_select);
+					temp.removeClass("selected_question");
+					
+					if(temp.hasClass("question")) {
+						update_answers_id(temp);					
+						var qtext = $(temp).getElement(".qtext");
+						var number = $(temp).getElement(".number");
+						qtext.innerHTML = "Ny fråga";
+						qtext.onclick = function() { this.inlineEdit(); };
+						number.innerHTML = 0;
+						number.onclick = function() { this.inlineEdit(); };
+					
+						temp.ondblclick = function() { showEditBox(this); }
+					}
+					else if(temp.hasClass("text")) {
+						temp.ondblclick = function() { edit_text(this); }
+					}
+					refreshScaleQuestions(old_select.parentNode);
+					//var action = temp.getElementById("action");
+					//console.info("uh?:", temp.getElementById("action"));
+					//console.info(temp);
+					//action.parentNode.removeChild(action);
+				
+					return false;
+				};
+				div.appendChild(new_question);
+				
+				var move_up = document.createElement("a");
+				move_up.appendChild(document.createTextNode("Flytta upp"));
+				move_up.href = "#";
+				move_up.onclick = function() {
+					move_question("up");
+					return false;
+				};
+				div.appendChild(move_up);
+				
+				var move_down = document.createElement("a");
+				move_down.appendChild(document.createTextNode("Flytta ner"));
+				move_down.href = "#";
+				move_down.onclick = function() {
+					move_question("down");
+					return false;
+				};
+				div.appendChild(move_down);
 			
-			console.info("Selected:", question);
+				if(question.hasClass("text")) {
+					question.appendChild(div);
+				} else { h5.appendChild(div); }
+			}
+			//console.info("Selected:", question);
 		}
 	}
 }
 
+/**
+ * Flyttar den markerade frågan antingen upp eller ner.
+ * @param direction - "up" eller "down"
+ */
 function move_question(direction) {
-	if(selected_question) {
+	if($(selected_question)) {
 		var question;
 		if(direction == "up") {
 			var prev_question = selected_question.getPrevious(".element");
-			console.info(prev_question);
 			if(prev_question) {
 				question = selected_question.parentNode.removeChild(selected_question);
 				prev_question.parentNode.insertBefore(question, prev_question);
 			} else {
 				var temp = selected_question.parentNode.getPrevious(".group")
 				if(temp) {
-					console.info(temp.getLast(".element"));
+					//console.info(temp.getLast(".element"));
 					insertAfter(selected_question, temp.getLast(".element"));
-					//temp.appendChild(selected_question.parentNode.removeChild(selected_question));
 				}
-			}
-			
+			}	
 		} else if (direction == "down") {
 			var next_question = selected_question.getNext(".element");
 			if(next_question) {
 				question = selected_question.parentNode.removeChild(selected_question);
 				insertAfter(question, next_question);
 			} else {
-				var temp = selected_question.parentNode.getNext(".group")
+				var temp = selected_question.getParent().getNext(".group")
 				if(temp) {
-					console.info(temp.getFirst(".element"));
+					//console.info(temp.getFirst(".element"));
 					var temp_first = temp.getFirst(".element");
 					temp_first.parentNode.insertBefore(selected_question, temp_first);
-					//temp.appendChild(selected_question.parentNode.removeChild(selected_question));
 				}
 			}
 		}
@@ -1751,6 +1907,7 @@ function keyHandler(e) {
 	if(code == 13) { // ENTER
 		if(targ.nodeName.toLowerCase() == "input" && targ.className != "textline" && targ.name != "textfield" && targ.name != "question_text") { // TODO: ge editboxfälten en viss class som då går att filtrera bort i keyHandler.
 			var div = document.createElement("div");
+			div.className = "qtext";
 			div.onclick = function() { $(this).inlineEdit(); };
 			insertAfter(div, targ.parentNode);
 			$(div).inlineEdit();
@@ -1761,6 +1918,8 @@ function keyHandler(e) {
 	
 	if(e.shiftKey && e.ctrlKey && code == 83) { saveForm(); return false; } // SHIFT + CTRL + S
 	if(e.shiftKey && e.ctrlKey && code == 82) { toggleEditMode(); return false; } // SHIFT + CTRL + R
+
+	if(e.shiftKey && e.ctrlKey && code == 79) { refreshOdd(); return false; } // SHIFT + CTRL + R
 	
 	if(e.shiftKey && e.ctrlKey && code == 38) { move_question("up"); return false; } // SHIFT + CTRL + PIL-UP
 	if(e.shiftKey && e.ctrlKey && code == 40) { move_question("down"); return false; } // SHIFT + CTRL + PIL-NER
@@ -1768,31 +1927,46 @@ function keyHandler(e) {
 	
 }
 
+/**
+ * Hanterar musknapparna, just nu bara för högerklick.
+ */
+//function mouseHandler(e) {
+//	var rightclick;
+//	var targ = null;
+//	if (!e) { var e = window.event; }
+//	if (e.target) { targ = e.target; }
+//	else if (e.srcElement) { targ = e.srcElement; }
+//	if (targ.nodeType == 3) {// defeat Safari bug
+//		targ = targ.parentNode;
+//	}
+	
+//	if (e.which) rightclick = (e.which == 3);
+//	else if (e.button) rightclick = (e.button == 2);
+//
+//	if(rightclick) {
+		//if (((targ.nodeName == "H5") && $(targ).parentNode.hasClass("question")) || ((targ.nodeName == "SPAN") && $(targ).parentNode.parentNode.hasClass("question")) || $(targ).hasClass("question")) { /*console.info("question!!!");*/ if(edit_mode) { setSelect($(targ).parentNode); } }
+//		if($(targ).getParent("element") || $(targ).getParent("element") ) { if(edit_mode) setSelect($(targ).getParent("element")); }
+//		if ($(targ).hasClass("headline")) { /*console.info("välj skala!!!"); */}
+//		if ($(targ).hasClass("text") && $(targ).hasClass("element")) { if(edit_mode) setSelect(targ); }
+//	return false;}
+//}
 
 function mouseHandler(e) {
-	var rightclick;
-	var targ = null;
-	if (!e) { var e = window.event; }
-	if (e.target) { targ = e.target; }
-	else if (e.srcElement) { targ = e.srcElement; }
-	if (targ.nodeType == 3) {// defeat Safari bug
-		targ = targ.parentNode;
-	}
-	
-	if (e.which) rightclick = (e.which == 3);
-	else if (e.button) rightclick = (e.button == 2);
+        var rightclick, ev=e || window.event, targ = ev.target || ev.srcElement;
+        if (!edit_mode || !ev) return;
+        if (targ.nodeType == 3) targ = targ.parentNode; // defeat Safari bug
 
-	if(rightclick) {
-		//console.info(targ);
-		//console.info($(targ).parentNode);
-		//console.info(targ.className);
-		//if (((targ.nodeName == "H5") && $(targ).parentNode.hasClass("question")) || ((targ.nodeName == "SPAN") && $(targ).parentNode.parentNode.hasClass("question")) || $(targ).hasClass("question")) { /*console.info("question!!!");*/ if(edit_mode) { setSelect($(targ).parentNode); } }
-		if($(targ).getParent("element") || $(targ).getParent("element") ) { if(edit_mode) setSelect($(targ).getParent("element")); }
-		/*else if($(targ).parentNode.hasClass("element")) setSelect($(targ).parentNode);
-		else if($(targ).parentNode.parentNode.hasClass("element")) setSelect($(targ).parentNode.parentNode);
-		else if($(targ).parentNode.parentNode.parentNode.hasClass("element")) setSelect($(targ).parentNode.parentNode.parentNode);
-		*/
-		if ($(targ).hasClass("headline")) { /*console.info("välj skala!!!"); */}
-		if ($(targ).hasClass("text") && $(targ).hasClass("element")) { if(edit_mode) setSelect(targ); }
-		return false;}
+        if (ev.which) rightclick = (ev.which == 3);
+        else if (ev.button) rightclick = (ev.button == 2);
+
+        if(rightclick) {
+                var divQ = fapp.findElementDiv(targ);
+                if(divQ) setSelect(divQ);
+                else fapp.logga('Hogerklick utanfor - prova klicka pa en fraga istallet!');
+
+                if ($(targ).hasClass("headline")) { fapp.logga("v\303\244lj skala!!!"); }
+
+                if (ev.stopPropagation) ev.stopPropagation(); //ger ingen nytta i FF3
+                return false;
+        }
 }

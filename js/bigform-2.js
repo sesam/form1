@@ -3,6 +3,15 @@ var pageNav;
 var edit_mode = false;
 var orginal_html = document.getElementsByTagName('html')[0].innerHTML;
 
+if (!window.console || !console.firebug)
+{
+    var names = ["log", "debug", "info", "warn", "error", "assert", "dir", "dirxml",
+    "group", "groupEnd", "time", "timeEnd", "count", "trace", "profile", "profileEnd"];
+
+    window.console = {};
+    for (var i = 0; i < names.length; ++i)
+        window.console[names[i]] = function() {}
+}
 
 function save() {
 	var textarea_div = document.createElement("div");
@@ -79,6 +88,7 @@ function save() {
 	
 	
 	$("addQuestion").appendChild(textarea_div);
+
 	document.textareaForm.submit();
 }
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
@@ -153,12 +163,47 @@ function insertAfter(new_element, target_element) {
 
 function prepareForm(){
 	var elements = document.getElements('LI.checkedtextfield');
+	var elements_radio = document.getElements('LI.radiotextfield');
+	
 	elements.each(
 	function(listItem) {
 			var textField = listItem.getElementsByTagName("input")[0];
 			var CHECK = "checked";
 			var UNCHECK = "unchecked";
 			listItem.checkedtextfield = true;
+			
+			listItem.className = UNCHECK;
+
+			listItem.onclick = function() {
+				if(listItem.active == true) {
+					textField.blur();
+					listItem.active = false;
+				} else {
+					textField.focus();
+					listItem.active = true;
+				}
+			}
+						
+			textField.onfocus = function() {
+				listItem.className = CHECK;
+				listItem.active = false;
+			}
+			
+			textField.onblur = function() {
+				if ( textField.value == "") {
+					listItem.className = UNCHECK;
+					listItem.active = true;
+				}	
+			}
+		}
+	);
+	
+	elements_radio.each(
+	function(listItem) {
+			var textField = listItem.getElementsByTagName("input")[0];
+			var CHECK = "selected";
+			var UNCHECK = "unselected";
+			listItem.radiotextfield = true;
 			
 			listItem.className = UNCHECK;
 
@@ -223,6 +268,10 @@ function fetch_questions() {
 	//console.group("To: bygg_statistik.asp");
 	for (var i=0; i<questions.length; i++) {
 		var question_text = $(questions[i]).getElement(".qtext").innerHTML;
+		
+		var div_text = $(questions[i]).getElements("DIV.qtext");
+		for(var j = 0; j < div_text.length; j++) { question_text += '\n' + div_text[j].innerHTML; }
+		
 		var question_type = "-";
 		var question_have_other = "";
 		if(!questions[i].parentNode.hasClass("scale-group")) {
@@ -237,7 +286,7 @@ function fetch_questions() {
 						question_text += "|" + children[y].data;
 					}
 				}
-				if(labels[x].parentNode.checkedtextfield) { question_have_other = "last-is-textfield"; }
+				if(labels[x].parentNode.checkedtextfield || labels[x].parentNode.radiotextfield) { question_have_other = "last-is-textfield"; }
 			}
 				
 		var inputs = $(questions[i]).getElements(".answer input");
@@ -463,7 +512,9 @@ var formApplication = function() {
 	
 	this.removeEditLink = function() {
 		var addQuestion = document.getElementById("addQuestion");
+		var createQuestion = document.getElementById("createQuestion");
 		if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
+		if(createQuestion) { createQuestion.parentNode.removeChild(createQuestion); }
 	}
 	/*
 	 * sets a page class, needed by css rules for marking current page in the page navigator
@@ -526,6 +577,13 @@ var formApplication = function() {
 	this.findQuestionDiv = function(elt) {
 		for (var i=0; i<9; i++) {
 			if (elt.className.match(/question/)) return elt;
+			elt = elt.parentNode;
+		}
+	}
+	
+	this.findElementDiv = function(elt) {
+		for (var i=0; i<9; i++) {
+			if (elt.className.match(/element/)) return elt;
 			elt = elt.parentNode;
 		}
 	}
