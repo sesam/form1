@@ -20,6 +20,7 @@ function save() {
 	textarea_form.setAttribute("name", "textareaForm");
 	textarea_form.setAttribute("method", "post");
 	textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/form_spara.asp");
+	textarea_form.id = "textareaform";
 	var textarea = document.createElement("textarea");
 	textarea.setAttribute("cols", "80%");
 	textarea.setAttribute("rows", "2");
@@ -32,10 +33,17 @@ function save() {
 	var addQuestion = document.getElementById("addQuestion");
 	var addQuestion_parent = addQuestion.parentNode;
 	editlink_parent.removeChild(editlink);
-
+	var toolbar = document.getElementById("toolbar");
+	if(toolbar) toolbar.parentNode.removeChild(toolbar);
 	
 	
 	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
+	
+	var saved = document.getElementById("saved");
+	var date = new Date();
+	fapp.logga($('form_').toQueryString());
+	saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+	
 	
 	var inner_html = document.getElementsByTagName("html")[0].innerHTML;
 	var pat = /style="position: absolute; left: -9999px;" /g;
@@ -49,26 +57,33 @@ function save() {
 	inner_html = inner_html.replace(/<div style=\"display: block;\"/g, '<div');
 	inner_html = inner_html.replace(/<div style=\"display: none;\"/g, '<div');
 	
-	orginal_html = orginal_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
-	orginal_html = orginal_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
-	orginal_html = orginal_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
-	orginal_html = orginal_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
-	orginal_html = orginal_html.replace(/.*<\/body>/, "<\/body>\n");
+//	orginal_html = orginal_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
+//	orginal_html = orginal_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
+//	orginal_html = orginal_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
+//	orginal_html = orginal_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
+//	orginal_html = orginal_html.replace(/.*<\/body>/, "<\/body>\n");
 	
-	inner_html = inner_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
-	inner_html = inner_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
-	inner_html = inner_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
-	inner_html = inner_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
-	inner_html = inner_html.replace(/.*<\/body>/, "<\/body>\n");
+//	inner_html = inner_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
+//	inner_html = inner_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
+//	inner_html = inner_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
+//	inner_html = inner_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
+//	inner_html = inner_html.replace(/.*<\/body>/, "<\/body>\n");
 	
 	inner_html= inner_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
 	inner_html= inner_html.replace(/^[ \t]*[\r\n]+/g, '')
 	orginal_html= orginal_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
 	orginal_html= orginal_html.replace(/^[ \t]*[\r\n]+/g, '')
+// 	
+// inner_html = inner_html.replace(/\s*title>/, '<title>');
+// orginal_html = orginal_html.replace(/\s*title>/, '<title>');
+// 
+// inner_html = inner_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
+// orginal_html = orginal_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
 	
 
-	inner_html = inner_html.replace(/<script.+<\/script>\r*\n*/g, "");
-	orginal_html = orginal_html.replace(/<script.+<\/script>\r*/g, "");
+
+	//inner_html = inner_html.replace(/<script.+<\/script>\r*\n*/g, "");
+	//orginal_html = orginal_html.replace(/<script.+<\/script>\r*/g, "");
 	alert(orginal_html == inner_html);
 	textarea.value = inner_html;
 	
@@ -86,10 +101,15 @@ function save() {
 	editlink_parent.appendChild(editlink);
 	addQuestion_parent.appendChild(addQuestion);
 	
-	
 	$("addQuestion").appendChild(textarea_div);
-
-	document.textareaForm.submit();
+	
+	var textareaForm = document.getElementById("textareaform");
+	
+	
+	textareaForm.submit();
+	
+	
+	//document.textareaForm.submit();
 }
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
 // Though it seems they are missing a way to populate cache without evalig the contents of the .js file.
@@ -415,7 +435,7 @@ var formApplication = function() {
 		for (var i=0; i <= this.maxPages; i++) {
 	  		var o=document.getElementById('page-' + i);			
 			if (o && o.style) o.style.display = (i==n) ? 'block':'none';
-			if (!o) break;
+			//if (!o) break;
   		}
 				
 		this.onpage = n;

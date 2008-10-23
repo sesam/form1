@@ -52,9 +52,15 @@ function toggleEditMode() {
 		
 	} else {
 		edit_mode = false;
+		var f = $('form_');
+		f.getElements('.question').each(function(elt) { elt.title = "" });
+		f.getElements('.text').each(function(elt) { elt.title = "" });
+		f.getElements('.scale-group .headline').each( function(elt) { elt.title = ""});
+		
+		
 		edit_link.className = "deactive";
 		fapp.removeEditLink();
-	
+		
 		var edit_boxes = document.getElements('.edit');
 		edit_boxes.each(function(elt) { elt.parentNode.removeChild(elt); });
 		
@@ -185,13 +191,13 @@ function new_question() {
 		var link_p = document.createElement("p");
 		var a = document.createElement("a");
 		a.href = "#addQuestion";
-		$(a).addEvent('click', function() {
+		$(a).onclick = function() {
 			//question("create", document.getElementById('createQuestion'));
 			old_question("create", document.getElementById('createQuestion'));
 			
 			delete_question(this.parentNode.parentNode);
 			return false;
-		});
+		};
 		a.appendChild(document.createTextNode("Färdig"));
 		link_p.appendChild(a);
 		
@@ -1661,10 +1667,11 @@ function closeEditBox(element) {
  */
 function refreshOdd() {
 	var odd = false;
-	$("form_").getElements("DIV.question").each(function(question) {
-		question.removeClass("odd");
-		if(odd) { question.addClass("odd"); odd = false; }
+	$("form_").getElements(".question").each(function(question) {
+		$(question).removeClass("odd");		
+		if(odd) { $(question).addClass("odd"); odd = false; }
 		else { odd = true; }
+		
 	});
 }
 
@@ -1801,7 +1808,7 @@ function move_question(direction) {
 				question = selected_question.parentNode.removeChild(selected_question);
 				prev_question.parentNode.insertBefore(question, prev_question);
 			} else {
-				var temp = selected_question.parentNode.getPrevious(".group")
+				var temp = selected_question.getParent().getPrevious(".group")
 				if(temp) {
 					insertAfter(selected_question, temp.getLast(".element"));
 				}

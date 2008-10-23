@@ -24,7 +24,7 @@
 	
 	<div id="statusbar" class="navigation">
 	<p><strong>Status:</strong><span id="saved"></span><span style="display: none;" id="laddar"> - laddar...</span></p>
-	<!-- ><h3>Gå till sida:</h3>
+	<!-- <h3>Gå till sida:</h3>
 	<ul class="pages">
 		<li><a class="goto-1" href="#page-1" onclick="fapp.showPage(1);">1</a></li>
 		<li><a class="goto-2" href="#page-2" onclick="fapp.showPage(2);">2</a></li>
@@ -37,6 +37,7 @@
 </div>
 
 <form action="form-5-3-2.html" id="form_" method="post">
+	<input type=hidden name=id value=-1>
 	<div id="form">
 		<div id="page-1">	
 			<a name="page-1"></a>
@@ -862,23 +863,13 @@ mycket du instämmer i påståendet:</p>
 			</div>
 			</div>
 			
-			
-			<!-- <p id="addQuestion"><a href="#" onclick="new_question(); return false;">Lägg till fråga</a></p> -->
+			<div class="infopage">
+				<input onclick="fapp.showPage(fapp.tack); return false;" value="Skicka in" type="submit">
+				<p style="color:gray;">På nästa sida får du ett personligt lösenord för att kunna ta fram ditt formulär igen.</p>
+			</div>
 		</div>
 
-		<div id="_page-0" class="infopage">
-			<a name="_page-0"></a>
-			<h2>Är du färdig med dina svar?</h2>
-			<p>Efter att svaren skickats in går de ej att ändra.</p>
-			<input onclick="fapp.showPage(fapp.tack); return false;" value="Skicka in nu" type="submit">
-			&nbsp;&nbsp;
-			<!--
-			<input onclick="fapp.showPage(1);" value="Nej, tillbaka till frågeformuläret" type="button">
-			&nbsp;&nbsp;
-			-->
-			<input onclick="window.location=fapp.logout_close.asp;" value="Fortsätt senare" type="button">
-			<p style="color: gray;">Efter att du har skickat in enkäten bör du stänga din webbläsare för att säkra din anonymitet.</p>
-		</div>
+		
 
 		<div id="page-exit" class="infopage">
 			<a name="page-exit"></a>

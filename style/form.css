@@ -613,6 +613,8 @@ body.print .scale-group.priority .header { background-color: blue; }
 #createQuestion p.radio, .edit li.radio, .edit li.radio_line {
 	padding-left: 20px;
 	width: 80%;
+	background: blue;
+	
 	background: #eee url("../images/radiobutton.gif") no-repeat; }
 
 .edit {
@@ -677,15 +679,15 @@ div.question .edit ul {
 
 .scale-group .delete { float: none; }
 
-.question .edit ul input, .scale-group .edit ul { width: 100%; }
-.question .edit ul input, .scale-group .edit ul li { width: 80%;}
-.question .edit ul input, .scale-group .edit .menu ul { width: auto;}
-.question .edit ul input, .scale-group .edit .menu li { width: auto;}
+.question .edit ul input, .scale-group .edit ul { width: 100%; }	/* testar lite med IE7 (x)- 23okt*/
+.question .edit ul input, .scale-group .edit ul li { width: 80%;}   /* testar lite med IE7 (x)- 23okt*/
+.question .edit ul input, .scale-group .edit .menu ul { xwidth: auto;} /* testar lite med IE7 (x)- 23okt*/
+.question .edit ul input, .scale-group .edit .menu li { xwidth: auto;} /* testar lite med IE7 (x)- 23okt*/
 
 .question .edit ul input, .scale-group .edit ul input {
 	float: left;
 	margin-right: 10px;
-	width: 90%;
+	xwidth: 90%; width: 500px; /* testar lite med IE7 (x)- 23okt*/
 }
 
 #editlink {

@@ -14,7 +14,7 @@ var inlineEdit = new Class({
 			var content = this.oldContent.trim().replace(new RegExp("<br>", "gi"), "\n");
 			this.inputBox = new Element(this.options.type).setProperty('value',content).addClass("inlineEdit");
 			if(!this.inputBox.value){this.inputBox.setHTML(content)}
-			this.setAllStyles(element,this.inputBox);
+			//this.setAllStyles(element,this.inputBox);
 			this.editting.setHTML('');
 			this.inputBox.injectInside(this.editting);
 			(function(){this.inputBox.focus()}.bind(this)).delay(300);
