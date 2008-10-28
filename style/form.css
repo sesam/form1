@@ -697,6 +697,7 @@ div.question .edit ul {
 	position: absolute;
 	top: 10px;
 	right: 10px;
+	text-indent: -9999px;
 }
 
 .deactive { background-position: 0px 0px !important;}
@@ -713,5 +714,5 @@ div.question .edit ul {
 #action div, #action a { margin-right: 0.5em; color: #000; font-weight: bold;}
 #action .add { font-size: 130%; text-decoration: none; }
 
-#toolbar { position: fixed; top: 0; left: 0; background-color: #000; color: #fff; height: 20px; width: 100%; }
+#toolbar { position: fixed; top: 0; left: 0; background-color: #000; color: #fff; xheight: 20px; width: 100%; }
 #toolbar a { color: #fff; }

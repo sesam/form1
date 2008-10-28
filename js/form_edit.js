@@ -14,16 +14,20 @@
  * name:									Namnet på inputfältet.
  */
 
+var edit_mode = false;
 
 document.onkeypress = keyHandler;
 document.onmousedown = mouseHandler;
 
 /* Aktivera inlineEdit2 via klick i #header */
 var statusbar = $('statusbar');
-var edit_link = document.createElement('div');
+//var edit_link = document.createElement('div');
+var edit_link = document.createElement('a');
+edit_link.appendChild(document.createTextNode("Redigera"));
 edit_link.id = "editlink";
 edit_link.className = "deactive";
 edit_link.title = "Öppna/stäng redigeringsläge här";
+edit_link.setAttribute("accesskey", "q");
 
 //var h = $('header');
 //h.addEvent('click', function(a) { 
@@ -34,8 +38,9 @@ statusbar.appendChild(edit_link);
 
 function toggleEditMode() {
 	if(edit_link.className == "deactive") { // Knappen var "av", så knappen slås på.
+		FancyForm.initing = 1;
 		edit_mode = true;
-		fapp.showEditLink();
+		showEditLink();
 		edit_link.className = "active";			
 		var f = $('form_');	
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
@@ -50,6 +55,78 @@ function toggleEditMode() {
 		toolbar.innerHTML = '<p><strong>Redigerar…</strong> <a href="#toolbar" onclick="refreshOdd(); return false;">Städa upp bland zebraränderna.</a></p>';
 		document.getElementsByTagName("body")[0].appendChild(toolbar);
 		
+		var tool_p = toolbar.getElementsByTagName("p")[0];
+		
+		var a = document.createElement("a");
+		a.setAttribute("href", "#");
+		//a.setAttribute("onclick", "new_question(); return false;");
+		
+		a.onclick = function () {
+			//alert("hej");
+			new_question();
+			return false;
+		}
+		tool_p.appendChild(document.createTextNode(" "));
+		a.appendChild(document.createTextNode("Lägg till fråga"));
+		tool_p.appendChild(a);
+		
+		tool_p.appendChild(document.createTextNode(" "));
+		
+		var aa = document.createElement("a");
+		aa.setAttribute("href", "#statistik");
+		aa.appendChild(document.createTextNode("Bygg resultattexter"));
+		aa.onclick = function() {
+			var textarea_div = document.createElement("div");
+			textarea_div.id = "statistik";
+			var textarea_form = document.createElement("form");
+			textarea_form.setAttribute("method", "post");
+			textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/bygg_statistik.asp");
+			var textarea = document.createElement("textarea");
+			textarea.setAttribute("cols", "80%");
+			textarea.setAttribute("rows", "2");
+			textarea.setAttribute("name", "String");
+			textarea.style.display = "none";
+			var textarea_link = document.createElement("input");
+			var fq = fetch_questions();
+			for(var i=0; i<fq.length; i++) { textarea.value += fq[i];}
+			
+			textarea_link.type = "submit";
+			textarea_link.value = "Spara resultattexter";
+			
+			textarea_form.appendChild(textarea);
+			textarea_form.appendChild(textarea_link);
+			textarea_div.appendChild(textarea_form);
+			
+			$("addQuestion").appendChild(textarea_div);
+			
+			//console.info(document.getElementsByTagName("html")[0].innerHTML);
+			return false;
+		}
+		
+		tool_p.appendChild(aa);
+		tool_p.appendChild(document.createTextNode(" "));
+		
+		
+		var spara = document.createElement("a");
+		spara.setAttribute("href", "#bygg");
+		spara.appendChild(document.createTextNode("Spara Formulär"));
+		spara.onclick = function() {
+			save();
+			
+			return false;
+		}
+		
+		tool_p.appendChild(spara);
+		tool_p.appendChild(document.createTextNode(" "));
+		
+		
+		var manual = document.createElement("a");
+		manual.href = "#";
+		manual.appendChild(document.createTextNode("Om frågeredigering"));
+		manual.onclick = function() { alert("Hjälptext kommer senare"); }
+		tool_p.appendChild(manual);
+		
+		
 	} else {
 		edit_mode = false;
 		var f = $('form_');
@@ -59,7 +136,7 @@ function toggleEditMode() {
 		
 		
 		edit_link.className = "deactive";
-		fapp.removeEditLink();
+		removeEditLink();
 		
 		var edit_boxes = document.getElements('.edit');
 		edit_boxes.each(function(elt) { elt.parentNode.removeChild(elt); });
@@ -72,6 +149,170 @@ function toggleEditMode() {
 		// Här måste alla inlineEdit tas bort från click-event
 	}
 	window.location.hash="edit";
+}
+
+
+function showEditLink() {
+	var addQuestion = document.getElementById("addQuestion");
+	if (addQuestion) {
+	addQuestion = addQuestion.parentNode.removeChild(addQuestion); //
+	} else {
+		// Skapar createQuestion p-elementet
+		addQuestion = document.createElement("p");
+		addQuestion.id = "addQuestion";
+	}
+	if (edit_mode) { fapp.currentPageDiv.appendChild(addQuestion); }
+}
+
+function removeEditLink() {
+	var addQuestion = document.getElementById("addQuestion");
+	var createQuestion = document.getElementById("createQuestion");
+	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
+	if(createQuestion) { createQuestion.parentNode.removeChild(createQuestion); }
+}
+
+function save() {
+	var textarea_div = document.createElement("div");
+	textarea_div.id = "bygg";
+	var textarea_form = document.createElement("form");
+	textarea_form.setAttribute("name", "textareaForm");
+	textarea_form.setAttribute("method", "post");
+	textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/form_spara.asp");
+	textarea_form.id = "textareaform";
+	var textarea = document.createElement("textarea");
+	textarea.setAttribute("cols", "80%");
+	textarea.setAttribute("rows", "2");
+	textarea.setAttribute("name", "html");
+	textarea.style.display = "none";
+	var textarea_link = document.createElement("input");
+	
+	var editlink = document.getElementById("editlink");
+	var editlink_parent = editlink.parentNode;
+	var addQuestion = document.getElementById("addQuestion");
+	var addQuestion_parent = addQuestion.parentNode;
+	editlink_parent.removeChild(editlink);
+	var toolbar = document.getElementById("toolbar");
+	if(toolbar) toolbar.parentNode.removeChild(toolbar);
+	
+	
+	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
+	
+	var saved = document.getElementById("saved");
+	var date = new Date();
+	fapp.logga($('form_').toQueryString());
+	saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+	
+	
+	//var inner_html = document.getElementsByTagName("html")[0].innerHTML;
+	var inner_html = document.getElementById("form_").innerHTML;
+	var pat = /style="position: absolute; left: -9999px;" /g;
+	inner_html = inner_html.replace(/style=\"position: absolute; left: -9999px;\" /g, "");
+	
+	inner_html = inner_html.replace(/ class=\"unselected\"/g, "");
+	inner_html = inner_html.replace(/ class=\"selected\"/g, "");
+	inner_html = inner_html.replace(/ class=\"checked\"/g, "");
+	inner_html = inner_html.replace(/ class=\"unchecked\"/g, "");
+	inner_html = inner_html.replace(/<li><label class=\"textfield\">/g, '<li class="checkedtextfield textfield"><label class="textfield">');	
+	inner_html = inner_html.replace(/<div style=\"display: block;\"/g, '<div');
+	inner_html = inner_html.replace(/<div style=\"display: none;\"/g, '<div');
+	
+//	orginal_html = orginal_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
+//	orginal_html = orginal_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
+//	orginal_html = orginal_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
+//	orginal_html = orginal_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
+//	orginal_html = orginal_html.replace(/.*<\/body>/, "<\/body>\n");
+	
+//	inner_html = inner_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
+//	inner_html = inner_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
+//	inner_html = inner_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
+//	inner_html = inner_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
+//	inner_html = inner_html.replace(/.*<\/body>/, "<\/body>\n");
+	
+	inner_html= inner_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
+	inner_html= inner_html.replace(/^[ \t]*[\r\n]+/g, '')
+	orginal_html= orginal_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
+	orginal_html= orginal_html.replace(/^[ \t]*[\r\n]+/g, '')
+// 	
+// inner_html = inner_html.replace(/\s*title>/, '<title>');
+// orginal_html = orginal_html.replace(/\s*title>/, '<title>');
+// 
+// inner_html = inner_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
+// orginal_html = orginal_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
+	
+
+
+	//inner_html = inner_html.replace(/<script.+<\/script>\r*\n*/g, "");
+	//orginal_html = orginal_html.replace(/<script.+<\/script>\r*/g, "");
+	alert(orginal_html == inner_html);
+	textarea.value = inner_html;
+	
+	//fapp.logga(inner_html);
+	//textarea.value = orginal_html;
+	
+	textarea_link.type = "submit";
+	textarea_link.value = "Spara";
+	
+	
+	textarea_form.appendChild(textarea);
+	textarea_form.appendChild(textarea_link);
+	textarea_div.appendChild(textarea_form);
+	
+	editlink_parent.appendChild(editlink);
+	addQuestion_parent.appendChild(addQuestion);
+	
+	$("addQuestion").appendChild(textarea_div);
+	
+	var textareaForm = document.getElementById("textareaform");
+	
+	
+	textareaForm.submit();
+	
+	
+	//document.textareaForm.submit();
+}
+
+function fetch_questions() {
+	var questions = document.getElements(".question");
+	var strings = new Array();
+	
+	//console.group("To: bygg_statistik.asp");
+	for (var i=0; i<questions.length; i++) {
+		var question_text = $(questions[i]).getElement(".qtext").innerHTML;
+		
+		var div_text = $(questions[i]).getElements("DIV.qtext");
+		for(var j = 0; j < div_text.length; j++) { question_text += '\n' + div_text[j].innerHTML; }
+		
+		var question_type = "-";
+		var question_have_other = "";
+		if(!questions[i].parentNode.hasClass("scale-group")) {
+			var labels = $(questions[i]).getElements(".answer label");
+			
+			for (var x=0; x<labels.length;x++) {
+				var children = labels[x].childNodes;
+				for (var y=0; y<children.length;y++) {
+					if(children[y].nodeName == "SPAN") {
+						question_text += "|" + children[y].innerHTML;
+					} else if (children[y].nodeType == 3 && children[y].data != " ") {
+						question_text += "|" + children[y].data;
+					}
+				}
+				if(labels[x].parentNode.checkedtextfield || labels[x].parentNode.radiotextfield) { question_have_other = "last-is-textfield"; }
+			}
+				
+		var inputs = $(questions[i]).getElements(".answer input");
+		if(inputs[0]) {
+			if(inputs[0].hasClass("r")) { question_type = "-5"; }
+			else if(inputs[0].hasClass("cb")) { question_type = "8"; }
+		}
+		if(questions[i].hasClass("big-text")) { question_type = "-1"; }
+		} else { question_type = "0"; }
+		
+		var string = questions[i].id + "," + question_type + ",#" + question_text + "#," + questions[i].className + " " + question_have_other + "\n\n";
+		//console.info(string);
+		strings.push(string);
+	}
+	//console.groupEnd();
+	return strings;
 }
 
 
@@ -515,7 +756,10 @@ function update_answers_id(question) {
 	}
 	question.id = question.id.replace(/\d+/, id);
 	var answers = $(question).getElements("INPUT");
-	answers.each(function(a) {a.id = a.id.replace(/\d+_/, id + "_");});
+	for(var x=0; x < answers.length; x++) {
+		//answers[x].id = answers[x].id.replace(/\d+_\d+/, id + "_" + (x + 1));
+		answers[x].name = answers[x].name.replace(/\d+/, id);
+	}
 	
 }
 
@@ -571,8 +815,9 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 			var input = document.createElement("input");
 			input.className = "r";
 			input.name = prefix + question_number;
-			input.id = prefix + question_number + "_" + (i+1);
+			//input.id = prefix + question_number + "_" + (i+1);
 			input.type = "radio";
+			input.value = i + 1;
 			var span = document.createElement("span");
 			span.appendChild(document.createTextNode(i+1));
 		
@@ -590,8 +835,9 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 			var input = document.createElement("input");
 			input.className = "r";
 			input.name = prefix + question_number;
-			input.id = prefix + question_number + "_" + (loop_count + 1);
+			//input.id = prefix + question_number + "_" + (loop_count + 1);
 			input.type = "radio";
+			input.value = -110;
 			var span = document.createElement("span");
 			span.appendChild(document.createTextNode("Kan ej ta ställning"));
 		
@@ -933,7 +1179,8 @@ function old_question(action, question) {
 			var label = document.createElement("label");
 			var input = document.createElement("input");
 			input.name = "q" + generatedID;
-			input.id = "q" + generatedID + "_" + (i + 1); 
+			//input.id = "q" + generatedID + "_" + (i + 1); 
+			input.value = i +1;
 			switch(element.questionType) {
 				case "radio": input.className = "r"; break;
 				case "checkbox": input.className = "cb"; break;
@@ -973,14 +1220,14 @@ function old_question(action, question) {
 			var input = document.createElement("input");
 			input.type = element.questionType
 			input.name = "q" + generatedID + "_" + (i+1);
-			input.id = "q" + generatedID + "_" + (i+1);
+			//input.id = "q" + generatedID + "_" + (i+1);
 			answer_div.appendChild(input);
 			active_ul = null;
 		}
 		else if (element.questionType == "textarea") {			
 			var input = document.createElement("textarea");
 			input.name = "q" + generatedID + "_" + (i+1);
-			input.id = "q" + generatedID + "_" + (i+1);
+			//input.id = "q" + generatedID + "_" + (i+1);
 			answer_div.appendChild(input);
 			active_ul = null;
 		}
@@ -1063,8 +1310,8 @@ function old_question(action, question) {
 		while (fetch == true) {
 			if(answers != null && answers[item_count] != null) {
 				var question = new Element('div', { 'class': 'question element' });
-				question.id = "q" + generatedID;
-				
+				question.id = "q" + generate_id();
+				console.info(question.id);
 				if(oddIratior) {
 					question.addClass("odd");
 					oddIratior = false;
@@ -1090,8 +1337,8 @@ function old_question(action, question) {
 				
 				h5.appendChild(qtxt);
 				
-				number.onclick = function() { this.inlineEdit(); }
-				qtxt.onclick = function() { this.inlineEdit(); }
+				number.onclick = function() { this.inlineEdit(); };
+				qtxt.onclick = function() { this.inlineEdit(); };
 				
 				
 				question.appendChild(h5);
@@ -1108,11 +1355,13 @@ function old_question(action, question) {
 					var input = document.createElement("input");
 					input.type = "radio";
 					input.name = question.id;
-					input.id = question.id + "_" + (i + 1); 
+					//input.id = question.id + "_" + (i + 1);
+					input.value = i + 1;
 					var span = document.createElement("span");
 					if (i == 5) { // 6:e
 						li.className = "v";
 						span.appendChild(document.createTextNode("Kan ej ta ställning") );
+						input.value = -110;
 					} else {
 						span.appendChild(document.createTextNode(i) );
 					}
@@ -1132,7 +1381,7 @@ function old_question(action, question) {
 				fetch = false;
 			}
 		}
-		$("createQuestion").getPrevious(".group").appendChild(scale_group);
+		$("createQuestion").getPrevious().getPrevious(".group").appendChild(scale_group);
 		headline.onclick = function() { showGroupEditBox( this.parentNode) };
 		
 		
@@ -1185,7 +1434,8 @@ function old_question(action, question) {
 			div_question.appendChild(answer_div);
 		}
 		
-		$("createQuestion").getPrevious(".group").appendChild(div_question);
+		$("createQuestion").getPrevious().getPrevious("DIV.group").appendChild(div_question);
+		//$("createQuestion").getPrevious("DIV.group").insertBefore(div_question, );
 	}
 	else if (action.toLowerCase() == "edit") {
 		var old_answer = $(question).getElement(".answer");	
@@ -1606,8 +1856,8 @@ function showEditBox(_question) {
 			var add_other = document.createElement("a");
 			add_other.onclick = function(){
 				var q = fapp.findQuestionDiv(this);
-				var edit = $(q).getElement("DIV.edit");
-				
+				var edit = $(q).getElement(".edit");
+				alert(edit);
 				var lis = edit.getElementsByTagName("li");
 				
 				var li = document.createElement("li");
@@ -1744,12 +1994,24 @@ function setSelect(question) {
 				
 					setSelect(selected_question);
 				
-					var temp = $(old_select).clone()
+					var temp = $(old_select).clone();
 					temp.injectAfter(old_select);
 					temp.removeClass("selected_question");
 					
+					
+					var set_onclick = function(qu) {
+						var qtext = $(qu).getElement(".qtext");
+						var number = $(qu).getElement(".number");
+						qtext.innerHTML = "Ny fråga";
+						qtext.onclick = function() { this.inlineEdit(); };
+						number.innerHTML = 0;
+						number.onclick = function() { this.inlineEdit(); };
+						temp.ondblclick = function() { showEditBox(this); }
+					}
+					
+					
 					if(temp.hasClass("question")) {
-						update_answers_id(temp);					
+						update_answers_id(temp);
 						var qtext = $(temp).getElement(".qtext");
 						var number = $(temp).getElement(".number");
 						qtext.innerHTML = "Ny fråga";
@@ -1759,10 +2021,21 @@ function setSelect(question) {
 					
 						temp.ondblclick = function() { showEditBox(this); }
 					}
+					else if(temp.hasClass("scale-group")){
+						// förnyar id på alla fågor i likert-gruppen etc.
+						var questions = $(temp).getElements(".question");
+						for(var i=0; i < questions.length; i++) {
+							update_answers_id(questions[i]);
+							set_onclick(questions[i]);
+						}
+						
+					}
 					else if(temp.hasClass("text")) {
 						temp.ondblclick = function() { edit_text(this); }
 					}
 					refreshScaleQuestions(old_select.parentNode);
+					FancyForm.start(0, { onSelect: fapp.onSelect } );
+					
 					return false;
 				};
 				div.appendChild(new_question);
@@ -1850,7 +2123,7 @@ function keyHandler(e) {
 	if (targ.nodeType == 3) { targ = targ.parentNode; } // defeat Safari bug
 	
 	if(code == 13) { // ENTER
-		if(targ.nodeName.toLowerCase() == "input" && targ.className != "textline" && targ.name != "textfield" && targ.name != "question_text") { // TODO: ge editboxfälten en viss class som då går att filtrera bort i keyHandler.
+		if(false && targ.nodeName.toLowerCase() == "input" && targ.className != "textline" && targ.name != "textfield" && targ.name != "question_text") { // TODO: ge editboxfälten en viss class som då går att filtrera bort i keyHandler.
 			var div = document.createElement("div");
 			div.className = "qtext";
 			div.onclick = function() { $(this).inlineEdit(); };
@@ -1885,6 +2158,8 @@ function mouseHandler(e) {
         else if (ev.button) rightclick = (ev.button == 2);
 
         if(rightclick) {
+				new Event(ev).preventDefault();
+				
                 var divQ = fapp.findElementDiv(targ);
                 if(divQ) setSelect(divQ);
                 else fapp.logga('Hogerklick utanfor - prova klicka pa en fraga istallet!');

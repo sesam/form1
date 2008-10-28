@@ -1,7 +1,6 @@
 ﻿var fapp = { onSelect: function(){} };
 var pageNav;
-var edit_mode = false;
-var orginal_html = document.getElementsByTagName('html')[0].innerHTML;
+var orginal_html = document.getElementById("form_").innerHTML;
 
 if (!window.console || !console.firebug)
 {
@@ -13,104 +12,7 @@ if (!window.console || !console.firebug)
         window.console[names[i]] = function() {}
 }
 
-function save() {
-	var textarea_div = document.createElement("div");
-	textarea_div.id = "bygg";
-	var textarea_form = document.createElement("form");
-	textarea_form.setAttribute("name", "textareaForm");
-	textarea_form.setAttribute("method", "post");
-	textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/form_spara.asp");
-	textarea_form.id = "textareaform";
-	var textarea = document.createElement("textarea");
-	textarea.setAttribute("cols", "80%");
-	textarea.setAttribute("rows", "2");
-	textarea.setAttribute("name", "html");
-	textarea.style.display = "none";
-	var textarea_link = document.createElement("input");
-	
-	var editlink = document.getElementById("editlink");
-	var editlink_parent = editlink.parentNode;
-	var addQuestion = document.getElementById("addQuestion");
-	var addQuestion_parent = addQuestion.parentNode;
-	editlink_parent.removeChild(editlink);
-	var toolbar = document.getElementById("toolbar");
-	if(toolbar) toolbar.parentNode.removeChild(toolbar);
-	
-	
-	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
-	
-	var saved = document.getElementById("saved");
-	var date = new Date();
-	fapp.logga($('form_').toQueryString());
-	saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
-	
-	
-	var inner_html = document.getElementsByTagName("html")[0].innerHTML;
-	var pat = /style="position: absolute; left: -9999px;" /g;
-	inner_html = inner_html.replace(/style=\"position: absolute; left: -9999px;\" /g, "");
-	
-	inner_html = inner_html.replace(/ class=\"unselected\"/g, "");
-	inner_html = inner_html.replace(/ class=\"selected\"/g, "");
-	inner_html = inner_html.replace(/ class=\"checked\"/g, "");
-	inner_html = inner_html.replace(/ class=\"unchecked\"/g, "");
-	inner_html = inner_html.replace(/<li><label class=\"textfield\">/g, '<li class="checkedtextfield textfield"><label class="textfield">');	
-	inner_html = inner_html.replace(/<div style=\"display: block;\"/g, '<div');
-	inner_html = inner_html.replace(/<div style=\"display: none;\"/g, '<div');
-	
-//	orginal_html = orginal_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
-//	orginal_html = orginal_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
-//	orginal_html = orginal_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
-//	orginal_html = orginal_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
-//	orginal_html = orginal_html.replace(/.*<\/body>/, "<\/body>\n");
-	
-//	inner_html = inner_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
-//	inner_html = inner_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
-//	inner_html = inner_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
-//	inner_html = inner_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
-//	inner_html = inner_html.replace(/.*<\/body>/, "<\/body>\n");
-	
-	inner_html= inner_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
-	inner_html= inner_html.replace(/^[ \t]*[\r\n]+/g, '')
-	orginal_html= orginal_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
-	orginal_html= orginal_html.replace(/^[ \t]*[\r\n]+/g, '')
-// 	
-// inner_html = inner_html.replace(/\s*title>/, '<title>');
-// orginal_html = orginal_html.replace(/\s*title>/, '<title>');
-// 
-// inner_html = inner_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
-// orginal_html = orginal_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
-	
 
-
-	//inner_html = inner_html.replace(/<script.+<\/script>\r*\n*/g, "");
-	//orginal_html = orginal_html.replace(/<script.+<\/script>\r*/g, "");
-	alert(orginal_html == inner_html);
-	textarea.value = inner_html;
-	
-	//fapp.logga(inner_html);
-	//textarea.value = orginal_html;
-	
-	textarea_link.type = "submit";
-	textarea_link.value = "Spara";
-	
-	
-	textarea_form.appendChild(textarea);
-	textarea_form.appendChild(textarea_link);
-	textarea_div.appendChild(textarea_form);
-	
-	editlink_parent.appendChild(editlink);
-	addQuestion_parent.appendChild(addQuestion);
-	
-	$("addQuestion").appendChild(textarea_div);
-	
-	var textareaForm = document.getElementById("textareaform");
-	
-	
-	textareaForm.submit();
-	
-	
-	//document.textareaForm.submit();
-}
 // Get a nicely caching mootools-version via google!   --- http://code.google.com/apis/ajax/documentation/
 // Though it seems they are missing a way to populate cache without evalig the contents of the .js file.
 
@@ -181,6 +83,9 @@ function insertAfter(new_element, target_element) {
 	}
 }
 
+/**
+ * Används för att få "annat"-svar att seut som kryssruta med ett textfält.
+ */
 function prepareForm(){
 	var elements = document.getElements('LI.checkedtextfield');
 	var elements_radio = document.getElements('LI.radiotextfield');
@@ -262,7 +167,7 @@ function saveForm() {
 			fapp.logga($('form_').toQueryString());
 			saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
 		}
-	});
+	});	
 	} catch(NS_ERROR_FILE_NOT_FOUND) {
 	
 	}
@@ -278,52 +183,6 @@ function autoSave(run) {
 	if (run == true) { autoSave_ = setInterval("saveForm()", 60 * 1000); }
 	else if (run == false) { clearInterval(autoSave_); }
 }
-
-
-function fetch_questions() {
-	var questions = document.getElements(".question");
-	var strings = new Array();
-	
-	//console.group("To: bygg_statistik.asp");
-	for (var i=0; i<questions.length; i++) {
-		var question_text = $(questions[i]).getElement(".qtext").innerHTML;
-		
-		var div_text = $(questions[i]).getElements("DIV.qtext");
-		for(var j = 0; j < div_text.length; j++) { question_text += '\n' + div_text[j].innerHTML; }
-		
-		var question_type = "-";
-		var question_have_other = "";
-		if(!questions[i].parentNode.hasClass("scale-group")) {
-			var labels = $(questions[i]).getElements(".answer label");
-			
-			for (var x=0; x<labels.length;x++) {
-				var children = labels[x].childNodes;
-				for (var y=0; y<children.length;y++) {
-					if(children[y].nodeName == "SPAN") {
-						question_text += "|" + children[y].innerHTML;
-					} else if (children[y].nodeType == 3 && children[y].data != " ") {
-						question_text += "|" + children[y].data;
-					}
-				}
-				if(labels[x].parentNode.checkedtextfield || labels[x].parentNode.radiotextfield) { question_have_other = "last-is-textfield"; }
-			}
-				
-		var inputs = $(questions[i]).getElements(".answer input");
-		if(inputs[0]) {
-			if(inputs[0].hasClass("r")) { question_type = "-5"; }
-			else if(inputs[0].hasClass("cb")) { question_type = "8"; }
-		}
-		if(questions[i].hasClass("big-text")) { question_type = "-1"; }
-		} else { question_type = "0"; }
-		
-		var string = questions[i].id + "," + question_type + ",#" + question_text + "#," + questions[i].className + " " + question_have_other + "\n\n";
-		//console.info(string);
-		strings.push(string);
-	}
-	//console.groupEnd();
-	return strings;
-}
-
 
 var formApplication = function() {
 	this.onpage = 1;
@@ -341,14 +200,6 @@ var formApplication = function() {
 	//if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
 	if ('welcome'== document.location.search) document.location.search='';
 	
-	// Debug - Skriver ut debug-information i <textarea>
-	/*
-	if (document.getElementsByTagName('textarea')) {
-		this.ta=document.getElementsByTagName('textarea');
-	}*/
-	/*
-	if (this.ta) this.ta=this.ta[0];
-	*/
 	this.logga = function(x) {
 		/*if (this.ta) this.ta.value += x + '\n';*/ /*console.info(x);*/
 		try{console.info(x);}
@@ -442,99 +293,10 @@ var formApplication = function() {
 		this.setPageClass('on-page-'+n);
 		this.currentPageDiv = document.getElementById('page-' + n);
 		
-		this.showEditLink();
 				
 		if (fapp.mark_unanswered) fapp.message_print();
 	}
-
-	this.showEditLink = function() {
-		var addQuestion = document.getElementById("addQuestion");
-		if (addQuestion) {
-		addQuestion = addQuestion.parentNode.removeChild(addQuestion); //
-		} else {
-			// Skapar createQuestion p-elementet
-			addQuestion = document.createElement("p");
-			addQuestion.id = "addQuestion";
-			var a = document.createElement("a");
-			a.setAttribute("href", "#");
-			//a.setAttribute("onclick", "new_question(); return false;");
-			
-			a.onclick = function () {
-				//alert("hej");
-				new_question();
-				return false;
-			}
-			
-			a.appendChild(document.createTextNode("Lägg till fråga"));
-			addQuestion.appendChild(a);
-			
-			addQuestion.appendChild(document.createTextNode(" "));
-			
-			var aa = document.createElement("a");
-			aa.setAttribute("href", "#statistik");
-			aa.appendChild(document.createTextNode("Bygg resultattexter"));
-			aa.onclick = function() {
-				var textarea_div = document.createElement("div");
-				textarea_div.id = "statistik";
-				var textarea_form = document.createElement("form");
-				textarea_form.setAttribute("method", "post");
-				textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/bygg_statistik.asp");
-				var textarea = document.createElement("textarea");
-				textarea.setAttribute("cols", "80%");
-				textarea.setAttribute("rows", "2");
-				textarea.setAttribute("name", "String");
-				textarea.style.display = "none";
-				var textarea_link = document.createElement("input");
-				var fq = fetch_questions();
-				for(var i=0; i<fq.length; i++) { textarea.value += fq[i];}
-				
-				textarea_link.type = "submit";
-				textarea_link.value = "Spara resultattexter";
-				
-				textarea_form.appendChild(textarea);
-				textarea_form.appendChild(textarea_link);
-				textarea_div.appendChild(textarea_form);
-				
-				$("addQuestion").appendChild(textarea_div);
-				
-				//console.info(document.getElementsByTagName("html")[0].innerHTML);
-				return false;
-			}
-			
-			addQuestion.appendChild(aa);
-			addQuestion.appendChild(document.createTextNode(" "));
-			
-			
-			var spara = document.createElement("a");
-			spara.setAttribute("href", "#bygg");
-			spara.appendChild(document.createTextNode("Spara Formulär"));
-			spara.onclick = function() {
-				save();
-				
-				return false;
-			}
-			
-			addQuestion.appendChild(spara);
-			addQuestion.appendChild(document.createTextNode(" "));
-			
-			
-			var manual = document.createElement("a");
-			manual.href = "#";
-			manual.appendChild(document.createTextNode("Om frågeredigering"));
-			manual.onclick = function() { alert("Hjälptext kommer senare"); }
-			addQuestion.appendChild(manual);
-		}
-		
-		if (edit_mode) { this.currentPageDiv.appendChild(addQuestion); } //
-		
-	}
 	
-	this.removeEditLink = function() {
-		var addQuestion = document.getElementById("addQuestion");
-		var createQuestion = document.getElementById("createQuestion");
-		if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
-		if(createQuestion) { createQuestion.parentNode.removeChild(createQuestion); }
-	}
 	/*
 	 * sets a page class, needed by css rules for marking current page in the page navigator
 	 */
@@ -592,7 +354,23 @@ var formApplication = function() {
 		var arr = all_unanswered.map(fapp.possiblyAddHighlight); //depends on fapp.mark_unanswered
 		return fapp.arraySum(arr);
 	}
+	
+	this.findMyDiv = function(elt,klass) {
+	 var re = new RegExp(klass);
+	 for (var i=0; i<9; i++) {
+	  if (elt.className && elt.className.match(re)) return elt;
+	  elt = elt.parentNode;
+	 }
+	}
 
+	this.findQuestionDiv = function(elt) {
+	 return fapp.findMyDiv(elt, 'question');
+	}
+
+	this.findElementDiv = function(elt) {
+	 return fapp.findMyDiv(elt, 'element');
+	}
+/*
 	this.findQuestionDiv = function(elt) {
 		for (var i=0; i<9; i++) {
 			if (elt.className.match(/question/)) return elt;
@@ -606,7 +384,7 @@ var formApplication = function() {
 			elt = elt.parentNode;
 		}
 	}
-
+*/
 	this.onSelect = function(event_elt) {
 		if (!fapp.hasAddedHighlights[fapp.onpage]) return;
 		var elt = fapp.findQuestionDiv(event_elt);
@@ -675,7 +453,18 @@ var formApplication = function() {
 	this.message_link = function(id, number, page) {
 	return '<a href="#' + id + '" onclick="fapp.showPage(' + page + ')">' + this.obl_text3 + " " + number + '</a>';
 	}
+	
+	/* Anropas vid aktivering av redigeringsläge */
+	this.pause = function() {
+		autoSave(false); FancyForm.initing=1;
+	}
+
+	/* Anropas vid deaktivering av redigeringsläge */
+	this.resume = function() {
+	/* TODO Senare(tm) */
+	}
 }
+
 
 
 //code for version 0.94 ? :-)
