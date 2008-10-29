@@ -460,6 +460,10 @@ div.question ul {
 	margin-left: 3em;
 }
 
+.big-text.question textarea {
+	display: block;
+}
+
 /* =clearfix
 ------------------------------------------------------------*/
 .clearfix:after {

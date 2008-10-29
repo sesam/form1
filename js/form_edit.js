@@ -38,7 +38,9 @@ statusbar.appendChild(edit_link);
 
 function toggleEditMode() {
 	if(edit_link.className == "deactive") { // Knappen var "av", så knappen slås på.
-		FancyForm.initing = 1;
+		location.search='?edit=1'; 
+	
+		//FancyForm.initing = 1;
 		edit_mode = true;
 		showEditLink();
 		edit_link.className = "active";			
@@ -197,16 +199,13 @@ function save() {
 	
 	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
 	
-	var saved = document.getElementById("saved");
-	var date = new Date();
-	fapp.logga($('form_').toQueryString());
-	saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
-	
-	
 	//var inner_html = document.getElementsByTagName("html")[0].innerHTML;
 	var inner_html = document.getElementById("form_").innerHTML;
-	var pat = /style="position: absolute; left: -9999px;" /g;
-	inner_html = inner_html.replace(/style=\"position: absolute; left: -9999px;\" /g, "");
+	var pat = /style="position: absolute; left: -9999px;" /gi;
+	inner_html = inner_html.replace(/style=\"position: absolute; left: -9999px;\" /gi, "");
+	//inner_html = inner_html.replace(/ style="LEFT: -9999px; POSITION: absolute"/gi, '');
+	inner_html = inner_html.replace(/ style=\"LEFT: -9999px; POSITION: absolute\"/gi, '');
+	
 	
 	inner_html = inner_html.replace(/ class=\"unselected\"/g, "");
 	inner_html = inner_html.replace(/ class=\"selected\"/g, "");
@@ -231,7 +230,11 @@ function save() {
 	inner_html= inner_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
 	inner_html= inner_html.replace(/^[ \t]*[\r\n]+/g, '')
 	orginal_html= orginal_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
-	orginal_html= orginal_html.replace(/^[ \t]*[\r\n]+/g, '')
+	orginal_html= orginal_html.replace(/^[ \t]*[\r\n]+/g, '');
+	
+	inner_html = inner_html.replace(/title=\"\.*\"/gi, '');
+	orginal_html = orginal_html.replace(/title=\"\.*\"/gi, '');
+	
 // 	
 // inner_html = inner_html.replace(/\s*title>/, '<title>');
 // orginal_html = orginal_html.replace(/\s*title>/, '<title>');
@@ -384,7 +387,7 @@ function setDefaultInputEvents(element, input_value, font_color) {
 
 var createQuestion_last = null;
 var createQuestion_type = null;
-var createQuestion_on = false;
+var createQuestion_on = false; 
 
 /**
  * Visar formuläret för att skapa nya frågor.
@@ -1007,15 +1010,17 @@ function question(action, question) {
 			var label = document.createElement("label");
 			var input = document.createElement("input");
 			input.name = ID;
+			input.value = i + 1;
 			switch(answer.questionType) {
 				case "radio":
 					input.className = "r";
-					input.id = ID + "_" + i;
+					//input.id = ID + "_" + i;
 					break;
 					
 				case "checkbox":
 					input.className = "cb";
-					input.id = ID + "_" + i;
+					input.name += "_" + (i + 1);
+					//input.id = ID + "_" + i;
 					break;
 					
 				default: input.className = answer.questionType; input.name = ID;
@@ -1027,6 +1032,8 @@ function question(action, question) {
 				input.className = "textline";
 				li.className = "checkedtextfield";
 				label.className = "textfield";
+				input.name = "t" + input.name.replace(/q/,'') + "_" + (i + 1);
+				input.value = null;
 				
 				label.appendChild(document.createTextNode(answer.label + " "));
 				label.appendChild(input);
@@ -1038,7 +1045,9 @@ function question(action, question) {
 					input.className = "textline";
 					li.className = "radiotextfield";
 					label.className = "textfield";
-
+					input.name = "t" + input.name.replace(/q/,'') + "_" + (i + 1);
+					input.value = null;
+					
 					label.appendChild(document.createTextNode(answer.label + " "));
 					label.appendChild(input);
 					li.appendChild(label);
@@ -1068,16 +1077,15 @@ function question(action, question) {
 		else if (answer.questionType == "text") {
 			var input = document.createElement("input");
 			input.type = answer.questionType
-			input.name = ID + "_" + i;
-			input.id = ID + "_" + i;
+			input.name = "t" + ID.replace(/q/, '') + "_" + (i +1);
 			answer_div.appendChild(input);
 			active_ul = null;
 		}
 		else if (answer.questionType == "textarea") {
 			var input = document.createElement("textarea");
-			input.name = ID + "_" + i;
-			input.id = ID + "_" + i; 
-			
+			input.name = "t" + ID.replace(/q/, '') + "_" + (i + 1);
+			input.setAttribute("cols", "70");
+			input.setAttribute("rows", "4");
 			answer_div.appendChild(input);
 			active_ul = null;
 		}
@@ -1179,11 +1187,11 @@ function old_question(action, question) {
 			var label = document.createElement("label");
 			var input = document.createElement("input");
 			input.name = "q" + generatedID;
-			//input.id = "q" + generatedID + "_" + (i + 1); 
 			input.value = i +1;
+			
 			switch(element.questionType) {
 				case "radio": input.className = "r"; break;
-				case "checkbox": input.className = "cb"; break;
+				case "checkbox": input.className = "cb"; input.name += "_" + (i+1); break;
 				default: input.className = element.questionType;
 			}
 			
@@ -1219,14 +1227,16 @@ function old_question(action, question) {
 		else if (element.questionType == "text") {
 			var input = document.createElement("input");
 			input.type = element.questionType
-			input.name = "q" + generatedID + "_" + (i+1);
+			input.name = "t" + generatedID + "_" + (i+1);
 			//input.id = "q" + generatedID + "_" + (i+1);
 			answer_div.appendChild(input);
 			active_ul = null;
 		}
 		else if (element.questionType == "textarea") {			
 			var input = document.createElement("textarea");
-			input.name = "q" + generatedID + "_" + (i+1);
+			input.name = "t" + generatedID + "_" + (i+1);
+			input.setAttribute("cols", "70");
+			input.setAttribute("rows", "4");
 			//input.id = "q" + generatedID + "_" + (i+1);
 			answer_div.appendChild(input);
 			active_ul = null;
@@ -1259,7 +1269,7 @@ function old_question(action, question) {
 		gr.className="grade";
 		
 		var h4_betyg = document.createElement("h4");
-		h4_betyg.appendChild(document.createTextNode("Betyg"));
+		h4_betyg.appendChild(document.createTextNode("Bedömning"));
 		
 		var ul = document.createElement("ul");
 		var li = document.createElement("li");
@@ -2012,17 +2022,9 @@ function setSelect(question) {
 					
 					if(temp.hasClass("question")) {
 						update_answers_id(temp);
-						var qtext = $(temp).getElement(".qtext");
-						var number = $(temp).getElement(".number");
-						qtext.innerHTML = "Ny fråga";
-						qtext.onclick = function() { this.inlineEdit(); };
-						number.innerHTML = 0;
-						number.onclick = function() { this.inlineEdit(); };
-					
-						temp.ondblclick = function() { showEditBox(this); }
+						set_onclick(temp);
 					}
 					else if(temp.hasClass("scale-group")){
-						// förnyar id på alla fågor i likert-gruppen etc.
 						var questions = $(temp).getElements(".question");
 						for(var i=0; i < questions.length; i++) {
 							update_answers_id(questions[i]);

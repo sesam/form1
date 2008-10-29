@@ -28,23 +28,7 @@ function init() {
 	pageNav = fapp; // tas bort först efter att alla gamla form*.html - filer har makulerats
 	FancyForm.onSelect = fapp.onSelect; //whee hoo!! monkeypatching ?
 	
-	fapp.lang = document.getElementsByTagName('html')[0].lang;
-	if ('sv'==fapp.lang) {
-		fapp.obl_text = "Det finns obligatoriska frågor som ej besvarats.";
-		fapp.obl_text2= " Var god besvara ";
-		fapp.obl_text3= "fråga";
-		fapp.unanswered_text= "Obesvarade frågor har markerats med gul bakgrund."
-	} else {
-		//english and default is the same, and only needed for foreign languages since 'sv' is the master translation.
-		fapp.obl_text = fapp.messageStore_default['obl_text'] = "There are some obligatory questions still unanswered.";
-		fapp.obl_text2= fapp.messageStore_default['obl_text2']= " Please address ";
-		fapp.obl_text3= fapp.messageStore_default['obl_text3']= "question";
-		fapp.unanswered_text= fapp.messageStore_default['unanswered_text'] = "Unanswered questions are marked with a yellow background."
-
-		var o=document.createNode('script');
-		o.src='js/translations.js';
-		document.getElementById('form').appendNode(o);
-	}
+	
 
 	if (!location.search.match(/print/)) {
 		fapp.loader();
@@ -164,7 +148,7 @@ function saveForm() {
 		onComplete: function() {
 			var saved = document.getElementById("saved");
 			var date = new Date();
-			fapp.logga($('form_').toQueryString());
+			//fapp.logga($('form_').toQueryString());
 			saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
 		}
 	});	
@@ -179,9 +163,12 @@ var autoSave_ = null;
  * @param run - true aktiverar sparning i tidsintervall
  */
 function autoSave(run) {
-	console.info("autosaveing");
-	if (run == true) { autoSave_ = setInterval("saveForm()", 60 * 1000); }
-	else if (run == false) { clearInterval(autoSave_); }
+	//console.info("autosaveing");
+	//if (run == true) { autoSave_ = setInterval("saveForm()", 60 * 1000); }
+	//else if (run == false) { clearInterval(autoSave_); }
+
+	if (null!=autoSave_) clearInterval(autoSave_);
+	if (run) autoSave_ = setInterval("saveForm()", 60 * 3 * 1000);
 }
 
 var formApplication = function() {
@@ -244,6 +231,24 @@ var formApplication = function() {
 	}
 
 	this.loader = function() {
+		fapp.lang = document.getElementsByTagName('html')[0].lang;
+		if ('sv'==fapp.lang) {
+			fapp.obl_text = "Det finns obligatoriska frågor som ej besvarats.";
+			fapp.obl_text2= " Var god besvara ";
+			fapp.obl_text3= "fråga";
+			fapp.unanswered_text= "Obesvarade frågor har markerats med gul bakgrund."
+		} else {
+			//english and default is the same, and only needed for foreign languages since 'sv' is the master translation.
+			fapp.obl_text = fapp.messageStore_default['obl_text'] = "There are some obligatory questions still unanswered.";
+			fapp.obl_text2= fapp.messageStore_default['obl_text2']= " Please address ";
+			fapp.obl_text3= fapp.messageStore_default['obl_text3']= "question";
+			fapp.unanswered_text= fapp.messageStore_default['unanswered_text'] = "Unanswered questions are marked with a yellow background."
+
+			var o=document.createNode('script');
+			o.src='js/translations.js';
+			document.getElementById('form').appendNode(o);
+		}
+		
   		var o=document.forms[0].elements.js;
   		if (o && o.value) o.value='1';
 		//js=1 indikerar for "nasta instans" att js finns&funkar.
@@ -255,7 +260,10 @@ var formApplication = function() {
 			setTimeout(_this_showanswers, 900); //lite delay sa man hinner se att ngt hander.
 		}
 		
+		if (!location.search.match(/edit/) && !location.hash.match(/edit/)) FancyForm.start(0, { onSelect: fapp.onSelect } );
+			
 		this.showPage(1);
+		
 	}
 
 	/* 
@@ -386,7 +394,10 @@ var formApplication = function() {
 	}
 */
 	this.onSelect = function(event_elt) {
-		if (!fapp.hasAddedHighlights[fapp.onpage]) return;
+		if (!fapp.hasAddedHighlights[fapp.onpage]) {
+			if(autoSave_ == null) { autoSave(true); }
+			return;
+		}
 		var elt = fapp.findQuestionDiv(event_elt);
 		elt.removeClass("highlight");
 		if (fapp.missedQuestions.hasKey(elt.id)) {
@@ -658,8 +669,6 @@ var FancyForm = {
 };
 
 if (location.href.match(/form/)) {
-	addLoadEvent(function() {FancyForm.start(0, { onSelect: fapp.onSelect } ) } );
-	addLoadEvent(function() {init();});
-	
+	addLoadEvent(function() {init();});	
 }
 
