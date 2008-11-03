@@ -15,6 +15,7 @@
  */
 
 var edit_mode = false;
+var active_theme;
 
 document.onkeypress = keyHandler;
 document.onmousedown = mouseHandler;
@@ -28,17 +29,12 @@ edit_link.id = "editlink";
 edit_link.className = "deactive";
 edit_link.title = "Öppna/stäng redigeringsläge här";
 edit_link.setAttribute("accesskey", "q");
+edit_link.onclick = function() { location.search.match(/\&edit=1/) ? location.search.replace(/\&edit=1/,'') : location.search +='&edit=1'; }
 
-//var h = $('header');
-//h.addEvent('click', function(a) { 
-$(edit_link).addEvent('click', function(a) {
-	toggleEditMode();
-});
 statusbar.appendChild(edit_link);
 
 function toggleEditMode() {
 	if(edit_link.className == "deactive") { // Knappen var "av", så knappen slås på.
-		location.search='?edit=1'; 
 	
 		//FancyForm.initing = 1;
 		edit_mode = true;
@@ -68,6 +64,16 @@ function toggleEditMode() {
 			new_question();
 			return false;
 		}
+		
+		tool_p.appendChild(document.createTextNode(" "));
+		
+		
+		var numbers = document.createElement("a");
+		numbers.href = "#";
+		numbers.appendChild(document.createTextNode("Ordna frågenummer"));
+		numbers.onclick = function() { refreshNumbers(); return false; }
+		tool_p.appendChild(numbers);
+		
 		tool_p.appendChild(document.createTextNode(" "));
 		a.appendChild(document.createTextNode("Lägg till fråga"));
 		tool_p.appendChild(a);
@@ -128,7 +134,26 @@ function toggleEditMode() {
 		manual.onclick = function() { alert("Hjälptext kommer senare"); }
 		tool_p.appendChild(manual);
 		
+		tool_p.appendChild(document.createTextNode(" "));
 		
+		var toggleTheme = document.createElement("a");
+		toggleTheme.href = "#";
+		toggleTheme.appendChild(document.createTextNode("Växla teman"));
+		toggleTheme.onclick = function() {
+			if(active_theme == "yellow") { switchStyleSheet(fapp.blue); active_theme="blue";}
+			else { switchStyleSheet(fapp.yellow); active_theme="yellow"; }
+			return false;
+		}
+		
+		tool_p.appendChild(toggleTheme);
+		tool_p.appendChild(document.createTextNode(" "));
+		
+		var fast_import = document.createElement("a");
+		fast_import.href = "#";
+		fast_import.appendChild(document.createTextNode("Snabb-import"));
+		fast_import.onclick = function() { show_fast_import(toolbar); return false; }
+		tool_p.appendChild(fast_import);
+			
 	} else {
 		edit_mode = false;
 		var f = $('form_');
@@ -153,6 +178,23 @@ function toggleEditMode() {
 	window.location.hash="edit";
 }
 
+var import_active = false;
+
+function show_fast_import(where) {
+	var import_box = null;
+	if(!import_active) {
+		import_box = document.createElement("div");
+		import_box.id = "import";
+		import_box.name = "import";
+		import_box.innerHTML = '<form><p>Importera:</p><textarea style="font-size: 102%;" cols="120" rows="20"></textarea><select><option>Placering</option><option>1</option><option>2</option></select> <a href="#">Infoga</a> <a href="#">Ersätt</a> <a href="#">Infoga allt</a></form>';
+		where.appendChild(import_box);
+		import_active = true;
+	} else {
+		import_box = document.getElementById("import");
+		if (import_box) import_box.parentNode.removeChild(import_box);
+		import_active = false;
+	}
+}
 
 function showEditLink() {
 	var addQuestion = document.getElementById("addQuestion");
@@ -263,7 +305,20 @@ function save() {
 	editlink_parent.appendChild(editlink);
 	addQuestion_parent.appendChild(addQuestion);
 	
-	$("addQuestion").appendChild(textarea_div);
+	var title = document.createElement("input");
+	title.value = document.getElementsByTagName("h1")[0].innerHTML;
+	title.name = "title";
+	title.type = "hidden";
+	
+	var theme = document.createElement("input");
+	theme.value = active_theme;
+	theme.name = "theme";
+	theme.type = "hidden";
+	
+	var aq = $("addQuestion");
+	aq.appendChild(title);
+	aq.appendChild(theme);
+	aq.appendChild(textarea_div);
 	
 	var textareaForm = document.getElementById("textareaform");
 	
@@ -731,7 +786,7 @@ function _group(action, group) {
 		childNode.innerHTML = _headline; 
 	}
 	update_scale_answer(group.parentNode, _scale.replace(/likert/, ''), _prio, _vetej);	
-	FancyForm.start(0, { onSelect: fapp.onSelect } );	
+	//FancyForm.start(0, { onSelect: fapp.onSelect } );	
 }
 
 function update_scale_answer(group, scale, add_prio, add_vetej) {
@@ -1131,7 +1186,7 @@ function question(action, question) {
 		insertAfter(answer_div, question.getElementsByTagName('h5')[0]);
 		
 		if (need_to_prepare_form) { prepareForm(); }
-		FancyForm.start(0, { onSelect: fapp.onSelect } );	
+		//FancyForm.start(0, { onSelect: fapp.onSelect } );	
 	}
 }
 
@@ -1453,7 +1508,7 @@ function old_question(action, question) {
 		insertAfter(answer_div, question.getElementsByTagName('h5')[0]);
 		
 		if (need_to_prepare_form) { prepareForm(); }
-		FancyForm.start(0, { onSelect: fapp.onSelect } );	
+		//FancyForm.start(0, { onSelect: fapp.onSelect } );	
 	}
 }
 
@@ -1505,7 +1560,7 @@ function delete_question(question) {
 	var oldParent = parent.parentNode;
 	if (parent.id == "createQuestion") { createQuestion_on = false; } // Skapa-rutan är borta, dvs. den är inte på.
 	oldParent.removeChild(parent); 
-	FancyForm.start(0, { onSelect: fapp.onSelect } );
+	//FancyForm.start(0, { onSelect: fapp.onSelect } );
 }
 
 
@@ -1935,6 +1990,15 @@ function refreshOdd() {
 	});
 }
 
+/**
+ * Används för att ordna sifferföljden på frågorna
+ */
+function refreshNumbers() {
+	var questions = $("form_").getElements(".question");
+	for(var n = 0; n < questions.length; n++) {
+		$(questions[n]).getElement("SPAN.number").innerHTML = n+1;
+	}
+}
 
 /**
  * Ordnar så att första frågan i en scale-group har ".first" och den sista har ".last". 
@@ -2036,7 +2100,7 @@ function setSelect(question) {
 						temp.ondblclick = function() { edit_text(this); }
 					}
 					refreshScaleQuestions(old_select.parentNode);
-					FancyForm.start(0, { onSelect: fapp.onSelect } );
+					//FancyForm.start(0, { onSelect: fapp.onSelect } );
 					
 					return false;
 				};

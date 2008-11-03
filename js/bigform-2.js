@@ -182,7 +182,7 @@ var formApplication = function() {
 	this.tack = 'tack';
 	this.logout_close = 'logout_close.asp';
 	this.yellow = 'yellow';
-	this.blue= 'blue';
+	this.blue = 'blue';
 	
 	//if (!this.data) data = '?tx1=asdf&v1=4&v2=2&v3=1';
 	if ('welcome'== document.location.search) document.location.search='';
@@ -261,7 +261,7 @@ var formApplication = function() {
 		}
 		
 		if (!location.search.match(/edit/) && !location.hash.match(/edit/)) FancyForm.start(0, { onSelect: fapp.onSelect } );
-			
+		if (location.search.match(/edit/)) toggleEditMode();
 		this.showPage(1);
 		
 	}
@@ -395,7 +395,7 @@ var formApplication = function() {
 */
 	this.onSelect = function(event_elt) {
 		if (!fapp.hasAddedHighlights[fapp.onpage]) {
-			if(autoSave_ == null) { autoSave(true); }
+			if(!edit_mode) { autoSave(true); }
 			return;
 		}
 		var elt = fapp.findQuestionDiv(event_elt);
