@@ -127,7 +127,8 @@ a:link {
 	min-height: 23px; }
 
 #statusbar p {
-	margin-bottom : -2em; }
+	margin-bottom : -2em; 
+	height: 1em; }
 	
 /* =question
 ------------------------------------------------------------*/
@@ -712,7 +713,7 @@ div.question .edit ul {
 
 .selected_question { background-color: #fcc !important; /*background-color: #000 !important; color: #fff !important;*/ }
 
-.inlineEdit, .inlineEdit:focus { margin: 0; width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown;  }
+input.textEdit, input.textEdit:focus { margin: 0; width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown;  }
 .textEdit { border: 1px solid brown; background-color: #EAE2DE; }
 
 #action div, #action a { margin-right: 0.5em; color: #000; font-weight: bold;}

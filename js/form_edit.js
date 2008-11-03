@@ -43,10 +43,10 @@ function toggleEditMode() {
 		var f = $('form_');	
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('.question').each(function(elt) { elt.title = "Dubbelklicka för frågans inställningar (funderar inte på likert-frågor)"; elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
-		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text(this);});});
+		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text_2(this);});});
 		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
-		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
-		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) elt.inlineEdit()}); } );	
+		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );
+		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );	
 		
 		var toolbar = document.createElement("div");
 		toolbar.id = "toolbar";
@@ -846,7 +846,7 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 	
 	var h4 = document.createElement("h4");
 	if(headline) { h4.appendChild(document.createTextNode(headline)); }
-	else { h4.appendChild(document.createTextNode("Betyg")); }
+	else { h4.appendChild(document.createTextNode("Bedömning")); }
 	div.appendChild(h4);
 	
 	var ul = document.createElement("ul");
@@ -1309,7 +1309,7 @@ function old_question(action, question) {
 		// En Scale-group skapas.
 		
 		var scale_group = document.createElement("div");
-		scale_group.className="scale-group likert5 v element";
+		scale_group.className="scale-group likert5 v element clearfix";
 		
 		//headline
 		var headline = document.createElement("div");
@@ -1534,6 +1534,64 @@ function edit_text(div) {
 		div.empty();
 		div.appendChild(textarea);
 		textarea.focus();		
+	}
+}
+
+function edit_text_2(element) {
+	if(element.childNodes[0].nodeName.toLowerCase() != "textarea" && element.childNodes[0].nodeName.toLowerCase() != "input"){
+		if($(element).hasClass("text")) {
+			/* Är ett fritext element (element text) */
+			var textarea = document.createElement("textarea");
+			textarea.setAttribute("rows", 20);
+			textarea.setAttribute("cols", 130);
+			textarea.value = element.innerHTML;
+			textarea.className = "textEdit clearfix";
+			
+			textarea.onblur = function() {
+				var parent_div = this.parentNode;
+				var txtarea = parent_div.childNodes[0];
+				if(txtarea.value != null && txtarea.value != "") {
+					parent_div.innerHTML = txtarea.value;
+				} else {
+					parent_div.parentNode.removeChild(parent_div);
+				}
+
+			}
+
+			element.empty();
+			element.appendChild(textarea);
+			textarea.focus();
+			
+			refreshOdd(); // En ful lösning på ett IE7 problem. Problemmet är att IE7 får lite kram när en textarea flyttar ner
+			 			 // tex. en likert grupp (rubrik och skala hänger inte med)
+		}
+		else if(element.hasClass("qtext") || element.hasClass("number")) {
+			/* Är frågetext till en fråga */
+			var input = document.createElement("input");
+			input.type = "text";
+			input.value = element.innerHTML;
+			input.className = "textEdit";
+			
+			input.onblur = function() {
+				var span = this.parentNode;
+				var txtinput = this;
+				if(txtinput.value != null && txtinput.value != "") {
+					span.innerHTML = txtinput.value;
+				} else {
+					if(span.nodeName == "SPAN") {
+						if(element.hasClass("qtext")) span.innerHTML = "Frågetext";
+						else if(element.hasClass("number")) span.innerHTML = "0";
+					}
+					else { span.parentNode.removeChild(span); }
+				}
+
+			}
+			
+			element.empty();
+			element.appendChild(input);
+			input.focus();
+			input.select();
+		}
 	}
 }
 
@@ -2020,7 +2078,7 @@ var selected_question = null;  // Innehåller den markerade frågan.
  * @param question - Frågan som ska markeras.
  */ 
 function setSelect(question) {
-	if(question.hasClass("element")) {
+	if($(question).hasClass("element")) {
 		if(selected_question) {
 				var del = selected_question.getElementById("action");
 				del.parentNode.removeChild(del);
@@ -2046,8 +2104,16 @@ function setSelect(question) {
 				removeField.title = "Ta bort frågan";
 				removeField.onclick = function() {
 					var selected_question_parent = selected_question.parentNode;
-					var q = this.parentNode.parentNode.parentNode;
-					q.parentNode.removeChild(q);
+					
+					var q;
+					if($(selected_question).hasClass("text")) {
+						q = fapp.findElementDiv(this);
+						q.parentNode.removeChild(q);
+					}
+					else { 
+						q = this.parentNode.parentNode.parentNode;
+						q.parentNode.removeChild(q);
+					}
 					if(selected_question_parent.hasClass("scale-group")) { refreshScaleQuestions(selected_question_parent); }
 					selected_question = null;
 				
@@ -2080,7 +2146,7 @@ function setSelect(question) {
 						qtext.onclick = function() { this.inlineEdit(); };
 						number.innerHTML = 0;
 						number.onclick = function() { this.inlineEdit(); };
-						temp.ondblclick = function() { showEditBox(this); }
+						temp.ondblclick = function() { showGroupEditBox(this); }
 					}
 					
 					
@@ -2189,12 +2255,14 @@ function keyHandler(e) {
 	if (targ.nodeType == 3) { targ = targ.parentNode; } // defeat Safari bug
 	
 	if(code == 13) { // ENTER
-		if(false && targ.nodeName.toLowerCase() == "input" && targ.className != "textline" && targ.name != "textfield" && targ.name != "question_text") { // TODO: ge editboxfälten en viss class som då går att filtrera bort i keyHandler.
+		if(targ.nodeName.toLowerCase() == "input" && $(targ).getParent().hasClass("qtext") && targ.className != "textline" && targ.name != "textfield" && targ.name != "question_text") { // TODO: ge editboxfälten en viss class som då går att filtrera bort i keyHandler.
 			var div = document.createElement("div");
 			div.className = "qtext";
-			div.onclick = function() { $(this).inlineEdit(); };
+			div.innerHTML = "Frågetext";
+			div.onclick = function() { /*$(this).inlineEdit();*/ edit_text_2(this) };
 			insertAfter(div, targ.parentNode);
-			$(div).inlineEdit();
+			//$(div).inlineEdit();
+			edit_text_2(div);
 		}
 		if(targ.nodeName.toLowerCase() == "textarea") { return true; }
 		return false
