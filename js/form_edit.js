@@ -50,7 +50,7 @@ function toggleEditMode() {
 		
 		var toolbar = document.createElement("div");
 		toolbar.id = "toolbar";
-		toolbar.innerHTML = '<p><strong>Redigerar…</strong> <a href="#toolbar" onclick="refreshOdd(); return false;">Städa upp bland zebraränderna.</a></p>';
+		toolbar.innerHTML = '<p><strong>Redigerar…</strong></p>';
 		document.getElementsByTagName("body")[0].appendChild(toolbar);
 		
 		var tool_p = toolbar.getElementsByTagName("p")[0];
@@ -64,21 +64,15 @@ function toggleEditMode() {
 			new_question();
 			return false;
 		}
-		
-		tool_p.appendChild(document.createTextNode(" "));
-		
-		
+				
 		var numbers = document.createElement("a");
 		numbers.href = "#";
 		numbers.appendChild(document.createTextNode("Ordna frågenummer"));
 		numbers.onclick = function() { refreshNumbers(); return false; }
-		tool_p.appendChild(numbers);
 		
-		tool_p.appendChild(document.createTextNode(" "));
+		
+		
 		a.appendChild(document.createTextNode("Lägg till fråga"));
-		tool_p.appendChild(a);
-		
-		tool_p.appendChild(document.createTextNode(" "));
 		
 		var aa = document.createElement("a");
 		aa.setAttribute("href", "#statistik");
@@ -111,10 +105,6 @@ function toggleEditMode() {
 			return false;
 		}
 		
-		tool_p.appendChild(aa);
-		tool_p.appendChild(document.createTextNode(" "));
-		
-		
 		var spara = document.createElement("a");
 		spara.setAttribute("href", "#bygg");
 		spara.appendChild(document.createTextNode("Spara Formulär"));
@@ -124,35 +114,47 @@ function toggleEditMode() {
 			return false;
 		}
 		
-		tool_p.appendChild(spara);
-		tool_p.appendChild(document.createTextNode(" "));
-		
-		
 		var manual = document.createElement("a");
 		manual.href = "#";
 		manual.appendChild(document.createTextNode("Om frågeredigering"));
 		manual.onclick = function() { alert("Hjälptext kommer senare"); }
-		tool_p.appendChild(manual);
-		
-		tool_p.appendChild(document.createTextNode(" "));
 		
 		var toggleTheme = document.createElement("a");
 		toggleTheme.href = "#";
-		toggleTheme.appendChild(document.createTextNode("Växla teman"));
+		toggleTheme.appendChild(document.createTextNode("Färgtema"));
 		toggleTheme.onclick = function() {
-			if(active_theme == "yellow") { switchStyleSheet(fapp.blue); active_theme="blue";}
-			else { switchStyleSheet(fapp.yellow); active_theme="yellow"; }
+			if(active_theme == "yellow") { switchStyleSheet(fapp.blue); active_theme="blue"; this.innerHTML = "Färgtema blå"; }
+			else { switchStyleSheet(fapp.yellow); active_theme="yellow"; this.innerHTML = "Färgtema gul"; }
 			return false;
 		}
-		
-		tool_p.appendChild(toggleTheme);
-		tool_p.appendChild(document.createTextNode(" "));
-		
+				
 		var fast_import = document.createElement("a");
 		fast_import.href = "#";
 		fast_import.appendChild(document.createTextNode("Snabb-import"));
 		fast_import.onclick = function() { show_fast_import(toolbar); return false; }
+		
+		var zebra = document.createElement("a");
+		zebra.href="#toolbar";
+		zebra.onclick = function() { refreshOdd(); return false; }
+		zebra.appendChild(document.createTextNode("Randa om"));
+		
+		// Omnumrera | Randa om | Färgtema ---- Ny fråga | Snabbimport --- Debug: Form-spara, resultattxt  --- Om...
+		tool_p.appendChild(numbers);
+		tool_p.appendChild(document.createTextNode(" | "));
+		tool_p.appendChild(zebra);
+		tool_p.appendChild(document.createTextNode(" | "));
+		tool_p.appendChild(toggleTheme);
+		tool_p.appendChild(document.createTextNode("\u00a0\u00a0\u00a0\u00a0\u00a0"));
+		
+		tool_p.appendChild(a);
+		tool_p.appendChild(document.createTextNode(" | "));
 		tool_p.appendChild(fast_import);
+		tool_p.appendChild(document.createTextNode("\u00a0\u00a0\u00a0\u00a0\u00a0Debug: "));
+		tool_p.appendChild(spara);
+		tool_p.appendChild(document.createTextNode(" | "));
+		tool_p.appendChild(aa);
+		tool_p.appendChild(document.createTextNode("\u00a0\u00a0\u00a0\u00a0\u00a0"));
+		tool_p.appendChild(manual);
 			
 	} else {
 		edit_mode = false;
