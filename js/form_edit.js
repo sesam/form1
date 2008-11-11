@@ -17,6 +17,10 @@
 var edit_mode = false;
 var active_theme;
 
+var form_redigerades = null;
+var form_sparades = null;
+
+
 document.onkeypress = keyHandler;
 document.onmousedown = mouseHandler;
 
@@ -29,8 +33,7 @@ edit_link.id = "editlink";
 edit_link.className = "deactive";
 edit_link.title = "Öppna/stäng redigeringsläge här";
 edit_link.setAttribute("accesskey", "q");
-edit_link.onclick = function() { location.search.match(/\&edit=1/) ? location.search.replace(/\&edit=1/,'') : location.search +='&edit=1'; }
-
+edit_link.onclick = function() { location.search.match(/\&edit=1/) ? location.search = location.search.replace(/\&edit=1/,'') : location.search +='&edit=1'; }
 statusbar.appendChild(edit_link);
 
 function toggleEditMode() {
@@ -109,8 +112,7 @@ function toggleEditMode() {
 		spara.setAttribute("href", "#bygg");
 		spara.appendChild(document.createTextNode("Spara Formulär"));
 		spara.onclick = function() {
-			save();
-			
+			save(true);
 			return false;
 		}
 		
@@ -177,7 +179,7 @@ function toggleEditMode() {
 		
 		// Här måste alla inlineEdit tas bort från click-event
 	}
-	window.location.hash="edit";
+	//window.location.hash="toolbar";
 }
 
 var import_active = false;
@@ -217,7 +219,28 @@ function removeEditLink() {
 	if(createQuestion) { createQuestion.parentNode.removeChild(createQuestion); }
 }
 
-function save() {
+function form_har_redigerats() {
+	form_redigerades = new Date();
+	return form_redigerades;
+}
+
+function form_har_sparats() {
+	form_sparades = new Date();
+	return form_sparades;
+}
+
+var autoEditSave_ = null;
+
+function autoEditSave(run) {
+	console.info("AutoEditsparning: on");
+	if (!run && autoEditSave_) clearInterval(autoEditSave_);
+	if (run)  {
+		if(form_redigerades > form_sparades) save();
+		if(!autoEditSave_) autoEditSave_ = setInterval("autoEditSave(true)", 60 * 1 * 1000);
+	}
+}
+
+function save(start_autosave) {
 	var textarea_div = document.createElement("div");
 	textarea_div.id = "bygg";
 	var textarea_form = document.createElement("form");
@@ -237,8 +260,8 @@ function save() {
 	var addQuestion = document.getElementById("addQuestion");
 	var addQuestion_parent = addQuestion.parentNode;
 	editlink_parent.removeChild(editlink);
-	var toolbar = document.getElementById("toolbar");
-	if(toolbar) toolbar.parentNode.removeChild(toolbar);
+	//var toolbar = document.getElementById("toolbar");
+	//if(toolbar) toolbar.parentNode.removeChild(toolbar);
 	
 	
 	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
@@ -258,19 +281,7 @@ function save() {
 	inner_html = inner_html.replace(/<li><label class=\"textfield\">/g, '<li class="checkedtextfield textfield"><label class="textfield">');	
 	inner_html = inner_html.replace(/<div style=\"display: block;\"/g, '<div');
 	inner_html = inner_html.replace(/<div style=\"display: none;\"/g, '<div');
-	
-//	orginal_html = orginal_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
-//	orginal_html = orginal_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
-//	orginal_html = orginal_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
-//	orginal_html = orginal_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
-//	orginal_html = orginal_html.replace(/.*<\/body>/, "<\/body>\n");
-	
-//	inner_html = inner_html.replace(/\n*<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>.\n*/g, "");
-//	inner_html = inner_html.replace(/\n*<!\[endif\]-->.\n*/g, "");
-//	inner_html = inner_html.replace(/\n*<!--\[if !\(IE 5\)\]-->.\n*/g, "");
-//	inner_html = inner_html.replace(/\n*<!--\[endif\]-->.\n*/g, "");
-//	inner_html = inner_html.replace(/.*<\/body>/, "<\/body>\n");
-	
+
 	inner_html= inner_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
 	inner_html= inner_html.replace(/^[ \t]*[\r\n]+/g, '')
 	orginal_html= orginal_html.replace(/\n[ \t]*[\r\n]+/g, '\n');
@@ -279,18 +290,7 @@ function save() {
 	inner_html = inner_html.replace(/title=\"\.*\"/gi, '');
 	orginal_html = orginal_html.replace(/title=\"\.*\"/gi, '');
 	
-// 	
-// inner_html = inner_html.replace(/\s*title>/, '<title>');
-// orginal_html = orginal_html.replace(/\s*title>/, '<title>');
-// 
-// inner_html = inner_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
-// orginal_html = orginal_html.replace(/\s*!--\[if \(gt IE 5\)&\(lt IE 7\)\]>/, '<!--\[if \(gt IE 5\)&\(lt IE 7\)\]>');
-	
-
-
-	//inner_html = inner_html.replace(/<script.+<\/script>\r*\n*/g, "");
-	//orginal_html = orginal_html.replace(/<script.+<\/script>\r*/g, "");
-	alert(orginal_html == inner_html);
+	//alert(orginal_html == inner_html);
 	textarea.value = inner_html;
 	
 	//fapp.logga(inner_html);
@@ -318,15 +318,36 @@ function save() {
 	theme.type = "hidden";
 	
 	var aq = $("addQuestion");
-	aq.appendChild(title);
-	aq.appendChild(theme);
+	textarea_form.appendChild(title);
+	textarea_form.appendChild(theme);
 	aq.appendChild(textarea_div);
 	
 	var textareaForm = document.getElementById("textareaform");
 	
+	//textareaForm.submit();
 	
-	textareaForm.submit();
+	var saved = document.getElementById("saved");
+	var date = new Date();
 	
+	try {
+		textareaForm.send({
+			onComplete: function() {
+				date = form_har_sparats();
+				saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+			}
+		});	
+	} catch(NS_ERROR_FILE_NOT_FOUND) {
+			console.warn("Kunde inte spara formuläret, hittade inte .asp-filen");
+			saved.innerHTML = " Misslyckades med att spara formuläret, kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+	}
+	
+	textarea_div.parentNode.removeChild(textarea_div);
+	
+	
+	
+	form_har_sparats(); //DEBUG: Ska ligga i ajax-kodsnutten ovan.
+	
+	if(start_autosave) autoEditSave(true);
 	
 	//document.textareaForm.submit();
 }
@@ -1450,8 +1471,6 @@ function old_question(action, question) {
 		}
 		$("createQuestion").getPrevious().getPrevious(".group").appendChild(scale_group);
 		headline.onclick = function() { showGroupEditBox( this.parentNode) };
-		
-		
 	}
 	else if (action.toLowerCase() == "create" && question_text != null && question_text.value != "") {
 		
@@ -1510,8 +1529,10 @@ function old_question(action, question) {
 		insertAfter(answer_div, question.getElementsByTagName('h5')[0]);
 		
 		if (need_to_prepare_form) { prepareForm(); }
-		//FancyForm.start(0, { onSelect: fapp.onSelect } );	
+		//FancyForm.start(0, { onSelect: fapp.onSelect } );			
 	}
+	
+	form_har_redigerats();
 }
 
 function edit_text(div) {
@@ -1538,8 +1559,12 @@ function edit_text(div) {
 		textarea.focus();		
 	}
 }
-
-function edit_text_2(element) {
+/**
+ * Används för att redigera 'innerHTML' i ett element 
+ * @param element - ett element.
+ * @param select - boolean som bestämmer om textarean/input fältet ska vara aktiv med textmarkören i sig.
+ */
+function edit_text_2(element, select) {
 	if(element.childNodes[0].nodeName.toLowerCase() != "textarea" && element.childNodes[0].nodeName.toLowerCase() != "input"){
 		if($(element).hasClass("text")) {
 			/* Är ett fritext element (element text) */
@@ -1592,8 +1617,11 @@ function edit_text_2(element) {
 			element.empty();
 			element.appendChild(input);
 			input.focus();
-			input.select();
+			if(select) input.select();
 		}
+	
+		form_har_redigerats();
+	
 	}
 }
 
@@ -2048,6 +2076,7 @@ function refreshOdd() {
 		else { odd = true; }
 		
 	});
+	form_har_redigerats();
 }
 
 /**
@@ -2056,8 +2085,9 @@ function refreshOdd() {
 function refreshNumbers() {
 	var questions = $("form_").getElements(".question");
 	for(var n = 0; n < questions.length; n++) {
-		$(questions[n]).getElement("SPAN.number").innerHTML = n+1;
+		$(questions[n]).getElement(".number").innerHTML = n+1;
 	}
+	form_har_redigerats();
 }
 
 /**
@@ -2118,7 +2148,8 @@ function setSelect(question) {
 					}
 					if(selected_question_parent.hasClass("scale-group")) { refreshScaleQuestions(selected_question_parent); }
 					selected_question = null;
-				
+					
+					form_har_redigerats();
 					return false;
 				};
 				var removeField_span = document.createElement("span");
@@ -2145,9 +2176,9 @@ function setSelect(question) {
 						var qtext = $(qu).getElement(".qtext");
 						var number = $(qu).getElement(".number");
 						qtext.innerHTML = "Ny fråga";
-						qtext.onclick = function() { this.inlineEdit(); };
+						qtext.onclick = function() { /* this.inlineEdit();*/ edit_text_2(this); };
 						number.innerHTML = 0;
-						number.onclick = function() { this.inlineEdit(); };
+						number.onclick = function() { /*this.inlineEdit();*/ edit_text_2(this); };
 						temp.ondblclick = function() { showGroupEditBox(this); }
 					}
 					
@@ -2170,6 +2201,7 @@ function setSelect(question) {
 					refreshScaleQuestions(old_select.parentNode);
 					//FancyForm.start(0, { onSelect: fapp.onSelect } );
 					
+					form_har_redigerats();
 					return false;
 				};
 				div.appendChild(new_question);
@@ -2235,8 +2267,7 @@ function move_question(direction) {
 		}
 		//window.location.hash = question.id;
 		//window.scrollBy(0,-170); // horizontal and vertical scroll increments
-    	
-		
+    	form_har_redigerats();
 	}
 }
 
@@ -2264,7 +2295,7 @@ function keyHandler(e) {
 			div.onclick = function() { /*$(this).inlineEdit();*/ edit_text_2(this) };
 			insertAfter(div, targ.parentNode);
 			//$(div).inlineEdit();
-			edit_text_2(div);
+			edit_text_2(div, true);
 		}
 		if(targ.nodeName.toLowerCase() == "textarea") { return true; }
 		return false

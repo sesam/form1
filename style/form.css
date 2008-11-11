@@ -104,12 +104,6 @@ a:link {
 .group p { 
 	margin-left: 0; }
 
-
-
-.obligatory {
-	xx_border-left-color: #000 !important;
-	xx_border-right-color: #000 !important; }
-
 /* =header
 ------------------------------------------------------------*/
 #header {
@@ -578,13 +572,9 @@ body.print .scale-group.priority .header { background-color: blue; }
 		position: absolute;
 		margin-left: 5px !important; /* .question ul input {…} har en dum margin */  }
 	
-	.question {
-		xxxborder-bottom-color: #666 !important; }
-		
 	.scale-group .question {
 		border-left-color: #D1D1D1 !important;
 		border-top-color: #D1D1D1 !important;
-		xborder-bottom-color: #666 !important;
 		border-right-color: #D1D1D1 !important;
 		border-left-width: 2px !important;
 		border-right-width: 2px !important;
@@ -595,7 +585,6 @@ body.print .scale-group.priority .header { background-color: blue; }
 	}
 	
 	.scale-group div.last {
-		xxxborder-bottom-width: 2px !important;
 		border-bottom-color: #D1D1D1 !important;
 	}
 	
@@ -686,13 +675,11 @@ div.question .edit ul {
 
 .question .edit ul input, .scale-group .edit ul { width: 100%; }	/* testar lite med IE7 (x)- 23okt*/
 .question .edit ul input, .scale-group .edit ul li { width: 80%;}   /* testar lite med IE7 (x)- 23okt*/
-.question .edit ul input, .scale-group .edit .menu ul { xwidth: auto;} /* testar lite med IE7 (x)- 23okt*/
-.question .edit ul input, .scale-group .edit .menu li { xwidth: auto;} /* testar lite med IE7 (x)- 23okt*/
 
 .question .edit ul input, .scale-group .edit ul input {
 	float: left;
 	margin-right: 10px;
-	xwidth: 90%; width: 500px; /* testar lite med IE7 (x)- 23okt*/
+	width: 500px; /* old_width: 90%; testar lite med IE7 (x)- 23okt*/
 }
 
 #editlink {
@@ -713,11 +700,11 @@ div.question .edit ul {
 
 .selected_question { background-color: #fcc !important; /*background-color: #000 !important; color: #fff !important;*/ }
 
-input.textEdit, input.textEdit:focus { margin: 0; width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown;  }
+input.textEdit, input.textEdit:focus { margin: 0; margin-left: -1px;width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown; font-family: Helvetica, Verdana;  }
 .textEdit { border: 1px solid brown; background-color: #EAE2DE; }
 
 #action div, #action a { margin-right: 0.5em; color: #000; font-weight: bold;}
 #action .add { font-size: 130%; text-decoration: none; }
 
-#toolbar { position: fixed; top: 0; left: 0; background-color: #000; color: #fff; xheight: 20px; width: 100%; }
+#toolbar { position: fixed; top: 0; left: 0; background-color: #000; color: #fff; width: 100%; }
 #toolbar a { color: #fff; }

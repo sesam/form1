@@ -23,12 +23,11 @@ function init() {
 	if (!document.getElementsByTagName) { return false; }
 	
 	prepareForm();
+	
 
 	fapp = new formApplication();
 	pageNav = fapp; // tas bort först efter att alla gamla form*.html - filer har makulerats
-	FancyForm.onSelect = fapp.onSelect; //whee hoo!! monkeypatching ?
-	
-	
+	FancyForm.onSelect = fapp.onSelect; //whee hoo!! monkeypatching ?	
 
 	if (!location.search.match(/print/)) {
 		fapp.loader();
@@ -66,6 +65,18 @@ function insertAfter(new_element, target_element) {
 		parent.insertBefore(new_element, target_element.nextSibling);
 	}
 }
+
+/**
+ * Anpassar storleken på textarea-element efter innehållet.
+ * @param ta - Textarea
+*/
+function resize_HTMLTextArea(ta) {
+		var t=ta.value.replace(/\r\n/g, '\n').split('\n'), sum=0;
+		for (var i=0;i<t.length;i++) if (t[i].length > ta.cols) sum++;
+		ta.rows=sum + t.length + 1;
+		if(ta.value == null || ta.value == "" || ta.rows < 4) ta.rows = 4;
+}
+
 
 /**
  * Används för att få "annat"-svar att seut som kryssruta med ett textfält.
@@ -372,27 +383,13 @@ var formApplication = function() {
 	}
 
 	this.findQuestionDiv = function(elt) {
-	 return fapp.findMyDiv(elt, 'question');
+		return fapp.findMyDiv(elt, 'question');
 	}
 
 	this.findElementDiv = function(elt) {
-	 return fapp.findMyDiv(elt, 'element');
+		return fapp.findMyDiv(elt, 'element');
 	}
-/*
-	this.findQuestionDiv = function(elt) {
-		for (var i=0; i<9; i++) {
-			if (elt.className.match(/question/)) return elt;
-			elt = elt.parentNode;
-		}
-	}
-	
-	this.findElementDiv = function(elt) {
-		for (var i=0; i<9; i++) {
-			if (elt.className.match(/element/)) return elt;
-			elt = elt.parentNode;
-		}
-	}
-*/
+
 	this.onSelect = function(event_elt) {
 		if (!fapp.hasAddedHighlights[fapp.onpage]) {
 			if(!edit_mode) { autoSave(true); }
@@ -669,6 +666,13 @@ var FancyForm = {
 };
 
 if (location.href.match(/form/)) {
-	addLoadEvent(function() {init();});	
+	addLoadEvent(function() {init();});
+	addLoadEvent(function() {
+		var textarea = document.getElementsByTagName("textarea");
+		for(var i = 0; i < textarea.length; i++) {
+			resize_HTMLTextArea(textarea[i]);
+			textarea[i].onchange = function() { resize_HTMLTextArea(this); };
+		}
+	});	
 }
 
