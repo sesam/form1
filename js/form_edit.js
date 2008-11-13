@@ -33,7 +33,15 @@ edit_link.id = "editlink";
 edit_link.className = "deactive";
 edit_link.title = "Öppna/stäng redigeringsläge här";
 edit_link.setAttribute("accesskey", "q");
-edit_link.onclick = function() { location.search.match(/\&edit=1/) ? location.search = location.search.replace(/\&edit=1/,'') : location.search +='&edit=1'; }
+edit_link.onclick = function() { 
+	if( location.search.match(/\&edit=1/) ) {
+		if(form_redigerades > form_sparades) {
+			var answer = confirm ("Är du säker på att du vill stänga av redigeringsläget?\nAlla dina ändringar kommer försvinna.");
+			if (!answer) { return false; }
+		}
+		location.search = location.search.replace(/\&edit=1/,'');
+	} else { location.search +='&edit=1'; }
+}
 statusbar.appendChild(edit_link);
 
 function toggleEditMode() {
@@ -45,7 +53,7 @@ function toggleEditMode() {
 		edit_link.className = "active";			
 		var f = $('form_');	
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
-		f.getElements('.question').each(function(elt) { elt.title = "Dubbelklicka för frågans inställningar (funderar inte på likert-frågor)"; elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
+		f.getElements('.question').each(function(elt) { elt.title = "Dubbelklicka för frågans inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
 		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text_2(this);});});
 		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
 		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );
@@ -60,13 +68,8 @@ function toggleEditMode() {
 		
 		var a = document.createElement("a");
 		a.setAttribute("href", "#");
-		//a.setAttribute("onclick", "new_question(); return false;");
 		
-		a.onclick = function () {
-			//alert("hej");
-			new_question();
-			return false;
-		}
+		a.onclick = function () { new_question(); return false; }
 				
 		var numbers = document.createElement("a");
 		numbers.href = "#";
@@ -141,24 +144,32 @@ function toggleEditMode() {
 		zebra.appendChild(document.createTextNode("Randa om"));
 		
 		// Omnumrera | Randa om | Färgtema ---- Ny fråga | Snabbimport --- Debug: Form-spara, resultattxt  --- Om...
+		var tabb = "\u00a0\u00a0\u00a0\u00a0\u00a0";
+		
+		tool_p.appendChild(document.createTextNode(tabb));
 		tool_p.appendChild(numbers);
 		tool_p.appendChild(document.createTextNode(" | "));
 		tool_p.appendChild(zebra);
 		tool_p.appendChild(document.createTextNode(" | "));
 		tool_p.appendChild(toggleTheme);
-		tool_p.appendChild(document.createTextNode("\u00a0\u00a0\u00a0\u00a0\u00a0"));
+		tool_p.appendChild(document.createTextNode(tabb));
 		
 		tool_p.appendChild(a);
 		tool_p.appendChild(document.createTextNode(" | "));
 		tool_p.appendChild(fast_import);
-		tool_p.appendChild(document.createTextNode("\u00a0\u00a0\u00a0\u00a0\u00a0Debug: "));
+		tool_p.appendChild(document.createTextNode(tabb + "Debug: "));
 		tool_p.appendChild(spara);
 		tool_p.appendChild(document.createTextNode(" | "));
 		tool_p.appendChild(aa);
-		tool_p.appendChild(document.createTextNode("\u00a0\u00a0\u00a0\u00a0\u00a0"));
+		tool_p.appendChild(document.createTextNode(tabb));
 		tool_p.appendChild(manual);
 			
 	} else {
+		if(form_redigerades > form_sparades) {
+			alert("här ska det komma upp en fråga");
+			var answer = confirm ("Är du säker på att du vill stänga av redigeringsläget?\nAlla dina ändringar kommer försvinna.");
+			if (!answer) { return false; } 
+		}	
 		edit_mode = false;
 		var f = $('form_');
 		f.getElements('.question').each(function(elt) { elt.title = "" });
@@ -267,13 +278,23 @@ function save(start_autosave) {
 	if(addQuestion) { addQuestion.parentNode.removeChild(addQuestion); }
 	
 	//var inner_html = document.getElementsByTagName("html")[0].innerHTML;
-	var inner_html = document.getElementById("form_").innerHTML;
+	//var inner_html = document.getElementById("form_").innerHTML;
+
+	var innerClone = $("form_");
+	var edit_box = innerClone.getElement(".textEdit");
+	if(edit_box) reverse_edit_text(edit_box);
+	
+	innerClone.getElements('.question').each(function(elt) { elt.removeAttribute('title') });
+	innerClone.getElements('.text').each(function(elt) { elt.removeAttribute('title') });
+	innerClone.getElements('.scale-group .headline').each(function(elt) { elt.removeAttribute('title') });
+	
+	
+	var inner_html = innerClone.innerHTML;
+
 	var pat = /style="position: absolute; left: -9999px;" /gi;
 	inner_html = inner_html.replace(/style=\"position: absolute; left: -9999px;\" /gi, "");
 	//inner_html = inner_html.replace(/ style="LEFT: -9999px; POSITION: absolute"/gi, '');
-	inner_html = inner_html.replace(/ style=\"LEFT: -9999px; POSITION: absolute\"/gi, '');
-	
-	
+	inner_html = inner_html.replace(/ style=\"LEFT: -9999px; POSITION: absolute\"/gi, '');	
 	inner_html = inner_html.replace(/ class=\"unselected\"/g, "");
 	inner_html = inner_html.replace(/ class=\"selected\"/g, "");
 	inner_html = inner_html.replace(/ class=\"checked\"/g, "");
@@ -323,9 +344,6 @@ function save(start_autosave) {
 	aq.appendChild(textarea_div);
 	
 	var textareaForm = document.getElementById("textareaform");
-	
-	//textareaForm.submit();
-	
 	var saved = document.getElementById("saved");
 	var date = new Date();
 	
@@ -335,18 +353,14 @@ function save(start_autosave) {
 				date = form_har_sparats();
 				saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
 			}
-		});	
+		});
 	} catch(NS_ERROR_FILE_NOT_FOUND) {
 			console.warn("Kunde inte spara formuläret, hittade inte .asp-filen");
 			saved.innerHTML = " Misslyckades med att spara formuläret, kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
 	}
 	
 	textarea_div.parentNode.removeChild(textarea_div);
-	
-	
-	
-	form_har_sparats(); //DEBUG: Ska ligga i ajax-kodsnutten ovan.
-	
+		
 	if(start_autosave) autoEditSave(true);
 	
 	//document.textareaForm.submit();
@@ -572,25 +586,25 @@ function showGroupEditBox(group) {
 		menu.className = "menu";
 		menu_div.appendChild(menu);
 		
+		var save_li = document.createElement("li");
+		var save_a = document.createElement("a");
+		save_a.appendChild(document.createTextNode("OK"));
+		save_li.appendChild(save_a);
+		menu.appendChild(save_li);
+		save_a.onclick = function() { _group("edit", this.parentNode.parentNode.parentNode.parentNode.parentNode); closeEditBox(group, null); return false; };
+		save_a.href = "#";
+		
 		var close_li = document.createElement("li");
 		var close_a = document.createElement("a");
-		close_a.appendChild(document.createTextNode("Stäng"));
+		close_a.appendChild(document.createTextNode("Avbryt"));
 		close_li.appendChild(close_a);
 		menu.appendChild(close_li);
 		close_a.onclick = function() { closeEditBox(group, null); return false; };
 		close_a.href = "#";
 		
-		var save_li = document.createElement("li");
-		var save_a = document.createElement("a");
-		save_a.appendChild(document.createTextNode("Spara"));
-		save_li.appendChild(save_a);
-		menu.appendChild(save_li);
-		save_a.onclick = function() { _group("edit", this.parentNode.parentNode.parentNode.parentNode.parentNode); return false; };
-		save_a.href = "#";
-		
 		var remove_li = document.createElement("li");
 		var remove_a = document.createElement("a");
-		remove_a.appendChild(document.createTextNode("Ta bort grupp"));
+		remove_a.appendChild(document.createTextNode("Ta bort"));
 		remove_li.appendChild(remove_a);
 		menu.appendChild(remove_li);
 		remove_a.onclick = function() { delete_question(this.parentNode.parentNode.parentNode.parentNode.parentNode); return false; };
@@ -610,19 +624,31 @@ function showGroupEditBox(group) {
 		
 		var likert4 = document.createElement("option");
 		var likert5 = document.createElement("option");
+		var likert4t = document.createElement("option");
+		var likert5t = document.createElement("option");
+		
 		
 		likert4.value = "likert4";
 		likert5.value = "likert5";
+		likert4t.value = "likert4t";
+		likert5t.value = "likert5t";
 		
 		likert4.appendChild(document.createTextNode("1-4"));
 		likert5.appendChild(document.createTextNode("1-5"));
+		likert4t.appendChild(document.createTextNode("1-4 Text"));
+		likert5t.appendChild(document.createTextNode("1+3+5 Text"));
 		
 		scale.appendChild(likert4);
 		scale.appendChild(likert5);
+		scale.appendChild(likert4t);
+		scale.appendChild(likert5t);
 
 		
-		if(group.className.match("likert4")) { likert4.selected = "selected" }
-		else if (group.className.match("likert5")) { likert5.selected = "selected" }
+		if(group.hasClass("likert4")) { likert4.selected = "selected" }
+		else if (group.hasClass("likert5")) { likert5.selected = "selected" }
+		else if (group.hasClass("likert4t")) { likert4t.selected = "selected" }
+		else if (group.hasClass("likert5t")) { likert5t.selected = "selected" }
+				
 		
 		var v = document.createElement("input");
 		v.type = "checkbox";
@@ -785,7 +811,7 @@ function _group(action, group) {
 	else { scale_group.removeClass("priority"); }
 	
 	if(_scale) {
-		scale_group.className = scale_group.className.replace(/\s*likert\d{1,}/, '');
+		scale_group.className = scale_group.className.replace(/\s*likert\w{1,}/, '');
 		scale_group.addClass(_scale);
 	}
 	
@@ -859,7 +885,17 @@ function update_answers_id(question) {
  */
 function create_scale_answer(question_number, scale, add_prio, headline, vetej, prio_run, is_scale_headline) {
 	var loop_count = 5;
-	if(scale) { loop_count = scale; }
+	var scale_text = new Array();
+	scale_text["5t"] = new Array("Instämmer inte alls", "Instämmer till liten del", "Instämmer delvis", "Instämmer till stor del", "Instämmer helt");
+	scale_text["4t"] = new Array("Instämmer inte alls", "Instämmer till liten del", "Instämmer till stor del", "Instämmer helt");
+	
+	if(scale) { 
+		switch (scale) {
+			case '4t': loop_count = 4; break;
+			case '5t': loop_count = 5; break;
+			default: loop_count = scale; break;
+		}
+	}
 	
 	var answer_div = document.createElement("div");
 	answer_div.className = "answer";
@@ -875,8 +911,11 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 	var ul = document.createElement("ul");
 	if (is_scale_headline) {
 		for (var i=0; i < loop_count; i++) {
+			console.info(loop_count, i);
 			var li = document.createElement("li");
-			li.appendChild(document.createTextNode(i+1));
+			if(scale == "5t") { li.appendChild(document.createTextNode(scale_text["5t"][i])); }
+			else if(scale == "4t") { li.appendChild(document.createTextNode(scale_text["4t"][i])); }
+			else { li.appendChild(document.createTextNode(i+1)); }
 			ul.appendChild(li);
 		}
 		
@@ -900,7 +939,10 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 			input.type = "radio";
 			input.value = i + 1;
 			var span = document.createElement("span");
-			span.appendChild(document.createTextNode(i+1));
+			if(scale == "5t") { span.appendChild(document.createTextNode(scale_text["5t"][i])); }
+			else if(scale == "4t") { span.appendChild(document.createTextNode(scale_text["4t"][i])); }
+			else { span.appendChild(document.createTextNode(i+1)); }
+			//span.appendChild(document.createTextNode(i+1));
 		
 			label.appendChild(input);
 			label.appendChild(span);
@@ -1387,7 +1429,7 @@ function old_question(action, question) {
 		
 		scale_group.appendChild(headline);
 		
-		h4.onclick = function() { this.inlineEdit(); };
+		h4.onclick = function() { edit_text_2(this); };
 				
 		// slut på headline
 		
@@ -1425,8 +1467,8 @@ function old_question(action, question) {
 				
 				h5.appendChild(qtxt);
 				
-				number.onclick = function() { this.inlineEdit(); };
-				qtxt.onclick = function() { this.inlineEdit(); };
+				number.onclick = function() { edit_text_2(this); };
+				qtxt.onclick = function() { edit_text_2(this); };
 				
 				
 				question.appendChild(h5);
@@ -1470,7 +1512,7 @@ function old_question(action, question) {
 			}
 		}
 		$("createQuestion").getPrevious().getPrevious(".group").appendChild(scale_group);
-		headline.onclick = function() { showGroupEditBox( this.parentNode) };
+		headline.ondblclick = function() { showGroupEditBox( this.parentNode) };
 	}
 	else if (action.toLowerCase() == "create" && question_text != null && question_text.value != "") {
 		
@@ -1505,16 +1547,16 @@ function old_question(action, question) {
 		h5.appendChild(number);
 		h5.appendChild(qtxt);
 		
-		number.onclick = function() { if(edit_mode) this.inlineEdit(); }
-		qtxt.onclick = function() { if(edit_mode) this.inlineEdit(); }
-		div_question.onclick = function() { if(edit_mode) showEditBox(this); }
+		number.onclick = function() { if(edit_mode) edit_text_2(this); }
+		qtxt.onclick = function() { if(edit_mode) edit_text_2(this); }
+		div_question.ondblclick = function() { if(edit_mode) showEditBox(this); }
 				
 		if (answer_div.className == "text") {
 			// Lite småful kod här, men är en lösning för att få upp betan lite snabbare.
 			div_question.className = "text element";
 			div_question.id = null;
 			div_question.innerHTML = answer_div.innerHTML;
-			div_question.ondblclick = function() { if(edit_mode) edit_text(this); }
+			div_question.ondblclick = function() { if(edit_mode) edit_text_2(this); }
 		} else {
 			div_question.appendChild(h5);
 			div_question.appendChild(answer_div);
@@ -1535,30 +1577,6 @@ function old_question(action, question) {
 	form_har_redigerats();
 }
 
-function edit_text(div) {
-	if(div.childNodes[0].nodeName.toLowerCase() != "textarea") {
-		var textarea = document.createElement("textarea");
-		textarea.setAttribute("rows", 20);
-		textarea.setAttribute("cols", 130);
-		textarea.value = div.innerHTML;
-		textarea.className = "textEdit";
-		
-		textarea.onblur = function() {
-			var parent_div = this.parentNode;
-			var txtarea = parent_div.childNodes[0];
-			if(txtarea.value != null && txtarea.value != "") {
-				parent_div.innerHTML = txtarea.value;
-			} else {
-				parent_div.parentNode.removeChild(parent_div);
-			}
-			
-		}
-		
-		div.empty();
-		div.appendChild(textarea);
-		textarea.focus();		
-	}
-}
 /**
  * Används för att redigera 'innerHTML' i ett element 
  * @param element - ett element.
@@ -1574,17 +1592,11 @@ function edit_text_2(element, select) {
 			textarea.value = element.innerHTML;
 			textarea.className = "textEdit clearfix";
 			
-			textarea.onblur = function() {
-				var parent_div = this.parentNode;
-				var txtarea = parent_div.childNodes[0];
-				if(txtarea.value != null && txtarea.value != "") {
-					parent_div.innerHTML = txtarea.value;
-				} else {
-					parent_div.parentNode.removeChild(parent_div);
-				}
-
-			}
-
+			textarea.onblur = function() { reverse_edit_text(this); }
+			textarea.onchange = function() { resize_HTMLTextArea(this); }
+			
+			resize_HTMLTextArea(textarea);
+			
 			element.empty();
 			element.appendChild(textarea);
 			textarea.focus();
@@ -1598,21 +1610,8 @@ function edit_text_2(element, select) {
 			input.type = "text";
 			input.value = element.innerHTML;
 			input.className = "textEdit";
-			
-			input.onblur = function() {
-				var span = this.parentNode;
-				var txtinput = this;
-				if(txtinput.value != null && txtinput.value != "") {
-					span.innerHTML = txtinput.value;
-				} else {
-					if(span.nodeName == "SPAN") {
-						if(element.hasClass("qtext")) span.innerHTML = "Frågetext";
-						else if(element.hasClass("number")) span.innerHTML = "0";
-					}
-					else { span.parentNode.removeChild(span); }
-				}
-
-			}
+		
+			input.onblur = function() { reverse_edit_text(this); }
 			
 			element.empty();
 			element.appendChild(input);
@@ -1622,6 +1621,32 @@ function edit_text_2(element, select) {
 	
 		form_har_redigerats();
 	
+	}
+}
+
+function reverse_edit_text(element) {
+	//console.info("Reverse", element, element.innerHTML);
+	if(element.nodeName == "TEXTAREA") {
+		var parent_div = element.parentNode;
+		var txtarea = parent_div.childNodes[0];
+		if(txtarea.value != null && txtarea.value != "") {
+			parent_div.innerHTML = txtarea.value;
+		} else {
+			parent_div.parentNode.removeChild(parent_div);
+		}
+	}
+	else if (element.nodeName == "INPUT" && element.type == "text") {
+		var span = element.parentNode;
+		var txtinput = element;
+		if(txtinput.value != null && txtinput.value != "") {
+			span.innerHTML = txtinput.value;
+		} else {
+			if(span.nodeName == "SPAN") {
+				if(element.hasClass("qtext")) span.innerHTML = "Frågetext";
+				else if(element.hasClass("number")) span.innerHTML = "0";
+			}
+			else { span.parentNode.removeChild(span); }
+		}
 	}
 }
 
@@ -1984,9 +2009,8 @@ function showEditBox(_question) {
 			var delete_link = document.createElement("a");
 			delete_link.setAttribute("href", "#");
 			delete_link.onclick = function() { delete_question(this.parentNode.parentNode); return false; };
-			delete_link.appendChild(document.createTextNode("Ta bort frågan"));
-			edit_form.appendChild(delete_link);
-			edit_form.appendChild(document.createElement("br"));
+			delete_link.appendChild(document.createTextNode("Ta bort"));
+			
 			var close_link = document.createElement("a");
 			close_link.onclick = function(){closeEditBox(_question); return false; };
 			$(close_link).addEvent('click', function(e) {
@@ -1996,15 +2020,12 @@ function showEditBox(_question) {
 			});
 			
 			close_link.setAttribute("href","#");
-			close_link.appendChild(document.createTextNode("Stäng"));
-			edit_form.appendChild(close_link);
-			edit_form.appendChild(document.createElement("br"));
+			close_link.appendChild(document.createTextNode("Avbryt"));
 				
 			var save_link = document.createElement("a");
-			save_link.onclick = function(){ question("edit", this.parentNode.parentNode.parentNode); return false; };
+			save_link.onclick = function(){ question("edit", this.parentNode.parentNode.parentNode); closeEditBox(_question); return false; };
 			save_link.setAttribute("href","#");
-			save_link.appendChild(document.createTextNode("Spara"));
-			edit_form.appendChild(save_link);
+			save_link.appendChild(document.createTextNode("OK"));
 			
 			var add_other = document.createElement("a");
 			add_other.onclick = function(){
@@ -2047,7 +2068,14 @@ function showEditBox(_question) {
 			};
 			add_other.setAttribute("href","#");
 			add_other.appendChild(document.createTextNode("Lägg till 'annat'"));
+			
+			edit_form.appendChild(save_link);
+			edit_form.appendChild(document.createElement("br"));
+			edit_form.appendChild(delete_link);
+			edit_form.appendChild(document.createElement("br"));
 			edit_form.appendChild(add_other);
+			edit_form.appendChild(document.createElement("br"));
+			edit_form.appendChild(close_link);
 			
 			
 			edit_div.appendChild(edit_form);
@@ -2172,14 +2200,14 @@ function setSelect(question) {
 					temp.removeClass("selected_question");
 					
 					
-					var set_onclick = function(qu) {
+					var set_onclick = function(qu, scalegroup) {
 						var qtext = $(qu).getElement(".qtext");
 						var number = $(qu).getElement(".number");
 						qtext.innerHTML = "Ny fråga";
 						qtext.onclick = function() { /* this.inlineEdit();*/ edit_text_2(this); };
 						number.innerHTML = 0;
 						number.onclick = function() { /*this.inlineEdit();*/ edit_text_2(this); };
-						temp.ondblclick = function() { showGroupEditBox(this); }
+						if(!scalegroup) temp.ondblclick = function() { showEditBox(this); }
 					}
 					
 					
@@ -2191,7 +2219,7 @@ function setSelect(question) {
 						var questions = $(temp).getElements(".question");
 						for(var i=0; i < questions.length; i++) {
 							update_answers_id(questions[i]);
-							set_onclick(questions[i]);
+							set_onclick(questions[i], true);
 						}
 						
 					}
@@ -2207,9 +2235,10 @@ function setSelect(question) {
 				div.appendChild(new_question);
 				
 				var move_up = document.createElement("a");
-				move_up.appendChild(document.createTextNode("Flytta upp"));
+				move_up.appendChild(document.createTextNode("\u2191"));
+				move_up.setAttribute("accesskey", "u");
 				move_up.href = "#";
-				move_up.title = "Flytta upp frågan ett steg";
+				move_up.title = "Flytta upp (ALT + u)";
 				move_up.onclick = function() {
 					move_question("up");
 					return false;
@@ -2217,9 +2246,10 @@ function setSelect(question) {
 				div.appendChild(move_up);
 				
 				var move_down = document.createElement("a");
-				move_down.appendChild(document.createTextNode("Flytta ner"));
+				move_down.appendChild(document.createTextNode("\u2193"));
+				move_down.setAttribute("accesskey", "n");
 				move_down.href = "#";
-				move_down.title = "Flytta ner frågan ett steg";
+				move_down.title = "Flytta ner (ALT + n)";
 				move_down.onclick = function() {
 					move_question("down");
 					return false;
@@ -2228,7 +2258,7 @@ function setSelect(question) {
 			
 				if(question.hasClass("text")) {
 					question.appendChild(div);
-				} else { h5.appendChild(div); }
+				} else { h5.insertBefore(div, h5.getElementsByTagName("span")[1]); }
 			}
 		}
 	}

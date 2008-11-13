@@ -1,2 +1,3 @@
 div.question { background-color: #E4EFEF; }
+div.question.odd { background-color: #FFFFFF; }
 .scale-group .question .answer .priority { background-color: #D5DDDD; }

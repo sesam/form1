@@ -375,11 +375,13 @@ var formApplication = function() {
 	}
 	
 	this.findMyDiv = function(elt,klass) {
-	 var re = new RegExp(klass);
-	 for (var i=0; i<9; i++) {
-	  if (elt.className && elt.className.match(re)) return elt;
-	  elt = elt.parentNode;
-	 }
+		try {
+			var re = new RegExp(klass);
+		 	for (var i=0; i<9; i++) {
+		 		if (elt.className && elt.className.match(re)) return elt;
+		  		elt = elt.parentNode;
+		 	}
+		} catch(NS_ERROR_UNEXPECTED) { console.info("test catch"); return null; }
 	}
 
 	this.findQuestionDiv = function(elt) {
