@@ -1,19 +1,3 @@
-/* FETCH DATA: 								Beskrivning:
- * -----------------------------------------------------------------------------------------
- * questionType : 	radio					Vilken typ av fråga det är.
- *					radio_line
- *					checkbox
- *					checkbox_line
- *					text
- *					textarea
- *
- * label: 									Vad som står i labeln.
- *
- * value: 									Om det ska stå något i text/textarea fältet.
- *
- * name:									Namnet på inputfältet.
- */
-
 var edit_mode = false;
 var active_theme;
 
@@ -24,7 +8,7 @@ var form_sparades = null;
 document.onkeypress = keyHandler;
 document.onmousedown = mouseHandler;
 
-/* Aktivera inlineEdit2 via klick i #header */
+/* Placerar redigerar länk i status-diven */
 var statusbar = $('statusbar');
 //var edit_link = document.createElement('div');
 var edit_link = document.createElement('a');
@@ -44,10 +28,13 @@ edit_link.onclick = function() {
 }
 statusbar.appendChild(edit_link);
 
+
+/*
+ * Slår på/av redigeringsläget
+ */
 function toggleEditMode() {
 	if(edit_link.className == "deactive") { // Knappen var "av", så knappen slås på.
 	
-		//FancyForm.initing = 1;
 		edit_mode = true;
 		showEditLink();
 		edit_link.className = "active";			
@@ -122,7 +109,7 @@ function toggleEditMode() {
 		var manual = document.createElement("a");
 		manual.href = "#";
 		manual.appendChild(document.createTextNode("Om frågeredigering"));
-		manual.onclick = function() { alert("Hjälptext kommer senare"); }
+		manual.onclick = function() { alert("Hjälptext kommer senare...\nCTRL + q = Stäng/öppna redigeringsläge\nCTRL + u = Flytta markerat element uppåt\nCTRL + n = Flytta markerat element ner"); }
 		
 		var toggleTheme = document.createElement("a");
 		toggleTheme.href = "#";
@@ -195,6 +182,10 @@ function toggleEditMode() {
 
 var import_active = false;
 
+/**
+ * Visar snabb-import rutan.
+ * @param where - Vart snabb-importen ska visas. I vilket DOM-element den ska placeras i
+ */
 function show_fast_import(where) {
 	var import_box = null;
 	if(!import_active) {
@@ -211,6 +202,10 @@ function show_fast_import(where) {
 	}
 }
 
+/**
+ * Visar "Lägg till fråga" länk längst ner
+ * OBS! Funktionen används troligen inte, funktionaliteten har flyttats upp till redigeringsmenyn.
+ */
 function showEditLink() {
 	var addQuestion = document.getElementById("addQuestion");
 	if (addQuestion) {
@@ -223,6 +218,10 @@ function showEditLink() {
 	if (edit_mode) { fapp.currentPageDiv.appendChild(addQuestion); }
 }
 
+/**
+ * Tar bort "Lägg till fråga" länken längst ner.
+ * OBS! Funktionen används troligen inte, funktionaliteten har flyttats upp till redigeringsmenyn.
+ */
 function removeEditLink() {
 	var addQuestion = document.getElementById("addQuestion");
 	var createQuestion = document.getElementById("createQuestion");
@@ -230,11 +229,19 @@ function removeEditLink() {
 	if(createQuestion) { createQuestion.parentNode.removeChild(createQuestion); }
 }
 
+/**
+ * Anropas när formuläret har blivit redigerats.
+ * @return Date-objekt
+ */
 function form_har_redigerats() {
 	form_redigerades = new Date();
 	return form_redigerades;
 }
 
+/**
+ * Anropas när formuläret har sparats.
+ * @return Date-objekt
+ */
 function form_har_sparats() {
 	form_sparades = new Date();
 	return form_sparades;
@@ -242,6 +249,10 @@ function form_har_sparats() {
 
 var autoEditSave_ = null;
 
+/**
+ * Sparar automatiskt formuläret varje minut om någon ändring har gjort sen den sist sparades.
+ * @param run - boolean om autosparning ska ske.
+ */
 function autoEditSave(run) {
 	console.info("AutoEditsparning: on");
 	if (!run && autoEditSave_) clearInterval(autoEditSave_);
@@ -251,6 +262,10 @@ function autoEditSave(run) {
 	}
 }
 
+/**
+ * Sparar formuläret (källkoden)
+ * @start_autosave - boolean om autosparning ska slås på.
+ */
 function save(start_autosave) {
 	var textarea_div = document.createElement("div");
 	textarea_div.id = "bygg";
@@ -366,6 +381,10 @@ function save(start_autosave) {
 	//document.textareaForm.submit();
 }
 
+/**
+ * Fångar in alla frågor. Används för att bygga resultattext tex.
+ * @return En textsträng med alla frågor formaterat så att servern förstår.
+ */
 function fetch_questions() {
 	var questions = document.getElements(".question");
 	var strings = new Array();
@@ -410,7 +429,10 @@ function fetch_questions() {
 	return strings;
 }
 
-
+/**
+ * Answer Klass
+ * {?} Tveksam om det används 
+ */
 var Answer = function() {
 	var questionType = null;
 	var label = null;
@@ -453,7 +475,6 @@ function switchStyleSheet(name) {
 
 /**
  * Används när man vill att ett textfält ska innehålla text som försvinner vid FOCUS.
- * 
  * @param element - textfältet.
  * @param input_value - vad som ska stå i textfältet.
  * @param font-color - textens färg när fältet inte är i focus.
@@ -482,7 +503,7 @@ var createQuestion_type = null;
 var createQuestion_on = false; 
 
 /**
- * Visar formuläret för att skapa nya frågor.
+ * Visar editbox för att skapa nya frågor.
  *
  */
 function new_question() {
@@ -502,8 +523,10 @@ function new_question() {
 		
 		var option;
 		
+		/* De olika typer av element man kan skapa i formuläret */
 		var select_values = new Array(	"typ",	"checkbox",		"textfield",	"textarea", 		"radio", 		"scale", 		"text");
 		var select_text = new Array(	"Typ",	"Kryssrutor",	"Textfält",		"Stort textfält", 	"Radioknappar",	"Likert-grupp",	"Fritext");
+		
 		for (var i=0; i < select_values.length; i++) {
 			option = document.createElement("option");
 			option.value = select_values[i];
@@ -569,7 +592,6 @@ function new_question() {
 
 /**
  * Visar editbox för scale-group
- *
  * Hämtar/kollar vilken skala scale-groupen har och hämtar frågornas rubriker.
  * @param group - en scale-group
  */
@@ -838,6 +860,13 @@ function _group(action, group) {
 	//FancyForm.start(0, { onSelect: fapp.onSelect } );	
 }
 
+/**
+ * Uppdaterar Likert-gruppens skala (inkl. alla likertfrågor inne i likert-gruppen)
+ * @param group - Vilken likert-grupp (scale-group) som ska uppdateras
+ * @param scale - Vilken skala den ska få, antingen ett heltal eller "5t" eller "4t" för att få text istället för siffror. NULL = 5
+ * @param add_prio - boolean om skalan ska ha prioritet.
+ * @param add_vetej - boolean om skalan ska ha "Kan ej ta ställning"
+ */
 function update_scale_answer(group, scale, add_prio, add_vetej) {
 	/* ändrar likert-gruppens huvudskala */
 	var headline = $(group).getElement(".headline .answer");
@@ -879,8 +908,10 @@ function update_answers_id(question) {
  * @param scale - skalan som ska användas.
  * @param add_prio - om prioritet ska finnas.
  * @param headline - rubriken till svarsalternativen? headline i typ='grade' döljs.
+ * @param vetej - om "Kan ej ta ställning" ska vara med.
  * @param answers - array med alla svarsalternativ.
- *
+ * @param prio_run - boolean om det är prioritets svaren som körs för den frågan. (Används bara av funktionen själv),sätt till false.
+ * @param is_svale_headline - boolean Om det är scale-gruppens rubrik som körs (som ska skapas). (Används bara av funktionen själv).
  * @return en ny och fin div class="answer"
  */
 function create_scale_answer(question_number, scale, add_prio, headline, vetej, prio_run, is_scale_headline) {
@@ -911,7 +942,6 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 	var ul = document.createElement("ul");
 	if (is_scale_headline) {
 		for (var i=0; i < loop_count; i++) {
-			console.info(loop_count, i);
 			var li = document.createElement("li");
 			if(scale == "5t") { li.appendChild(document.createTextNode(scale_text["5t"][i])); }
 			else if(scale == "4t") { li.appendChild(document.createTextNode(scale_text["4t"][i])); }
@@ -985,14 +1015,15 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
 
 /**
  * HÄMTAR FORM-FÄLTEN FRÅN EN FRÅGA/EDITBOX.
- *
  * @param question - Frågan som form-fält ska hämtas ifrån.
  * @param getClass - Används om man vill hämta form-fält från ett annat klassnamn i frågan, som standard hämtas fälten från '.answer'.
  * @return en array som innehåller svarsobject (answer).
+ * {?} Tveksam till om funktionen används.
  */
 function fetch(question, getClass) {
 	if (!getClass) { getClass = ""; }
-	var parent_classname = question.parentNode.className;
+	//var parent_classname = question.parentNode.className;   Ska bort
+	var parent = question.parentNode;
 	
 	var answers = new Array();
 	var nodes;
@@ -1010,7 +1041,7 @@ function fetch(question, getClass) {
 						var label = li[x].getElementsByTagName('label')[0];
 						var input = li[x].getElementsByTagName('input')[0];
 
-						if ((parent_classname == "column-group" || $(question).hasClass("big-text")) && !getClass) { label = label.getElementsByTagName('span')[0]; }
+						if (($(parent).hasClass("column-group") || $(question).hasClass("big-text")) && !getClass) { label = label.getElementsByTagName('span')[0]; }
 						if(!input.questionType) {
 							switch (input.className) {
 								case "r": answer.questionType = "radio"; break;
@@ -1085,7 +1116,6 @@ function fetch(question, getClass) {
 
 
 /** SKAPA OCH REDIGERA/UPPDATERA EN FRÅGA.
- *
  * @param action - edit/create.
  * @param question - frågan som ska redigeras/uppdaters. Obligatorisk vid redigering/uppdatering.
  *
@@ -1255,6 +1285,12 @@ function question(action, question) {
 	}
 }
 
+/**
+ * Används för att skapa nya frågor.
+ * @param action - "create" & "edit"
+ * @param question - används vid action = "edit"
+ * {!} Skapa funktionerna måste städas, anledningen till röran är att nya funktionen inte är färdig (en nödlösning)
+ */
 function old_question(action, question) {
 	var oddIratior = false;
 	var form = null;
@@ -1578,7 +1614,7 @@ function old_question(action, question) {
 }
 
 /**
- * Används för att redigera 'innerHTML' i ett element 
+ * Används för att redigera 'innerHTML' i ett element. (Används för att redigera fritext-element)
  * @param element - ett element.
  * @param select - boolean som bestämmer om textarean/input fältet ska vara aktiv med textmarkören i sig.
  */
@@ -1624,6 +1660,10 @@ function edit_text_2(element, select) {
 	}
 }
 
+/**
+ * Används för att ändra tillbaka en TEXTAREA till fritext-element. Används av edit_text_2
+ * @param element - Det element (TEXTAREA) som ska bli ett fritext-element igen.
+ */
 function reverse_edit_text(element) {
 	//console.info("Reverse", element, element.innerHTML);
 	if(element.nodeName == "TEXTAREA") {
@@ -1664,8 +1704,8 @@ function generate_id() {
 
 
 
-/** TAR BORT EN FRÅGA
- *
+/** 
+ * TAR BORT EN FRÅGA
  * @param question - frågan som ska tas bort.
  */
 function delete_question(question) {
@@ -1678,8 +1718,7 @@ function delete_question(question) {
 
 
 /**
- * Visar formulärfält för den valda frågetypen
- *
+ * Visar formulärfält för den valda frågetypen. Används i editboxen för ny fråga.
  * @param question_type - vilken typ av fråga det är (checkbox, radio, textfield, textarea, scale);
  */
 function show_spec(question_type) {
@@ -1917,7 +1956,6 @@ function fetchQuestion(question) {
 
 /**
  * Visar redigeringsrutan för en fråga.
- *
  * @param _question - frågan som ska redigeras.
  */
 function showEditBox(_question) {	
@@ -1938,9 +1976,7 @@ function showEditBox(_question) {
 			
 			for (var i=0; i < answers.length; i++) {
 				var answer = answers[i];
-				
-				if(i == answers.length - 1) next_type = answer.questionType;
-				
+								
 				var li = document.createElement("li");
 				var inputfield = document.createElement("input");
 				inputfield.type = "text";
@@ -2031,7 +2067,6 @@ function showEditBox(_question) {
 			add_other.onclick = function(){
 				var q = fapp.findQuestionDiv(this);
 				var edit = $(q).getElement(".edit");
-				alert(edit);
 				var lis = edit.getElementsByTagName("li");
 				
 				var li = document.createElement("li");
@@ -2134,7 +2169,7 @@ function refreshScaleQuestions(scale_group) {
 var selected_question = null;  // Innehåller den markerade frågan.
 
 /**
- * Markerar en fråga så man kan flytta den.
+ * Markerar en fråga så man kan flytta.
  * @param question - Frågan som ska markeras.
  */ 
 function setSelect(question) {
@@ -2295,14 +2330,12 @@ function move_question(direction) {
 				}
 			}
 		}
-		//window.location.hash = question.id;
-		//window.scrollBy(0,-170); // horizontal and vertical scroll increments
-    	form_har_redigerats();
 	}
 }
 
 /**
  * Hanterar tangentbordstryckningar.
+ * @param e - Event
  */
 function keyHandler(e) {
 	var code;
@@ -2345,6 +2378,7 @@ function keyHandler(e) {
 
 /**
  * Hanterar musknapparna, just nu bara för högerklick.
+ * @param e - Event
  */
 function mouseHandler(e) {
         var rightclick, ev = e || window.event, targ = ev.target || ev.srcElement;

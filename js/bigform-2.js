@@ -50,6 +50,10 @@ function addLoadEvent(func) {
   }
 }
 
+/*
+ * Hämtar första textNoden den hittar i ett element.
+ * @param - Elementet som ska sökas igenom.
+ */
 function getFirstTextNode(x) {
 	var children = x.childNodes;
 	for (i=0;i<children.length;i++) { 
@@ -57,6 +61,11 @@ function getFirstTextNode(x) {
 	}
 }
 
+/*
+ * Placerar ett element efter ett element i DOM-trädet.
+ * @param new_element - Det nya elementet.
+ * @param target_element - Elementet i DOM-trädet som det nya elementet ska placeras under/efter.
+ */
 function insertAfter(new_element, target_element) {
 	var parent = target_element.parentNode;
 	if (parent.lastChild == target_element) {
@@ -69,7 +78,7 @@ function insertAfter(new_element, target_element) {
 /**
  * Anpassar storleken på textarea-element efter innehållet.
  * @param ta - Textarea
-*/
+ */
 function resize_HTMLTextArea(ta) {
 		var t=ta.value.replace(/\r\n/g, '\n').split('\n'), sum=0;
 		for (var i=0;i<t.length;i++) if (t[i].length > ta.cols) sum++;
@@ -152,8 +161,9 @@ function prepareForm(){
 	);
 }
 var formform;
+
+/* Samlar ihop svar och skickar till servern. */
 function saveForm() {
-	// Samlar ihop svar och skickar till servern.
 	try {
 	formform = $('form_').send({
 		onComplete: function() {
@@ -170,7 +180,8 @@ function saveForm() {
 
 var autoSave_ = null;
 
-/* 
+/*
+ * Spara automatiskt formuläret var 3:e minut 
  * @param run - true aktiverar sparning i tidsintervall
  */
 function autoSave(run) {
@@ -182,6 +193,10 @@ function autoSave(run) {
 	if (run) autoSave_ = setInterval("saveForm()", 60 * 3 * 1000);
 }
 
+
+/*
+ * 
+ */
 var formApplication = function() {
 	this.onpage = 1;
 	this.currentPageDiv = document.getElementById('page-1');
@@ -287,7 +302,7 @@ var formApplication = function() {
 		if (!to && 1==diff) this.showPage(0); //efter sista sida kommer "Spara"-sidan
 		else this.showPage(ny);
   	}
-
+	
 	this.showPage = function(n) {
 		if (this.notFirstLoad) { //don't highlight on first visit
 			var first = !this.hasAddedHighlights[fapp.onpage];
@@ -338,7 +353,12 @@ var formApplication = function() {
 		}
 		return sum;
 	}
-
+	
+	/*
+	 * Kollar om frågan är besvarad
+	 * @param question_div - Frågan som ska kontrolleras
+	 * @return 
+	 */
 	this.isUnanswered = function(question_div) {
 		var inputs = question_div.getElements("INPUT");
 		return !inputs.some( function(elt) {
@@ -346,13 +366,23 @@ var formApplication = function() {
 			return elt.getValue();
 		} );
 	}
-
+	
+	/*
+	 * Markerar en fråga som obesvarad, om frågan är obligatorisk skrivs frågenumret ut i meddelande-raden.
+	 * @param question_div - Frågan som ska markeras
+	 * @param isObligatory - Om det är en obligatorisk fråga.
+	 */
 	this.addHighlight = function(question_div, isObligatory) {
 		question_div.addClass("highlight");
 		if (isObligatory) fapp.message_add( question_div );
 		this.hasAddedHighlights[this.onpage] = true;  //TODO fapp eller this ?
 	}
-
+	
+	/*
+	 * Kollar om en fråga ska bli markerad som obesvarad.
+	 * @param question_div - Frågon som ska kontrolleras.
+	 * @return om frågan har blivit markerad som obesvarad
+	 */
 	this.possiblyAddHighlight = function(question_div) {
 		var isObligatory = question_div.className.match(/obligatory/);
 		if (isObligatory || (fapp.mark_unanswered && 0==fapp.missedQuestions.length)) {
@@ -360,7 +390,10 @@ var formApplication = function() {
 		}
 		return (isObligatory ? 1 : 0);
 	}
-
+	
+	/*
+	 * 
+	 */
 	this.addHighlights = function() {
 		if (window.ie) $(fapp.currentPageDiv.id); //denna rad ska troligen raderas
 
@@ -374,6 +407,13 @@ var formApplication = function() {
 		return fapp.arraySum(arr);
 	}
 	
+	/*
+	 * Används av funktionerna: findQuestionDiv och findElementDiv.
+	 * Används för att hitta ett elementets närmaste DIV-element.
+	 * @param elt - Elementet som vi ska hitta DIV-elementet åt.
+	 * @param klass - vilken klass DIV:en ska ha, tex. "question" eller "element"
+	 * @return DIV:en om den hittar någon annars NULL
+	 */
 	this.findMyDiv = function(elt,klass) {
 		try {
 			var re = new RegExp(klass);
@@ -384,14 +424,27 @@ var formApplication = function() {
 		} catch(NS_ERROR_UNEXPECTED) { console.info("test catch"); return null; }
 	}
 
+	/*
+	 * Hittar letar efter ett elements parentNode som är en DIV med klassen "Question".
+	 * @param elt - Elementet som vi ska försöka hitta en question-div till.
+	 * @return en question-div om den hittar någon annars NULL
+	 */
 	this.findQuestionDiv = function(elt) {
 		return fapp.findMyDiv(elt, 'question');
 	}
-
+	
+	/*
+	 * Hittar letar efter ett elements parentNode som är en DIV med klassen "Element".
+	 * @param elt - Elementet som vi ska försöka hitta en element-div till.
+	 * @return en element-div om den hittar någon annars NULL
+	 */
 	this.findElementDiv = function(elt) {
 		return fapp.findMyDiv(elt, 'element');
 	}
-
+	
+	/*
+	 * 
+	 */
 	this.onSelect = function(event_elt) {
 		if (!fapp.hasAddedHighlights[fapp.onpage]) {
 			if(!edit_mode) { autoSave(true); }
@@ -416,7 +469,12 @@ var formApplication = function() {
 		return false;
 	}
 
+	
 	this.messageStore_default = { }
+	
+	/*
+	 * Översätter textmeddelanden.
+	 */
 	this.tran = function(which) {
 		fapp.messageStore = (msgStore && msgStore[fapp.lang]) ? msgStore[fapp.lang] : fapp.messageStore_default; //caching
 		var txt = fapp.store[which] || fapp.messageStore_default[which]; //if untranslated, falls back to default translations 
@@ -460,6 +518,12 @@ var formApplication = function() {
 		// return '<a href="#' + id + '">' + this.obl_text3 + " " + number + '</a>';
 	}*/
 	
+	/*
+	 * Bygger ihop en html-länk.
+	 * @param id - frågans ID
+	 * @param number - frågans nummer
+	 * @param page - vilken sida frågan ligger på
+	 */
 	this.message_link = function(id, number, page) {
 	return '<a href="#' + id + '" onclick="fapp.showPage(' + page + ')">' + this.obl_text3 + " " + number + '</a>';
 	}
