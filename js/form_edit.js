@@ -272,7 +272,7 @@ function save(start_autosave) {
 	var textarea_form = document.createElement("form");
 	textarea_form.setAttribute("name", "textareaForm");
 	textarea_form.setAttribute("method", "post");
-	textarea_form.setAttribute("action", "http://5.28.219.86/gecko/asp/form_spara.asp");
+	textarea_form.setAttribute("action", path("form_spara.asp"));
 	textarea_form.id = "textareaform";
 	var textarea = document.createElement("textarea");
 	textarea.setAttribute("cols", "80%");

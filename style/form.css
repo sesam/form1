@@ -265,6 +265,58 @@ div.odd {
 	padding-left: 4em; /* Flyttar Prioritets-rubriken mer åt vänster */
 }
 
+.scale-group .question .answer .grade h4 {
+	position: absolute;
+	left: -9999px;
+}
+
+.scale-group .question .answer .priority h4 {
+	left: 0;
+	margin: 0;
+	padding: 4px 0 0 0.5em;
+	position: absolute;
+	top: 0;
+}
+
+.scale-group .question .answer .priority {
+	background-color: #EEEEEE;
+	left: 0;
+	position: absolute;
+	top: 34px;
+}
+
+.scale-group .question .answer div {
+	position: relative;
+}
+
+.scale-group.priority .question {
+	height: 55px;
+}
+
+.scale-group .question h5 {
+	padding-right: 388px;
+}
+
+
+.scale-group .question .priority ul li, .scale-group .question.first .priority ul li  {
+	padding-bottom: 4px;
+	margin-bottom: 0; }
+
+.scale-group .question .answer div h4 {
+	font-size: 100%; }
+
+.scale-group.likert4t .question ul li,
+.scale-group.likert4t .headline ul li,
+.scale-group.likert5t .question ul li,
+.scale-group.likert5t .headline ul li {padding: 0 5px;}
+.scale-group.likert4t .question ul li.v,
+.scale-group.likert4t .headline ul li.v,
+.scale-group.likert5t .question ul li.v,
+.scale-group.likert5t .headline ul li.v {padding: 0;}
+.scale-group.likert4t .question h5 { padding-right: 316px; }
+.scale-group.likert5t .question h5 { padding-right: 387px;}
+
+
 /* =column-group
 ------------------------------------------------------------*/
 .column-group {
@@ -294,7 +346,30 @@ div.odd {
 .column-group .question h5, .column-group .question p {
 	padding-right: 0; }
 
+/* =text
+------------------------------------------------------------*/	
+.text { padding-left: 1em; }
+.group .text { padding-left: 0; }
+.text p, .text h1, .text h2, .text h3, .text h4, .text h5, .text h6 { margin-left: 0; }
+
+			
+.textline, textarea {
+	border: 1px solid #ccc; }
+		
+.big-text ul {
+	clear: left;
+	float: none; }
 	
+.big-text.question textarea, .small-text.question input {
+	margin-left: 3em;
+}
+
+.big-text.question textarea {
+	display: block;
+}
+
+
+
 /* =navigation
 ------------------------------------------------------------*/
 #navigation {
@@ -434,25 +509,6 @@ div.odd {
 
 
 
-.text { padding-left: 1em; }
-.group .text { padding-left: 0; }
-.text p, .text h1, .text h2, .text h3, .text h4, .text h5, .text h6 { margin-left: 0; }
-
-			
-.textline, textarea {
-	border: 1px solid #ccc; }
-		
-.big-text ul {
-	clear: left;
-	float: none; }
-	
-.big-text.question textarea, .small-text.question input {
-	margin-left: 3em;
-}
-
-.big-text.question textarea {
-	display: block;
-}
 
 /* =clearfix
 ------------------------------------------------------------*/
@@ -474,48 +530,8 @@ div.odd {
 	display: block; }
 /* End hide from IE-mac */
 
-.scale-group .question .answer .grade h4 {
-	position: absolute;
-	left: -9999px;
-}
-
-.scale-group .question .answer .priority h4 {
-	left: 0;
-	margin: 0;
-	padding: 4px 0 0 0.5em;
-	position: absolute;
-	top: 0;
-}
-
-.scale-group .question .answer .priority {
-	background-color: #EEEEEE;
-	left: 0;
-	position: absolute;
-	top: 34px;
-}
-
-.scale-group .question .answer div {
-	position: relative;
-}
-
-.scale-group.priority .question {
-	height: 55px;
-}
-
-.scale-group .question h5 {
-	padding-right: 388px;
-}
-
-
-.scale-group .question .priority ul li, .scale-group .question.first .priority ul li  {
-	padding-bottom: 4px;
-	margin-bottom: 0; }
-
-.scale-group .question .answer div h4 {
-	font-size: 100%; }
-
-
-
+/* =media:screen
+------------------------------------------------------------*/
 @media screen {
 	body {
 		background-color : #333; }
@@ -541,6 +557,8 @@ body.print .noprint, body.print .infopage, body.print #header, body.print #messa
 
 body.print .scale-group.priority .header { background-color: blue; }
 
+/* =media:print
+------------------------------------------------------------*/
 @media print {
 	.noprint, .infopage, #header, #message, #navigation, #footer { display:none; }
 	body {
@@ -586,56 +604,47 @@ body.print .scale-group.priority .header { background-color: blue; }
 	#toolbar { display: none; }
 } /* print */
 
-
+/* =edit (Editboxar)
+------------------------------------------------------------*/
+/* Boxen som används när man skapar nya frågor */
 #createQuestion { background-color: #999; }
-
-.disable { background-color: #777; }
-
 #createQuestion p.checkbox, .edit li.checkbox, .edit li.checkbox_line { padding-left: 20px; width: 80%; background: #eee url("../images/checkbox.gif") no-repeat; }
+#createQuestion p.radio, .edit li.radio, .edit li.radio_line { padding-left: 20px; width: 80%; background: blue; background: #eee url("../images/radiobutton.gif") no-repeat; }
+.disable { background-color: #777; } /* Används för att sista inputfältet ser "disable" ut. */
 
-#createQuestion p.radio, .edit li.radio, .edit li.radio_line {
-	padding-left: 20px;
-	width: 80%;
-	background: blue;
-	background: #eee url("../images/radiobutton.gif") no-repeat; }
-
+/* Boxen när man redigerar frågor */
 .edit { border-top: 1px solid #D1D1D1; clear: left; width: 100%; }
-
-.edit a span.delete { text-indent: -9999px; background: transparent url("../images/delete.gif") no-repeat; width: 50px; height: 30px; }
-
+!_används_troligen_inte.edit a span.delete { text-indent: -9999px; background: transparent url("../images/delete.gif") no-repeat; width: 50px; height: 30px; }
+.edit li { clear: left; }
 div.question .edit ul { float: none; clear: left; }
 
+/* Boxen när man redigerar scale-group (likert-grupp) */
 .scale-group .question .edit ul li { float: none; width: auto; }
 .scale-group .edit { float: left; background-color: #ccc; }
 .scale-group .menu, .question .menu { float: left !important; }
 .scale-group .menu li { clear: none; }
 .scale-group .menu li, .scale-group .menu .ul { float: left; }
 
-.edit li { clear: left; }
-
-.delete { width: 16px; height: 16px; background: transparent url("../images/delete.gif") no-repeat; float: left;
-	margin-top: 2px; padding-right: 7px; cursor: pointer; }
-
+/* Delete knappen */
+.delete { width: 16px; height: 16px; background: transparent url("../images/delete.gif") no-repeat; float: left; margin-top: 2px; padding-right: 7px; cursor: pointer; }
 .delete span { position: absolute; left: -9999px; }
-
 .scale-group .delete { float: none; }
 
 .question .edit ul input, .scale-group .edit ul { width: 100%; }	/* testar lite med IE7 (x)- 23okt*/
 .question .edit ul input, .scale-group .edit ul li { width: 80%;}   /* testar lite med IE7 (x)- 23okt*/
-
 .question .edit ul input, .scale-group .edit ul input { float: left; margin-right: 10px; width: 500px; /* old_width: 90%; testar lite med IE7 (x)- 23okt*/ }
 
-#editlink { width: 80px; height: 25px; background: transparent url("../images/edit.gif") no-repeat 0px 0px;
-	position: absolute; top: 10px; right: 10px; text-indent: -9999px; }
-
+/* Redigerar knappen i statusfältet längst upp*/
+#editlink { width: 80px; height: 25px; background: transparent url("../images/edit.gif") no-repeat 0px 0px; position: absolute; top: 10px; right: 10px; text-indent: -9999px; }
 .deactive { background-position: 0px 0px !important;}
-
 .active { background-position: 0px -31px !important; }
 
 #addQuestion { clear: left; }
 
-.selected_question { background-color: #fcc !important; /*background-color: #000 !important; color: #fff !important;*/ }
+/* Markerad fråga */
+.selected_question { background-color: #fcc !important; }
 
+/* Utseendet på textfältet när man redigerar element av typen Fritext */
 input.textEdit, input.textEdit:focus { margin: 0; margin-left: -1px;width:99.5%; font-size:100%; border: 0; background-color: #EAE2DE; border-bottom: 1px solid brown; font-family: Helvetica, Verdana;  }
 .textEdit { border: 1px solid brown; background-color: #EAE2DE; }
 
@@ -646,17 +655,7 @@ div#action { display: inline; xposition: absolute; top: 5px; right: 347px; }
 #action a:hover { background-color: #E4B6B4; xtext-decoration: underline; }
 #action div.delete { float: left; }
 
+/* =toolbar
+------------------------------------------------------------*/
 #toolbar { position: fixed; top: 0; left: 0; background-color: #000; color: #fff; width: 100%; }
 #toolbar a { color: #fff; }
-
-
-.scale-group.likert4t .question ul li,
-.scale-group.likert4t .headline ul li,
-.scale-group.likert5t .question ul li,
-.scale-group.likert5t .headline ul li {padding: 0 5px;}
-.scale-group.likert4t .question ul li.v,
-.scale-group.likert4t .headline ul li.v,
-.scale-group.likert5t .question ul li.v,
-.scale-group.likert5t .headline ul li.v {padding: 0;}
-.scale-group.likert4t .question h5 { padding-right: 316px; }
-.scale-group.likert5t .question h5 { padding-right: 387px;}

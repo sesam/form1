@@ -193,9 +193,29 @@ function autoSave(run) {
 	if (run) autoSave_ = setInterval("saveForm()", 60 * 3 * 1000);
 }
 
+/**
+ * Hanterar sökväg till filer beroende på vart man surfar in ifrån
+ * @param filename - filnamnet.
+ * @return String med sökvägen till filen.
+ */
+function path(filename) {	
+	var path = "";
+	
+	if (location.href.match(/zondera.com/)) {
+		/* användaren kommer från zondera.com/ */
+		path = filename;
+	} else {
+		/* kommer troligen in från Hamachi-adress(IP) */
+		path = "http://5.28.219.86/gecko/asp/" + filename;
+	}
+	
+	return path;
+	
+}
+
 
 /*
- * 
+ * Klass. 
  */
 var formApplication = function() {
 	this.onpage = 1;
