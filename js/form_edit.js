@@ -100,9 +100,17 @@ function toggleEditMode() {
 		
 		var spara = document.createElement("a");
 		spara.setAttribute("href", "#bygg");
-		spara.appendChild(document.createTextNode("Spara Formulär"));
+		spara.appendChild(document.createTextNode("Spara i bakgrunden"));
 		spara.onclick = function() {
-			save(true);
+			save(true, true);
+			return false;
+		}
+		
+		var spara_no_bg = document.createElement("a");
+		spara_no_bg.setAttribute("href", "#bygg2");
+		spara_no_bg.appendChild(document.createTextNode("Spara"));
+		spara_no_bg.onclick = function() {
+			save(false, false);
 			return false;
 		}
 		
@@ -266,7 +274,7 @@ function autoEditSave(run) {
  * Sparar formuläret (källkoden)
  * @start_autosave - boolean om autosparning ska slås på.
  */
-function save(start_autosave) {
+function save(start_autosave, in_background) {
 	var textarea_div = document.createElement("div");
 	textarea_div.id = "bygg";
 	var textarea_form = document.createElement("form");
@@ -362,23 +370,26 @@ function save(start_autosave) {
 	var saved = document.getElementById("saved");
 	var date = new Date();
 	
-	try {
-		textareaForm.send({
-			onComplete: function() {
-				date = form_har_sparats();
-				saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
-			}
-		});
-	} catch(NS_ERROR_FILE_NOT_FOUND) {
-			console.warn("Kunde inte spara formuläret, hittade inte .asp-filen");
-			saved.innerHTML = " Misslyckades med att spara formuläret, kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+	if(in_background) {
+		try {
+			textareaForm.send({
+				onComplete: function() {
+					date = form_har_sparats();
+					saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+				}
+			});
+		} catch(NS_ERROR_FILE_NOT_FOUND) {
+				console.warn("Kunde inte spara formuläret, hittade inte .asp-filen : " + textareaForm.getAttribute("action"));
+				saved.innerHTML = " Misslyckades med att spara formuläret, kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+		}
+	}
+	else {
+		document.textareaForm.submit();
 	}
 	
 	textarea_div.parentNode.removeChild(textarea_div);
 		
 	if(start_autosave) autoEditSave(true);
-	
-	//document.textareaForm.submit();
 }
 
 /**
@@ -2219,7 +2230,9 @@ function setSelect(question) {
 				removeField_span.appendChild(document.createTextNode("X"));
 				removeField.appendChild(removeField_span);
 				div.appendChild(removeField);
-			
+				
+				
+				/* '+' Länken för att lägga till en ny fråga under. */ 				
 				var new_question = document.createElement("a");
 				new_question.appendChild(document.createTextNode("+"));
 				new_question.className = "add";
@@ -2230,7 +2243,7 @@ function setSelect(question) {
 				
 					setSelect(selected_question);
 				
-					var temp = $(old_select).clone();
+					var temp = $(old_select).clone(); // Nya frågan
 					temp.injectAfter(old_select);
 					temp.removeClass("selected_question");
 					
@@ -2239,9 +2252,10 @@ function setSelect(question) {
 						var qtext = $(qu).getElement(".qtext");
 						var number = $(qu).getElement(".number");
 						qtext.innerHTML = "Ny fråga";
-						qtext.onclick = function() { /* this.inlineEdit();*/ edit_text_2(this); };
+						qtext.onclick = null;
+						//qtext.onclick = function() { edit_text_2(this); };
 						number.innerHTML = 0;
-						number.onclick = function() { /*this.inlineEdit();*/ edit_text_2(this); };
+						//number.onclick = function() { edit_text_2(this); };
 						if(!scalegroup) temp.ondblclick = function() { showEditBox(this); }
 					}
 					
