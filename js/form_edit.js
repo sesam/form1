@@ -41,7 +41,7 @@ function toggleEditMode() {
 		var f = $('form_');	
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('.question').each(function(elt) { elt.title = "Dubbelklicka för frågans inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
-		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text_2(this);});});
+		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för att redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text_2(this);});});
 		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
 		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );
 		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );	
@@ -69,7 +69,7 @@ function toggleEditMode() {
 		
 		var aa = document.createElement("a");
 		aa.setAttribute("href", "#statistik");
-		aa.appendChild(document.createTextNode("Bygg resultattexter"));
+		aa.appendChild(document.createTextNode("#stat"));
 		aa.onclick = function() {
 			var textarea_div = document.createElement("div");
 			textarea_div.id = "statistik";
@@ -375,12 +375,12 @@ function save(start_autosave, in_background) {
 			textareaForm.send({
 				onComplete: function() {
 					date = form_har_sparats();
-					saved.innerHTML = " Sparades kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+					saved.innerHTML = " Sparades kl " + humanTime(date);
 				}
 			});
 		} catch(NS_ERROR_FILE_NOT_FOUND) {
 				console.warn("Kunde inte spara formuläret, hittade inte .asp-filen : " + textareaForm.getAttribute("action"));
-				saved.innerHTML = " Misslyckades med att spara formuläret, kl " + (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
+				saved.innerHTML = " Misslyckades med att spara formuläret, kl " + humanTime(date);
 		}
 	}
 	else {
@@ -390,6 +390,14 @@ function save(start_autosave, in_background) {
 	textarea_div.parentNode.removeChild(textarea_div);
 		
 	if(start_autosave) autoEditSave(true);
+}
+
+/**
+ * Formaterar klockslag med 0-utfyllnad.
+ * @return En textsträng
+ */
+function humanTime(d) {
+	return (date.getHours()<10 ? "0" : "") + date.getHours() + ":" + (date.getMinutes()<10 ? "0" : "") + date.getMinutes();
 }
 
 /**
@@ -1029,7 +1037,7 @@ function create_scale_answer(question_number, scale, add_prio, headline, vetej, 
  * @param question - Frågan som form-fält ska hämtas ifrån.
  * @param getClass - Används om man vill hämta form-fält från ett annat klassnamn i frågan, som standard hämtas fälten från '.answer'.
  * @return en array som innehåller svarsobject (answer).
- * {?} Tveksam till om funktionen används.
+ * Denna används av question() och showEditBox()
  */
 function fetch(question, getClass) {
 	if (!getClass) { getClass = ""; }
