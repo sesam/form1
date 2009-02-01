@@ -34,6 +34,8 @@ function init() {
 	} else {
 		fapp.setPageClass('print');		
 	}
+
+	if (form_edit_init) form_edit_init();
 }
 
 function addLoadEvent(func) {
@@ -307,7 +309,6 @@ var formApplication = function() {
 		}
 		
 		if (!location.search.match(/edit/) && !location.hash.match(/edit/)) FancyForm.start(0, { onSelect: fapp.onSelect } );
-		if (location.search.match(/edit/)) toggleEditMode();
 		this.showPage(1);
 		
 	}
