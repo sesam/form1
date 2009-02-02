@@ -58,7 +58,7 @@ function form_edit_init() {
  */
 function toggleEditMode() {
 	if(edit_link.className == "deactive") { // Knappen var "av", så knappen slås på.
-	
+
 		edit_mode = true;
 		showEditLink();
 		edit_link.className = "active";			
@@ -66,10 +66,10 @@ function toggleEditMode() {
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('.question').each(function(elt) { elt.title = "Dubbelklicka för frågans inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
 		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för att redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text_2(this);});});
-		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showGroupEditBox(this.parentNode);}); } );
+		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ alert(edit_mode); if(edit_mode) {showGroupEditBox(this.parentNode);} }); } );
 		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );
 		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );	
-		
+
 		var toolbar = dce("div#toolbar", "<p><strong>Redigerar…</strong></p>");
 		document.getElementsByTagName("body")[0].appendChild(toolbar);
 		
@@ -91,7 +91,7 @@ function toggleEditMode() {
 
 			var textarea_form = document.createElement("form");
 			textarea_form.setAttribute("method", "post");
-			textarea_form.setAttribute("action", "bygg_statistik.asp");
+			textarea_form.setAttribute("action", path("bygg_statistik.asp"));
 			var textarea = document.createElement("textarea");
 			textarea.setAttribute("cols", "80%");
 			textarea.setAttribute("rows", "2");
@@ -156,7 +156,7 @@ function toggleEditMode() {
 		tool_p.appendChild(a);
 		tool_p.appendChild(document.createTextNode(" | "));
 		tool_p.appendChild(fast_import);
-		tool_p.appendChild(document.createTextNode(tabb + "Debug: "));
+		tool_p.appendChild(document.createTextNode(tabb));
 		tool_p.appendChild(spara);
 		tool_p.appendChild(document.createTextNode(" | "));
 		tool_p.appendChild(spara_no_bg);
@@ -2403,9 +2403,9 @@ function mouseHandler(e) {
 				
                 var divQ = fapp.findElementDiv(targ);
                 if(divQ) setSelect(divQ);
-                else fapp.logga('Hogerklick utanfor - prova klicka pa en fraga istallet!');
+                else { alert("klicka på en fråga istället"); fapp.logga('Hogerklick utanfor - prova klicka pa en fraga istallet!'); }
 
-                if ($(targ).hasClass("headline")) { fapp.logga("v\303\244lj skala!!!"); }
+                if ($(targ).hasClass("headline")) { alert("v\303\244lj skala!!!"); fapp.logga("v\303\244lj skala!!!"); }
 
                 if (ev.stopPropagation) ev.stopPropagation(); //ger ingen nytta i FF3
                 return false;
