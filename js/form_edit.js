@@ -13,7 +13,7 @@ var form_sparades = null;
 function dce(name,html) {
 	var arr = name.replace(/([$_.#])/g,',$1').split(/,/);
 	if (!arr.length) return document.createElement(name);
-	var	elt = document.createElement(arr[0]);
+	var elt = $(document.createElement(arr[0]));
 	for (var i=1; i<arr.length; i++) {
 		var x=arr[i];
 		if (x.match(/^[$#]/)) elt.id = x.substring(1,x.length);
@@ -406,15 +406,15 @@ function fetch_questions() {
 	
 	//console.group("To: bygg_statistik.asp");
 	for (var i=0; i<questions.length; i++) {
-		var question_text = $(questions[i]).getElement(".qtext").innerHTML;
+		var q = $(questions[i]), question_text = q.getElement(".qtext").innerHTML;
 		
-		var div_text = $(questions[i]).getElements("DIV.qtext");
+		var div_text = q.getElements("DIV.qtext");
 		for(var j = 0; j < div_text.length; j++) { question_text += '\n' + div_text[j].innerHTML; }
 		
 		var question_type = "-";
 		var question_have_other = "";
-		if(!questions[i].parentNode.hasClass("scale-group")) {
-			var labels = $(questions[i]).getElements(".answer label");
+		if(!$(q.parentNode).hasClass("scale-group")) {
+			var labels = q.getElements(".answer label");
 			
 			for (var x=0; x<labels.length;x++) {
 				var children = labels[x].childNodes;
