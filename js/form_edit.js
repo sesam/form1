@@ -70,7 +70,7 @@ function toggleEditMode() {
 		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );
 		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );	
 
-		var toolbar = dce("div#toolbar", "<p><strong>Redigerar…</strong></p>");
+		var toolbar = dce("div#toolbar", "<p><a href='panel.asp'>Startsida</a> <strong>Redigerar...</strong></p>");
 		document.getElementsByTagName("body")[0].appendChild(toolbar);
 		
 		var tool_p = toolbar.getElementsByTagName("p")[0];
