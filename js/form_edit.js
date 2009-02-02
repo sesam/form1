@@ -6,7 +6,9 @@ var form_sparades = null;
 
 /* A create element helper that can add id, className and innerHTML directly.
  * @param name TagName + '#' + id + '.' + className + '.' + className ...
+ * @html innerHTML to be added on the new element (or null to avoid using innerHTML)
  * @return new Element
+ * Example: var link2 = dce('a#link2', 'linktext 2');
  */
 function dce(name,html) {
 	var arr = name.replace(/([$_.#])/g,',$1').split(/,/);
