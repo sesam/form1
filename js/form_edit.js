@@ -42,7 +42,7 @@ function toggleEditMode() {
 		f.getElements('label').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) elt.inlineEdit()}); } );
 		f.getElements('.question').each(function(elt) { elt.title = "Dubbelklicka för frågans inställningar"; elt.addEvent('dblclick',function(){ if(edit_mode) showEditBox(this);});});
 		f.getElements('.text').each(function(elt) { elt.title = "Dubbelklicka för redigera text"; elt.addEvent('dblclick',function(){ if(edit_mode) edit_text_2(this);});});
-		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ alert(edit_mode); if(edit_mode) {showGroupEditBox(this.parentNode);} }); } );
+		f.getElements('.scale-group .headline').each( function(elt) { elt.title = "Dubbelklicka för likert-gruppens inställningar"; elt.addEvent('dblclick',function(){ alert(edit_mode); if(edit_mode) {showGroupEditBox(this.parentNode);}}); } );
 		f.getElements('.question h5 .qtext').each( function(elt) {elt.addEvent('click',function(){if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );
 		f.getElements('.question h5 .number').each( function(elt) {elt.addEvent('click',function(){ if(edit_mode) /*elt.inlineEdit()*/ edit_text_2(elt)}); } );	
 		
